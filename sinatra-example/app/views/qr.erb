@@ -1,0 +1,62 @@
+<%# This file is part of the Salt Edge Authenticator distribution
+# (https://github.com/saltedge/sca-identity-service-example)
+# Copyright (c) 2019 Salt Edge Inc.
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3 or later.
+
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+# For the additional permissions granted for Salt Edge Authenticator
+# under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md %>
+<style type="text/css">
+  table {
+    border-width: 0;
+    border-style: none;
+    border-color: #0000ff;
+    border-collapse: collapse;
+  }
+  td {
+    border-width: 0;
+    border-style: none;
+    border-color: #0000ff;
+    border-collapse: collapse;
+    padding: 0;
+    margin: 0;
+    width: 5px;
+    height: 5px;
+  }
+  td.black { background-color: #000; }
+  td.white { background-color: #fff; }
+  h1 {text-align:center;}
+  p {text-align:center;}
+</style>
+ 
+<html>
+  <body>
+    <h1>Connect to Demo Service Provider</h1>
+    <br>
+    <p><a href='<%= @configuration_deeplink %>'>Mobile client deeplink</a><br>
+    <br>
+    <table align="center">
+      <% @qr.modules.each_index do |x| %>
+        <tr>
+          <% @qr.modules.each_index do |y| %>
+            <% if @qr.dark?(x,y) %>
+              <td class="black"/>
+            <% else %>
+              <td class="white"/>
+            <% end %>
+          <% end %>
+        </tr>
+      <% end %>
+    </table>
+  </body>
+</html>

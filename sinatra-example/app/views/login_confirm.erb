@@ -1,0 +1,49 @@
+<%# This file is part of the Salt Edge Authenticator distribution
+# (https://github.com/saltedge/sca-identity-service-example)
+# Copyright (c) 2019 Salt Edge Inc.
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3 or later.
+
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>. 
+
+# For the additional permissions granted for Salt Edge Authenticator
+# under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md %>
+<style>
+h1 {
+  text-align:center;
+  font-size: 24px;
+}
+p {
+  text-align:center;
+  font-size: 18px;
+}
+form {text-align:center;}
+button {
+ font-family: Arial,Helvetica,sans-serif;
+ font-size: 24px;
+}
+</style>
+
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <div>
+      <h1>Welcome <%= @user_name %></h1>
+      <form action="/login/success">
+        <button type="submit" class="btn">Confirm connection</button>
+      </form>
+      <p><a href='/login/error'>Finish with error</a>
+    </div>
+    <p><a href='/login'>Return to Login page</a>
+  </body>
+</html>

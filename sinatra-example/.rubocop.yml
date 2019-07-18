@@ -1,0 +1,644 @@
+# This file is part of the Salt Edge Authenticator distribution
+# (https://github.com/saltedge/sca-identity-service-example)
+# Copyright (c) 2019 Salt Edge Inc.
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3 or later.
+
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+# For the additional permissions granted for Salt Edge Authenticator
+# under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+
+require: rubocop-rspec
+
+# reviewed for rubocop 0.57.0, rubocop-rspec 1.26
+AllCops:
+  CacheRootDirectory: tmp
+  DisabledByDefault: true
+  TargetRubyVersion: 2.4
+  Exclude:
+    - 'db/**/*'
+    - 'config/**/*'
+    - 'tmp/**/*'
+    - 'bin/**/*'
+    - 'node_modules/**/*'
+    - 'vendor/**/*'
+
+# NOTE: we can gradually fix this by using rubocop TODO system.
+Metrics/LineLength:
+  Enabled: true
+  Max: 180
+
+Lint/Void:
+  Enabled: true
+  Exclude:
+    - 'spec/**/*'
+
+Lint/UselessAssignment:
+  Enabled: true
+  Exclude:
+    - 'spec/**/*'
+
+Lint/AmbiguousBlockAssociation:
+  Enabled: true
+  Exclude:
+    - 'spec/**/*'
+
+Security:
+  Enabled: true
+  Exclude:
+    - 'spec/**/*'
+
+Bundler/DuplicatedGem:
+  Enabled: true
+
+Bundler/InsecureProtocolSource:
+  Enabled: true
+
+Layout/AlignParameters:
+  Enabled: true
+  EnforcedStyle: with_fixed_indentation
+
+Layout/BlockAlignment:
+  Enabled: true
+
+Layout/BlockEndNewline:
+  Enabled: true
+
+Layout/CaseIndentation:
+  Enabled: true
+  EnforcedStyle: end
+
+Layout/CommentIndentation:
+  Enabled: true
+
+Layout/ConditionPosition:
+  Enabled: true
+
+Layout/DefEndAlignment:
+  Enabled: true
+
+Layout/DotPosition:
+  Enabled: true
+
+Layout/ElseAlignment:
+  Enabled: true
+
+Layout/EmptyComment:
+  Enabled: true
+
+Layout/EmptyLineBetweenDefs:
+  Enabled: true
+
+Layout/EmptyLines:
+  Enabled: true
+
+Layout/EmptyLinesAroundAccessModifier:
+  Enabled: true
+
+Layout/EmptyLinesAroundArguments:
+  Enabled: true
+
+Layout/EmptyLinesAroundBeginBody:
+  Enabled: true
+
+Layout/EmptyLinesAroundBlockBody:
+  Enabled: true
+
+Layout/EmptyLinesAroundClassBody:
+  Enabled: true
+
+Layout/EmptyLinesAroundExceptionHandlingKeywords:
+  Enabled: true
+
+Layout/EmptyLinesAroundMethodBody:
+  Enabled: true
+
+Layout/EmptyLinesAroundModuleBody:
+  Enabled: true
+
+Layout/EndAlignment:
+  Enabled: true
+  EnforcedStyleAlignWith: start_of_line
+
+Layout/EndOfLine:
+  Enabled: true
+
+Layout/ExtraSpacing:
+  Enabled: true
+
+Layout/FirstHashElementLineBreak:
+  Enabled: true
+
+Layout/IndentAssignment:
+  Enabled: true
+
+Layout/IndentFirstHashElement:
+  Enabled: true
+  EnforcedStyle: consistent
+
+Layout/IndentationConsistency:
+  Enabled: true
+
+Layout/IndentationWidth:
+  Enabled: true
+
+Layout/InitialIndentation:
+  Enabled: true
+
+Layout/MultilineArrayBraceLayout:
+  Enabled: true
+
+# TODO: feedback needed
+Layout/MultilineAssignmentLayout:
+  Enabled: true
+  EnforcedStyle: same_line
+
+Layout/MultilineBlockLayout:
+  Enabled: true
+
+Layout/MultilineHashBraceLayout:
+  Enabled: true
+
+Layout/MultilineMethodCallIndentation:
+  Enabled: true
+  EnforcedStyle: indented
+
+Layout/MultilineOperationIndentation:
+  Enabled: true
+
+Layout/RescueEnsureAlignment:
+  Enabled: true
+
+Layout/SpaceAfterColon:
+  Enabled: true
+
+Layout/SpaceAfterComma:
+  Enabled: true
+
+Layout/SpaceAfterMethodName:
+  Enabled: true
+
+Layout/SpaceAfterNot:
+  Enabled: true
+
+Layout/SpaceAfterSemicolon:
+  Enabled: true
+
+Layout/SpaceAroundKeyword:
+  Enabled: true
+
+Layout/SpaceBeforeBlockBraces:
+  Enabled: true
+
+Layout/SpaceBeforeComment:
+  Enabled: true
+
+Layout/SpaceBeforeFirstArg:
+  Enabled: true
+
+Layout/SpaceInLambdaLiteral:
+  Enabled: true
+
+Layout/SpaceInsideArrayLiteralBrackets:
+  Enabled: true
+
+Layout/SpaceInsideArrayPercentLiteral:
+  Enabled: true
+
+Layout/SpaceInsideParens:
+  Enabled: true
+
+Layout/SpaceInsidePercentLiteralDelimiters:
+  Enabled: true
+
+Layout/SpaceInsideRangeLiteral:
+  Enabled: true
+
+Layout/SpaceInsideReferenceBrackets:
+  Enabled: true
+
+Layout/SpaceInsideStringInterpolation:
+  Enabled: true
+
+Layout/Tab:
+  Enabled: true
+
+Layout/TrailingWhitespace:
+  Enabled: true
+
+Lint/AssignmentInCondition:
+  Enabled: true
+  AllowSafeAssignment: false
+
+Lint/BigDecimalNew:
+  Enabled: true
+
+Lint/BooleanSymbol:
+  Enabled: true
+
+Lint/CircularArgumentReference:
+  Enabled: true
+
+Lint/Debugger:
+  Enabled: true
+
+Lint/DeprecatedClassMethods:
+  Enabled: true
+
+Lint/DuplicateCaseCondition:
+  Enabled: true
+
+Lint/DuplicateMethods:
+  Enabled: true
+
+Lint/DuplicatedKey:
+  Enabled: true
+
+Lint/EachWithObjectArgument:
+  Enabled: true
+
+Lint/ElseLayout:
+  Enabled: true
+
+Lint/EmptyEnsure:
+  Enabled: true
+
+Lint/EmptyExpression:
+  Enabled: true
+
+Lint/EmptyInterpolation:
+  Enabled: true
+
+Lint/EmptyWhen:
+  Enabled: true
+
+Lint/EnsureReturn:
+  Enabled: true
+
+Lint/FloatOutOfRange:
+  Enabled: true
+
+Lint/ImplicitStringConcatenation:
+  Enabled: true
+
+Lint/IneffectiveAccessModifier:
+  Enabled: true
+
+# https://ruby-doc.org/core-2.2.0/Exception.html
+Lint/InheritException:
+  Enabled: true
+
+Lint/LiteralAsCondition:
+  Enabled: true
+
+Lint/LiteralInInterpolation:
+  Enabled: true
+
+Lint/MultipleCompare:
+  Enabled: true
+
+Lint/NestedMethodDefinition:
+  Enabled: true
+
+Lint/NestedPercentLiteral:
+  Enabled: true
+
+Lint/NextWithoutAccumulator:
+  Enabled: true
+
+Lint/ParenthesesAsGroupedExpression:
+  Enabled: true
+
+Lint/PercentStringArray:
+  Enabled: true
+
+Lint/PercentSymbolArray:
+  Enabled: true
+
+Lint/RandOne:
+  Enabled: true
+
+Lint/RedundantWithIndex:
+  Enabled: true
+
+Lint/RedundantWithObject:
+  Enabled: true
+
+Lint/RegexpAsCondition:
+  Enabled: true
+
+Lint/RequireParentheses:
+  Enabled: true
+
+# https://github.com/bbatsov/ruby-style-guide#no-blind-rescues
+Lint/RescueException:
+  Enabled: true
+
+Lint/RescueType:
+  Enabled: true
+
+Lint/ReturnInVoidContext:
+  Enabled: true
+
+Lint/SafeNavigationChain:
+  Enabled: true
+
+Lint/SafeNavigationConsistency:
+  Enabled: true
+
+Lint/ScriptPermission:
+  Enabled: true
+
+Lint/ShadowedArgument:
+  Enabled: true
+
+Lint/ShadowedException:
+  Enabled: true
+
+Lint/StringConversionInInterpolation:
+  Enabled: true
+
+Lint/Syntax:
+  Enabled: true
+
+Lint/UnderscorePrefixedVariableName:
+  Enabled: true
+
+Lint/UnifiedInteger:
+  Enabled: true
+
+Lint/UnneededCopDisableDirective:
+  Enabled: true
+
+Lint/UnneededCopEnableDirective:
+  Enabled: true
+
+Lint/UnneededRequireStatement:
+  Enabled: true
+
+Lint/UnneededSplatExpansion:
+  Enabled: true
+
+Lint/UnreachableCode:
+  Enabled: true
+
+Lint/UselessAccessModifier:
+  Enabled: true
+
+Lint/UselessComparison:
+  Enabled: true
+
+Lint/UselessElseWithoutRescue:
+  Enabled: true
+
+Lint/UselessSetterCall:
+  Enabled: true
+
+Metrics/BlockNesting:
+  Enabled: true
+
+Metrics/ParameterLists:
+  Enabled: true
+
+Naming/AsciiIdentifiers:
+  Enabled: true
+
+Naming/ClassAndModuleCamelCase:
+  Enabled: true
+
+Naming/ConstantName:
+  Enabled: true
+
+Naming/FileName:
+  Enabled: true
+
+Naming/HeredocDelimiterCase:
+  Enabled: true
+
+Naming/HeredocDelimiterNaming:
+  Enabled: true
+
+Naming/MethodName:
+  Enabled: true
+
+Naming/VariableName:
+  Enabled: true
+
+Style/Alias:
+  Enabled: true
+
+#  https://github.com/bbatsov/ruby-style-guide#no-and-or-or
+Style/AndOr:
+  Enabled: true
+
+Style/ArrayJoin:
+  Enabled: true
+
+Style/AsciiComments:
+  Enabled: true
+
+Style/Attr:
+  Enabled: true
+
+Style/AutoResourceCleanup:
+  Enabled: true
+
+Style/BeginBlock:
+  Enabled: true
+
+Style/BlockComments:
+  Enabled: true
+
+Style/CaseEquality:
+  Enabled: true
+
+Style/CharacterLiteral:
+  Enabled: true
+
+Style/ClassMethods:
+  Enabled: true
+
+# https://github.com/bbatsov/ruby-style-guide#no-class-vars
+Style/ClassVars:
+  Enabled: true
+
+Style/ColonMethodCall:
+  Enabled: true
+
+Style/ColonMethodDefinition:
+  Enabled: true
+
+Style/CommentAnnotation:
+  Enabled: true
+
+Style/DateTime:
+  Enabled: true
+
+Style/DefWithParentheses:
+  Enabled: true
+
+Style/Dir:
+  Enabled: true
+
+Style/DoubleNegation:
+  Enabled: true
+
+Style/EachForSimpleLoop:
+  Enabled: true
+
+Style/EmptyBlockParameter:
+  Enabled: true
+
+Style/EmptyCaseCondition:
+  Enabled: true
+
+Style/EmptyElse:
+  Enabled: true
+
+Style/EndBlock:
+  Enabled: true
+
+Style/EvenOdd:
+  Enabled: true
+
+Style/For:
+  Enabled: true
+
+Style/GlobalVars:
+  Enabled: true
+
+Style/HashSyntax:
+  Enabled: true
+
+Style/IdenticalConditionalBranches:
+  Enabled: true
+
+Style/IfInsideElse:
+  Enabled: true
+
+Style/IfUnlessModifierOfIfUnless:
+  Enabled: true
+
+Style/IfWithSemicolon:
+  Enabled: true
+
+Style/ImplicitRuntimeError:
+  Enabled: true
+
+Style/MethodDefParentheses:
+  Enabled: true
+
+Style/MixinUsage:
+  Enabled: true
+
+Style/MultilineIfThen:
+  Enabled: true
+
+Style/MultilineMemoization:
+  Enabled: true
+
+Style/MultilineTernaryOperator:
+  Enabled: true
+
+Style/NegatedIf:
+  Enabled: true
+
+Style/NegatedWhile:
+  Enabled: true
+
+Style/NestedModifier:
+  Enabled: true
+
+Style/NestedParenthesizedCalls:
+  Enabled: true
+
+Style/Not:
+  Enabled: true
+
+Style/OrAssignment:
+  Enabled: true
+
+Style/ParenthesesAroundCondition:
+  Enabled: true
+
+Style/RandomWithOffset:
+  Enabled: true
+
+Style/RedundantBegin:
+  Enabled: true
+
+Style/RedundantConditional:
+  Enabled: true
+
+Style/RedundantParentheses:
+  Enabled: true
+
+Style/RedundantReturn:
+  Enabled: true
+
+Style/StabbyLambdaParentheses:
+  Enabled: true
+
+Style/SymbolProc:
+  Enabled: true
+
+Style/TrailingBodyOnClass:
+  Enabled: true
+
+Style/TrailingBodyOnMethodDefinition:
+  Enabled: true
+
+Style/TrailingBodyOnModule:
+  Enabled: true
+
+Style/TrailingMethodEndStatement:
+  Enabled: true
+
+Style/UnlessElse:
+  Enabled: true
+
+Style/UnneededInterpolation:
+  Enabled: true
+
+Style/WhenThen:
+  Enabled: true
+
+Capybara/CurrentPathExpectation:
+  Enabled: true
+
+RSpec/AlignLeftLetBrace:
+  Enabled: true
+
+RSpec/DescribedClass:
+  Enabled: true
+
+RSpec/EmptyExampleGroup:
+  Enabled: true
+
+RSpec/EmptyLineAfterFinalLet:
+  Enabled: true
+
+RSpec/EmptyLineAfterSubject:
+  Enabled: true
+
+RSpec/ExampleWithoutDescription:
+  Enabled: true
+
+RSpec/LetBeforeExamples:
+  Enabled: true
+
+RSpec/OverwritingSetup:
+  Enabled: true
+
+RSpec/RepeatedDescription:
+  Enabled: true
+

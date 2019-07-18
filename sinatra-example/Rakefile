@@ -1,0 +1,37 @@
+# This file is part of the Salt Edge Authenticator distribution
+# (https://github.com/saltedge/sca-identity-service-example)
+# Copyright (c) 2019 Salt Edge Inc.
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3 or later.
+
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+# For the additional permissions granted for Salt Edge Authenticator
+# under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+
+require 'rubygems'
+require 'rake'
+require 'sinatra/activerecord/rake'
+require 'rspec/core/rake_task'
+
+#Run migrations
+#bundle exec rake db:migrate
+namespace :db do
+  task :load_config do
+    require "./app/service.rb"
+  end
+end
+
+desc "Run all specs"
+RSpec::Core::RakeTask.new('test') do |task|
+  task.rspec_opts = ["-Ilib", "--format documentation", "--color", "-r ./spec/spec_helper.rb"]
+  task.pattern = ['spec/**/*_spec.rb']
+end

@@ -1,0 +1,4 @@
+application.yml
+database.yml
+*.sqlite3
+tmp/**

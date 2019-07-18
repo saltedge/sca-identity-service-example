@@ -1,0 +1,45 @@
+# This file is part of the Salt Edge Authenticator distribution
+# (https://github.com/saltedge/sca-identity-service-example)
+# Copyright (c) 2019 Salt Edge Inc.
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3 or later.
+
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+# For the additional permissions granted for Salt Edge Authenticator
+# under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+
+source 'https://rubygems.org'
+gem 'sinatra'               # Sinatra is a DSL for quickly creating web applications in Ruby with minimal effort.
+gem 'sinatra-contrib'       # Collection of useful Sinatra extensions
+
+# other dependencies
+gem 'rake'                 # Rake is a Make-like program implemented in Ruby
+gem 'sinatra-activerecord' # ActiveRecord implementation
+gem 'sqlite3'              # SQLite DB
+gem 'json'                 # JSON implementation
+gem 'rqrcode'              # QR code generator
+gem 'fcm'                  # FCM Push service client
+gem 'apnotic'              # APNS Push service client
+
+group :development do
+  gem 'rubocop', '~> 0.71.0', require: false
+  gem 'rubocop-rspec'
+end
+
+group :test do
+  gem 'rack-test'           # Rack::Test is a layer on top of Rack's MockRequest
+  gem 'rspec'               # BDD for Ruby
+  gem 'database_cleaner'    # Strategies for cleaning databases. Can be used to ensure a clean state for testing.
+  gem 'capybara'            # Feature tests
+  gem 'rack_session_access' # Middleware that supports a user in managing sessions independently
+  gem 'factory_bot'
+end
