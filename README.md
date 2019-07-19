@@ -38,15 +38,15 @@ It will help you to implement our solution in your system.
 
 We have already published Authenticator Identity Service mobile clients for Apple iOS and Google Android system.  
 You can find source code of mobile application here: 
-* [Authenticator iOS](https://github.com/saltedge/sca-authenticator-ios) 
-* [Authenticator Android](https://github.com/saltedge/sca-authenticator-android).   
+* [Authenticator iOS App source code](https://github.com/saltedge/sca-authenticator-ios) 
+* [Authenticator Android App source code](https://github.com/saltedge/sca-authenticator-android).   
 
 You can download mobile application:  
 <a href='https://play.google.com/store/apps/details?id=com.saltedge.authenticator'>
-    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Get_it_on_Google_play.svg/1000px-Get_it_on_Google_play.svg.png' alt='Get it on Google Play' height="64px"/>
+    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Get_it_on_Google_play.svg/1000px-Get_it_on_Google_play.svg.png' alt='Get it on Google Play' height="56px"/>
 </a> 
 <a href='https://apps.apple.com/md/app/priora-authenticator/id1277625653'>
-    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Download_on_the_App_Store_Badge.svg/1000px-Download_on_the_App_Store_Badge.svg.png' alt='Get it on App Store' height="64px"/>
+    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Download_on_the_App_Store_Badge.svg/1000px-Download_on_the_App_Store_Badge.svg.png' alt='Get it on App Store' height="56px"/>
 </a> 
   
 ## How it works
