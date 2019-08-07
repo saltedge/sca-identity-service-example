@@ -175,11 +175,12 @@ curl \
 ```
 
 #### Response parameters
-- `connect_url` **[string, required]** - base url of the Identity Service
-- `code` **[string, required]** - code of the Service Provider
-- `name` **[string, required]** - name of the Service Provider
-- `logo_url` **[string, optional]** - url of the Service Provider's logo asset
-- `version` **[string, required]** - required Authenticator API version
+- `connect_url`   **[string, required]** - base url of the Identity Service
+- `code`          **[string, required]** - code of the Service Provider
+- `name`          **[string, required]** - name of the Service Provider
+- `logo_url`      **[string, optional]** - url of the Service Provider's logo asset
+- `support_email` **[string, optional]** - email address of Provider's Customer Support
+- `version`       **[string, required]** - required Authenticator API version
 
 #### Example response
 ```json  
@@ -188,6 +189,7 @@ curl \
   "code": "demobank",
   "name": "Demobank",
   "logo_url": "https://connector.service_host.com/assets/logo.png",
+  "support_email": "authenticator@saltedge.com",
   "version": "1"
 }
 ```
