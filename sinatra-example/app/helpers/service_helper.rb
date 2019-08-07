@@ -79,11 +79,12 @@ module Sinatra
       provider = create_random_provider
       {
         data: {
-          connect_url: service_url,
-          code:        provider[:code],
-          name:        provider[:name],
-          logo_url:    provider[:logo_url],
-          version:     "1"
+          connect_url:   service_url,
+          code:          provider[:code],
+          name:          provider[:name],
+          logo_url:      provider[:logo_url],
+          support_email: provider[:support_email],
+          version:       "1"
         }
       }.to_json
     end
@@ -222,9 +223,10 @@ module Sinatra
         'https://www.google.com/logos/doodles/2015/googles-new-logo-5078286822539264.3-hp2x.gif'
       ].sample
       {
-        code:     'demobank',
-        name:     'Demobank',
-        logo_url: logo
+        code:          'demobank',
+        name:          'Demobank',
+        logo_url:      logo,
+        support_email: 'authenticator@saltedge.com',
       }
     end
 
