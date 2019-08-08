@@ -185,12 +185,14 @@ curl \
 #### Example response
 ```json  
 {
-  "connect_url": "https://connector.service_host.com",
-  "code": "demobank",
-  "name": "Demobank",
-  "logo_url": "https://connector.service_host.com/assets/logo.png",
-  "support_email": "authenticator@saltedge.com",
-  "version": "1"
+  "data": {
+    "connect_url": "https://connector.service_host.com",
+    "code": "demobank",
+    "name": "Demobank",
+    "logo_url": "https://connector.service_host.com/assets/logo.png",
+    "support_email": "authenticator@saltedge.com",
+    "version": "1"
+  }
 }
 ```
 ---
