@@ -25,7 +25,6 @@ The purpose of Identity Service is to process and store customer identities, rol
 
 There is a little effort from Service Provider in order to implement and extension Identity Service with 6 API end-points: 
 * Connect to Service Provider; 
-* Get Access Token; 
 * Revoke Access Token; 
 * Show Authorizations List; 
 * Show Authorization; 
