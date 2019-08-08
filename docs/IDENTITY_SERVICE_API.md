@@ -190,7 +190,7 @@ curl \
     "code": "demobank",
     "name": "Demobank",
     "logo_url": "https://connector.service_host.com/assets/logo.png",
-    "support_email": "authenticator@saltedge.com",
+    "support_email": "support@your_host.com",
     "version": "1"
   }
 }
