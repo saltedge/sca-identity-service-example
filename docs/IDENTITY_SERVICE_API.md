@@ -9,7 +9,7 @@
   * [Errors](#errors)
   * [Get configuration](#get-service-provider-configuration)
   * [Connect to Service Provider](#connect-to-service-provider)
-  * [Get Access Token](#get-access-token)
+  * [Obtain access token](#obtain-access-token)
   * [Revoke Access token](#revoke-access-token)
   * [Show Authorizations List](#show-authorizations-list)
   * [Show Authorization](#show-authorization)
@@ -30,6 +30,7 @@ There is a little effort from Service Provider in order to implement and extensi
 * Show Authorizations List; 
 * Show Authorization; 
 * Confirm or Deny Authorization. 
+and add authentication/enrollment flow for `Obtaining Access Token`
   
 Salt Edge has developed the SCA solution with such an architecture, having Identity Service in infrastructure of Service Provider, in order not to have any access to the personal information/credentials of the customer. All related to the customer private data is isolated from any third party or application and is controlled exclusively by the Service Provider.
 
@@ -244,9 +245,9 @@ curl \
 }
 ```
 ---
-### Get Access Token
+### Obtain access token
 User should open `connect_url` and pass authentication procedure.
-On authentication flow finish client (WebView on Mobile Application) will be redirected to url which should start with `return_url` ((passed on Connect)[#connect-to-service-provider]) and extra params. Once client has captured the redirect url, it has to deserialize the JSON-encoded URL path following the custom scheme and the host.
+On authentication flow finish, client (WebView on Mobile Application) will be redirected to url which should start with `return_url` ((passed on Connect)[#connect-to-service-provider]) and extra params. Once client has captured the redirect url, it has to deserialize the JSON-encoded URL path following the custom scheme and the host.
 
 #### Redirect Parameters of successful authentication
 - `id` **[string, required]** - a unique id of Connection
