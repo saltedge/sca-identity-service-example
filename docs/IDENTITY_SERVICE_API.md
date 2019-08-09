@@ -28,7 +28,7 @@ There is a little effort from Service Provider in order to implement and extensi
 * Revoke Access Token; 
 * Show Authorizations List; 
 * Show Authorization; 
-* Confirm or Deny Authorization. 
+* Confirm or Deny Authorization.  
 and add authentication/enrollment flow for `Obtaining Access Token`
   
 Salt Edge has developed the SCA solution with such an architecture, having Identity Service in infrastructure of Service Provider, in order not to have any access to the personal information/credentials of the customer. All related to the customer private data is isolated from any third party or application and is controlled exclusively by the Service Provider.
