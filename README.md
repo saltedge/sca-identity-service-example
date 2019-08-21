@@ -66,7 +66,7 @@ In the spirit of [free software][free-sw], **everyone** is encouraged to help [i
 
 ## Contact us
 
-Feel free to [contact us](mailto:authenticator@saltedge.com)
+Feel free to [contact us](https://www.saltedge.com/pages/contact_support)
 
 ## License
 
