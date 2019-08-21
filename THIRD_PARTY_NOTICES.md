@@ -19,4 +19,4 @@ If you modify this Program, or any covered work, by linking or combining it with
 * [factory_bot (MIT license)](https://raw.githubusercontent.com/thoughtbot/factory_bot/master/LICENSE)
     
 ***NOTE***  
-In the event that we accidentally failed something, [please bring it to our attention](mailto:authenticator@saltedge.com).
+In the event that we accidentally failed something, [please bring it to our attention](https://www.saltedge.com/pages/contact_support).
