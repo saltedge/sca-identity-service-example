@@ -17,7 +17,7 @@ Otherwise, the system will also tell you how you can sign the CLA. Once you have
 ## Code of Conduct
 
 This project and everyone participating in it is governed by the [Salt Edge Code of Conduct](./CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. 
-Please report unacceptable behavior to [authenticator@saltedge.com](mailto:authenticator@saltedge.com).
+Please report unacceptable behavior to [Salt Edge Support](https://www.saltedge.com/pages/contact_support).
 
 ## Here are some ways *you* can contribute:
 
