@@ -17,7 +17,7 @@
 * [Authorization code builder example](#authorization-code-builder-example)
 
 
-## What is Identity Service
+## What is Identity Service?
   
 [Identity Service WIKI](https://github.com/saltedge/sca-identity-service-example/wiki)  
   
