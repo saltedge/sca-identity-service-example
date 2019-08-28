@@ -2,15 +2,15 @@
 
 * [What is Identity Service](#what-is-identity-service)
 * [Identity Service Models](#identity-service-models)
-* [Deep link](#deep-link)
+* [Deep Link](#deep-link)
 * [Public API](#identity-service-api)
   * [API Data Types](#api-data-types)
   * [API Security](#api-security)
   * [Errors](#errors)
-  * [Get configuration](#get-service-provider-configuration)
+  * [Get Configuration](#get-service-provider-configuration)
   * [Connect to Service Provider](#connect-to-service-provider)
-  * [Obtain access token](#obtain-access-token)
-  * [Revoke Access token](#revoke-access-token)
+  * [Obtain Access Token](#obtain-access-token)
+  * [Revoke Access Token](#revoke-access-token)
   * [Show Authorizations List](#show-authorizations-list)
   * [Show Authorization](#show-authorization)
   * [Confirm or Deny Authorization](#confirm-or-deny-authorization)
@@ -35,7 +35,7 @@ Salt Edge has developed the SCA solution with such an architecture, having Ident
 
 Besides public API, may be implemented next util endpoints for internal usage (non-public):
 * Revoke connection. For some reasons (security reason, cleaning job, etc.) Bank (Service Provider) should have possibility to revoke any connection
-* Create new authorization. Identity service should create new authorization with data from request from Bank Core (`authorization_code`, `title`, `description`, `user_id`), and send notifications (through Push Service) about new authorization to related connections.
+* Create new authorization. Identity service should create new authorization with data from request from Core banking (`authorization_code`, `title`, `description`, `user_id`), and send notifications (through Push Service) about new authorization to related connections.
 
 ## Identity Service Models
 
@@ -48,13 +48,13 @@ Besides public API, may be implemented next util endpoints for internal usage (n
 `Mobile Client` represents a single connection between `User` and  Mobile Application. Each `User` can have multiple `Mobile Client`'s because user can have many connections to a single Service Provider from different applications.
   
 - `id` - a unique ID string
-- `user_id` - id of related user model
+- `user_id` - ID of related user model
 - `public_key` - a unique Asymmetric Public Key in PEM format string
 - `push_token` - a unique token string which uniquely identify mobile application for Push Notification system (i.e. unique address of current mobile application instance)
 - `access_token` - a unique token string for authenticated access to API resources
-- `return_url` - a URL the mobile application will be redirected to at the end of the authentication process
+- `return_url` - a URL the Mobile Application will be redirected to at the end of the authentication process
 - `connect_session_token` - a unique token string for authentication session process
-- `revoked` - a boolean value which indicate that connection is active or revoked
+- `revoked` - a boolean value which indicates that connection is active or revoked
 - `created_at` - a datetime
 - `updated_at` - a datetime
 
@@ -62,12 +62,12 @@ Besides public API, may be implemented next util endpoints for internal usage (n
 `Authorization` represents a single action for user. Each `User` can have multiple `Authorization`'s.
   
 - `id` - a unique ID string
-- `user_id` - id of related user model
+- `user_id` - ID of related user model
 - `expires_at` - a datetime which indicates period of validity of authorization action
 - `title` - title of authorization action
 - `description` - description of authorization action
 - `authorization_code` - generated unique code per each authorization action based on set of input information (datetime, amount, payee, account, etc.)
-- `confirmed` - a boolean value which indicate that Authorization was confirmed or denied
+- `confirmed` - a boolean value which indicates that Authorization was confirmed or denied
 - `created_at` - a datetime
 - `updated_at` - a datetime
 
@@ -86,7 +86,7 @@ Besides public API, may be implemented next util endpoints for internal usage (n
 
 ***Optional***, if implemented Push Service inside Identity Service.
 
-## Deep link
+## Deep Link
 
 For initiating connect flow, service should generate deep-link for initiating connection in mobile application. Deep-link can be encoded as QR code. Deep-link should contain link to configuration endpoint.  
 ``` 
@@ -96,7 +96,7 @@ For initiating connect flow, service should generate deep-link for initiating co
 ---
 ## Identity Service API
 
-### API Data Types
+### API data types
 The following section describes the different data types used for request and response data.
 
 [JSON format](https://restfulapi.net/json-data-types/) is using for request/response data formating. Since all data is eventually represented as UTF-8 strings, these types mostly define what characters are considered valid for data of a specific type. Additional validation rules may apply for specific parameters.  
@@ -152,13 +152,13 @@ The fields  `request_method`, `original_url` and `post_body` from the `Signature
 ### Errors
 
 Each authenticated endpoint can return next errors:
-* `BadRequest` - some of request params not valid.
+* `BadRequest` - some of request params are not valid.
 * `AuthorizationRequired` - `access_token` param is missing.
 * `SignatureExpired` - `expires_at` param is missing or `expires_at` is before now.
 * `SignatureMissing` - `signature` param is missing.
 * `InvalidSignature` - `signature` param is invalid.
 * `ConnectionNotFound` - connection associated with by `access_token` param not found
-* `AuthorizationNotFound` - Authorization queried by `authorization_id` param not found
+* `AuthorizationNotFound` - authorization queried by `authorization_id` param not found
 
 ---
 ### Get Service provider configuration   
@@ -175,10 +175,10 @@ curl \
 ```
 
 #### Response parameters
-- `connect_url`   **[string, required]** - base url of the Identity Service
+- `connect_url`   **[string, required]** - base URL of the Identity Service
 - `code`          **[string, required]** - code of the Service Provider
 - `name`          **[string, required]** - name of the Service Provider
-- `logo_url`      **[string, optional]** - url of the Service Provider's logo asset
+- `logo_url`      **[string, optional]** - URL of the Service Provider's logo asset
 - `support_email` **[string, optional]** - email address of Provider's Customer Support
 - `version`       **[string, required]** - required Authenticator API version
 
@@ -197,7 +197,7 @@ curl \
 ```
 ---
 ### Connect to Service Provider
-Init the new Mobile Client (i.e. Service Connection) and return Connect Url for future user authentication.
+Init the new Mobile Client (i.e. Service Connection) and return Connect URL for future user authentication.
 
 `POST` `/api/authenticator/v1/connections`  
 
@@ -214,9 +214,9 @@ curl \
   
 #### Request Parameters
 - `public_key` **[string, required]** - a unique Asymmetric Public Key linked to the new Mobile Client (Connection) in PEM format 
-- `return_url` **[string, required]** - a URL the mobile application will be redirected to at the end of the authentication process
+- `return_url` **[string, required]** - a URL the Mobile Application will be redirected to at the end of the authentication process
 - `platform` **[string, required]** - mobile platform's name (e.g.  `android` or `ios`)
-- `push_token` **[string, optional]** - a token which uniquely identify mobile application for Push Notification system (e.g. Firebase Cloud Messaging, Apple Push Notifications) (i.e. unique address of current mobile application instance). Sometimes is not available for current application.
+- `push_token` **[string, optional]** - a token which uniquely identify Mobile Application for Push Notification system (e.g. Firebase Cloud Messaging, Apple Push Notifications) (i.e. unique address of current Mobile Application instance). Sometimes is not available for current application.
 
 #### Request Example
 ```json
@@ -231,8 +231,8 @@ curl \
 ```
 
 #### Response Parameters
-- `connect_url` **[string]** - an url of Connect Web Page for future end-user authentication
-- `id` **[string]** - an unique id of current connection model.
+- `connect_url` **[string]** - an URL of Connect Web Page for future end-user authentication
+- `id` **[string]** - an unique ID of current connection model.
 
 #### Response Example
 ```json
@@ -246,10 +246,10 @@ curl \
 ---
 ### Obtain access token
 User should open `connect_url` and pass authentication procedure.
-On authentication flow finish, client (WebView on Mobile Application) will be redirected to url which should start with `return_url` ((passed on Connect)[#connect-to-service-provider]) and extra params. Once client has captured the redirect url, it has to deserialize the JSON-encoded URL path following the custom scheme and the host.
+On authentication flow finish, client (WebView on Mobile Application) will be redirected to url which should start with `return_url` ((passed on Connect)[#connect-to-service-provider]) and extra params. Once client has captured the redirect URL, it has to deserialize the JSON-encoded URL path following the custom scheme and the host.
 
 #### Redirect Parameters of successful authentication
-- `id` **[string, required]** - a unique id of Connection
+- `id` **[string, required]** - a unique ID of Connection
 - `access_token` **[string, required]** - a unique token for future authenticated access to API resources
 
 #### Example of successful authentication
@@ -270,7 +270,7 @@ On authentication flow finish, client (WebView on Mobile Application) will be re
 
 ---
 ### Revoke Access token
-Invalidates a mobile client by `Access-Token` (in header).  
+Invalidates a Mobile Client by `Access-Token` (in header).  
   
 `DELETE` `/api/authenticator/v1/connections`  
   
@@ -327,10 +327,10 @@ curl \
 - `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature. 
 
 #### Response Body Parameters
-- `id` **[string]** - a unique id of authorization model
-- `connection_id` **[string]** - a unique ID of Mobile Client (Service Connection). Used to decrypt models in the mobile application
-- `iv` **[string]** - an initialization vector of encryption algorithm, this string is encrypted with public key linked to mobile client
-- `key` **[string]** - an secure key of encryption algorithm, this string is encrypted with public key linked to mobile client
+- `id` **[string]** - a unique ID of authorization model
+- `connection_id` **[string]** - a unique ID of Mobile Client (Service Connection). Used to decrypt models in the Mobile Application
+- `iv` **[string]** - an initialization vector of encryption algorithm, this string is encrypted with public key linked to Mobile Client
+- `key` **[string]** - an secure key of encryption algorithm, this string is encrypted with public key linked to Mobile Client
 - `algorithm` **[string]** - encryption algorithm and block mode type
 - `data` **[string]** - encrypted authorization payload with algorithm mentioned above
 
@@ -351,8 +351,8 @@ curl \
 ```
 
 #### Authorization Payload Parameters (Decrypted payload)  
-- `id` **[string]** - a unique id of authorization model
-- `connection_id` **[string]** - a unique ID of Mobile Client (Service Connection). Used to decrypt models in the mobile application
+- `id` **[string]** - a unique ID of authorization model
+- `connection_id` **[string]** - a unique ID of Mobile Client (Service Connection). Used to decrypt models in the Mobile Application
 - `title` **[string]** - a human-readable title of authorization action
 - `description` **[string]** - a human-readable description of authorization action
 - `authorization_code` **[string]** - a unique code for each operation (e.g. payment transaction), specific to the attributes of operation, must be used once
@@ -400,9 +400,9 @@ curl \
 
 #### Response Parameters
 - `id` **[string]** - a unique code of authorization model  
-- `connection_id` **[string]** - a unique ID of Mobile Client (Service Connection). Used to decrypt models in the mobile application
-- `iv` **[string]** - an initialization vector of encryption algorithm, this string is encrypted with public key linked to mobile client
-- `key` **[string]** - an secure key of encryption algorithm, this string is encrypted with public key linked to mobile client
+- `connection_id` **[string]** - a unique ID of Mobile Client (Service Connection). Used to decrypt models in the Mobile Application
+- `iv` **[string]** - an initialization vector of encryption algorithm, this string is encrypted with public key linked to Mobile Client
+- `key` **[string]** - an secure key of encryption algorithm, this string is encrypted with public key linked to Mobile Client
 - `algorithm` **[string]** - encryption algorithm and block mode type
 - `data` **[string]** - encrypted authorization payload with algorithm mentioned above
 
@@ -421,8 +421,8 @@ curl \
 ```
 
 #### Authorization Payload Parameters (Decrypted payload)  
-- `id` **[string]** - a unique id of authorization model
-- `connection_id` **[string]** - a unique ID of Mobile Client (Service Connection). Used to decrypt models in the mobile application
+- `id` **[string]** - a unique ID of authorization model
+- `connection_id` **[string]** - a unique ID of Mobile Client (Service Connection). Used to decrypt models in the Mobile Application
 - `title` **[string]** - a human-readable title of authorization action
 - `description` **[string]** - a human-readable description of authorization action
 - `authorization_code` **[string]** - a unique code for each operation (e.g. payment transaction), specific to the attributes of operation, must be used once
@@ -444,7 +444,7 @@ curl \
 
 ---
 ### Confirm or Deny Authorization
-Confirm/Denies authorization model (e.g. payment, operation, etc) from Service Provider.  
+Confirms/Denies authorization model (e.g. payment, operation, etc) from Service Provider.  
 Requests for Confirm and Deny are practicaly equal. The only difference in the value of `confirm` field.
 For `Confirm`, field `confirm` should be `true`. For `Deny`, field `confirm` should be `false`.  
 
@@ -486,7 +486,7 @@ curl \
 
 #### Response Parameters
 - `success` **[boolean]** - result of confirm/deny operation. 
-- `id` **[string]** - a unique id of authorization model
+- `id` **[string]** - a unique ID of authorization model
 
 #### Response Example 
 ```json
