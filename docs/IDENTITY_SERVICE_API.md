@@ -1,6 +1,6 @@
 # Identity Service
 
-* [What is Identity Service](#what-is-identity-service)
+* [What is Identity Service?](#what-is-identity-service)
 * [Identity Service Models](#identity-service-models)
 * [Deep Link](#deep-link)
 * [Public API](#identity-service-api)
@@ -23,7 +23,7 @@
   
 The purpose of Identity Service is to process and store customer identities, roles, credentials, and add the necessary functionality in order to implement SCA. Hence, besides standard functionality, in Identity Service should be implemented additional functionalities and an API, as an extension to the existing Identity Service. The extension (additional functionality and API) processes received from Core banking information and appeals to the Authenticator app via Authentication Service in order to get either action confirmation or denial from the customer.
 
-There is a little effort from Service Provider in order to implement and extension Identity Service with 6 API end-points: 
+There is a little effort from Service Provider in order to implement the extension of Identity Service with 6 API end-points: 
 * Connect to Service Provider; 
 * Revoke Access Token; 
 * Show Authorizations List; 
@@ -33,7 +33,7 @@ and add authentication/enrollment flow for `Obtaining Access Token`
   
 Salt Edge has developed the SCA solution with such an architecture, having Identity Service in infrastructure of Service Provider, in order not to have any access to the personal information/credentials of the customer. All related to the customer private data is isolated from any third party or application and is controlled exclusively by the Service Provider.
 
-Besides public API, may be implemented next util endpoints for internal usage (non-public):
+Besides public API, may be implemented next useful end-points for internal usage (non-public):
 * Revoke connection. For some reasons (security reason, cleaning job, etc.) Bank (Service Provider) should have possibility to revoke any connection
 * Create new authorization. Identity service should create new authorization with data from request from Core banking (`authorization_code`, `title`, `description`, `user_id`), and send notifications (through Push Service) about new authorization to related connections.
 
@@ -42,7 +42,7 @@ Besides public API, may be implemented next util endpoints for internal usage (n
 ![schema](images/authenticator_models_schema.png)
 
 ### User model
-`User` represents an abstract single customer of Bank's Identity Service (e.g  Service Provider). Bank already has it
+`User` represents an abstract single customer of Bank's Identity Service (e.g  Service Provider). This entity is already present in Bank's Identity Service.
 
 ### Connection (Mobile Client) model
 `Mobile Client` represents a single connection between `User` and  Mobile Application. Each `User` can have multiple `Mobile Client`'s because user can have many connections to a single Service Provider from different applications.
@@ -50,7 +50,7 @@ Besides public API, may be implemented next util endpoints for internal usage (n
 - `id` - a unique ID string
 - `user_id` - ID of related user model
 - `public_key` - a unique Asymmetric Public Key in PEM format string
-- `push_token` - a unique token string which uniquely identify mobile application for Push Notification system (i.e. unique address of current mobile application instance)
+- `push_token` - a unique token string which uniquely identifies Mobile Application for the Push Notification system (i.e. unique address of current Mobile Application instance)
 - `access_token` - a unique token string for authenticated access to API resources
 - `return_url` - a URL the Mobile Application will be redirected to at the end of the authentication process
 - `connect_session_token` - a unique token string for authentication session process
@@ -84,7 +84,7 @@ Besides public API, may be implemented next util endpoints for internal usage (n
  - `push_server_app_id` - a unique token string, released by Push Server owner
  - `push_server_app_secret` - a unique token string, released by Push Server owner
 
-***Optional***, if implemented Push Service inside Identity Service.
+***Optional***, if Push Service is implemented inside Identity Service.
 
 ## Deep Link
 
@@ -99,7 +99,7 @@ For initiating connect flow, service should generate deep-link for initiating co
 ### API data types
 The following section describes the different data types used for request and response data.
 
-[JSON format](https://restfulapi.net/json-data-types/) is using for request/response data formating. Since all data is eventually represented as UTF-8 strings, these types mostly define what characters are considered valid for data of a specific type. Additional validation rules may apply for specific parameters.  
+[JSON format](https://restfulapi.net/json-data-types/) is used for request/response data formatting. Since all data is eventually represented as UTF-8 strings, these types mostly define what characters are considered valid for data of a specific type. Additional validation rules may apply for specific parameters.  
 Several primitive types:
 **Boolean** - A case insensitive Boolean value, represented as either `true` or `false`.
 
@@ -111,7 +111,7 @@ Several primitive types:
 
 **Array** - An array of values. Arrays are encoded by adding brackets.  For example: `"data": ["1", "2", "3"]`
 
-**Object/Hashmap/Dictionary** - A associative array of values. For example: `"data": { id: "1", connection_id: "333" }`
+**Object/Hashmap/Dictionary** - An associative array of values. For example: `"data": { id: "1", connection_id: "333" }`
   
 ### API Security
 The following section describes the different security approaches used for securing data flow.
@@ -197,7 +197,7 @@ curl \
 ```
 ---
 ### Connect to Service Provider
-Init the new Mobile Client (i.e. Service Connection) and return Connect URL for future user authentication.
+Create the new Mobile Client's model (i.e. Service Connection) and return Connect URL for future user authentication.
 
 `POST` `/api/authenticator/v1/connections`  
 
@@ -216,7 +216,7 @@ curl \
 - `public_key` **[string, required]** - a unique Asymmetric Public Key linked to the new Mobile Client (Connection) in PEM format 
 - `return_url` **[string, required]** - a URL the Mobile Application will be redirected to at the end of the authentication process
 - `platform` **[string, required]** - mobile platform's name (e.g.  `android` or `ios`)
-- `push_token` **[string, optional]** - a token which uniquely identify Mobile Application for Push Notification system (e.g. Firebase Cloud Messaging, Apple Push Notifications) (i.e. unique address of current Mobile Application instance). Sometimes is not available for current application.
+- `push_token` **[string, optional]** - a token which uniquely identifies Mobile Application for the Push Notification system (e.g. Firebase Cloud Messaging, Apple Push Notifications) (i.e. unique address of current Mobile Application instance). Sometimes is not available for current application.
 
 #### Request Example
 ```json
@@ -231,8 +231,8 @@ curl \
 ```
 
 #### Response Parameters
-- `connect_url` **[string]** - an URL of Connect Web Page for future end-user authentication
-- `id` **[string]** - an unique ID of current connection model.
+- `connect_url` **[string]** - a URL of Connect Web Page for future end-user authentication
+- `id` **[string]** - a unique ID of current connection model.
 
 #### Response Example
 ```json
@@ -245,8 +245,8 @@ curl \
 ```
 ---
 ### Obtain access token
-User should open `connect_url` and pass authentication procedure.
-On authentication flow finish, client (WebView on Mobile Application) will be redirected to url which should start with `return_url` ((passed on Connect)[#connect-to-service-provider]) and extra params. Once client has captured the redirect URL, it has to deserialize the JSON-encoded URL path following the custom scheme and the host.
+Client (WebView on Mobile Application) should open `connect_url` and user should pass authentication procedure.  
+When authentication flow is finished, client will be redirected to URL which should start with `return_url` ((passed on Connect)[#connect-to-service-provider]) and extra params. Once client has captured the redirect URL, it has to deserialize the JSON-encoded URL path following the custom scheme and the host.
 
 #### Redirect Parameters of successful authentication
 - `id` **[string, required]** - a unique ID of Connection
@@ -256,17 +256,17 @@ On authentication flow finish, client (WebView on Mobile Application) will be re
 ```
   authenticator://oauth/redirect?id=333&access_token=Oqws977brjJUfXbEnGqHNsIRl8PytSL60T7JIsRBCZM
 ```
-*The URL will be URLEncoded (percent-encoded),  the URL above is not URLEncoded to preserve it’s readability.*
+*The URL will be URLEncoded (percent-encoded),  the URL above is not URLEncoded to preserve its readability.*
 
 #### Redirect Parameters of failed authentication
-- `error_class` **[string, required]** - a class name which describe occurred error.
+- `error_class` **[string, required]** - a class name which describes occurred error
 - `error_message` **[string, required]** - a human-readable error message
 
 #### Example of failed authentication
 ```
   authenticator://oauth/redirect?error_class=WRONG_CREDENTIALS&error_message=Wrong login or password
 ``` 
-*The URL will be URLEncoded (percent-encoded), the URL above is not URLEncoded to preserve it’s readability.*
+*The URL will be URLEncoded (percent-encoded), the URL above is not URLEncoded to preserve its readability.*
 
 ---
 ### Revoke Access token
@@ -330,7 +330,7 @@ curl \
 - `id` **[string]** - a unique ID of authorization model
 - `connection_id` **[string]** - a unique ID of Mobile Client (Service Connection). Used to decrypt models in the Mobile Application
 - `iv` **[string]** - an initialization vector of encryption algorithm, this string is encrypted with public key linked to Mobile Client
-- `key` **[string]** - an secure key of encryption algorithm, this string is encrypted with public key linked to Mobile Client
+- `key` **[string]** - a secure key of encryption algorithm, this string is encrypted with public key linked to Mobile Client
 - `algorithm` **[string]** - encryption algorithm and block mode type
 - `data` **[string]** - encrypted authorization payload with algorithm mentioned above
 
@@ -374,7 +374,7 @@ curl \
 
 ---
 ### Show Authorization
-Return the one authorization which require end-user confirmation for Service Provider by `Access-Token` from headers and by `id` parameter.
+Return the one authorization which requireы end-user confirmation for Service Provider by `Access-Token` from headers and by `id` parameter.
 Each Authorization's `confirmation_data` is encrypted with algorithm mentioned in `algorithm` param. Necessary data for decryption (`key` and `iv`) are encrypted by asymmetric `public_key' sent on (creating new connection)[#connect-to-service-provider] earlier.
 
 `GET` `/api/authenticator/v1/authorizations/:authorization_id` 
@@ -402,7 +402,7 @@ curl \
 - `id` **[string]** - a unique code of authorization model  
 - `connection_id` **[string]** - a unique ID of Mobile Client (Service Connection). Used to decrypt models in the Mobile Application
 - `iv` **[string]** - an initialization vector of encryption algorithm, this string is encrypted with public key linked to Mobile Client
-- `key` **[string]** - an secure key of encryption algorithm, this string is encrypted with public key linked to Mobile Client
+- `key` **[string]** - a secure key of encryption algorithm, this string is encrypted with public key linked to Mobile Client
 - `algorithm` **[string]** - encryption algorithm and block mode type
 - `data` **[string]** - encrypted authorization payload with algorithm mentioned above
 
