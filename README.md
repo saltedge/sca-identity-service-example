@@ -74,7 +74,7 @@ Feel free to [contact us](https://www.saltedge.com/pages/contact_support)
 - under a GNU GPLv3 license for free (open source). See the [LICENSE](LICENSE.txt) file.
 - under a proprietary (commercial) license, to be used in closed source applications. 
   
-[More information about licenses](wiki_link).
+[More information about licenses](https://github.com/saltedge/sca-identity-service-example/wiki/Multi-license).
   
 ***Additional permission under GNU GPL version 3 section 7***
 
