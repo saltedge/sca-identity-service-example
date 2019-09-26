@@ -178,7 +178,7 @@ curl \
 - `connect_url`   **[string, required]** - base URL of the Identity Service
 - `code`          **[string, required]** - code of the Service Provider
 - `name`          **[string, required]** - name of the Service Provider
-- `logo_url`      **[string, optional]** - URL of the Service Provider's logo asset
+- `logo_url`      **[string, optional]** - URL of the Service Provider's logo asset ([logo instruction](https://github.com/saltedge/sca-identity-service-example/wiki/How-to...%3F#correctly-fit-logo))
 - `support_email` **[string, optional]** - email address of Provider's Customer Support
 - `version`       **[string, required]** - required Authenticator API version
 
