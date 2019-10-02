@@ -500,9 +500,21 @@ curl \
 ----
 
 ## Authorization code builder example
-```ruby
-Base64.encode64(Digest::SHA256.hexdigest("#{payee_details}|#{amount}|#{time}|#{user_id}|#{description}|#{salt}"))
-```  
+
+If authorization code is generating as sha256, than resulting string should be Base64 encoded without paddings.
   
+Ruby example:
+```ruby
+template = "#{payee_details}|#{amount}|#{time}|#{user_id}|#{description}|#{salt}"
+authorization_code = Base64.urlsafe_encode64(Digest::SHA256.hexdigest(template), padding: false)
+```
+
+Java (JDK 9) example:
+```java
+String template = payee_details + "|" + amount + "|" + time + "|" + user_id " | " + description + "|" + salt
+byte[] hashbytes = MessageDigest.getInstance(SHA3_256).digest(originalString.getBytes(StandardCharsets.UTF_8));
+authorizationCode = Base64.getEncoder().withoutPadding().encodeToString(hashbytes);
+```
+
 ----  
 Copyright © 2019 Salt Edge. https://www.saltedge.com
