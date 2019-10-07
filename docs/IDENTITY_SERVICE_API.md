@@ -3,9 +3,9 @@
 * [What is Identity Service?](#what-is-identity-service)
 * [Identity Service Models](#identity-service-models)
 * [Deep Link](#deep-link)
+* [API Security](#api-security)
 * [Public API](#identity-service-api)
   * [API Data Types](#api-data-types)
-  * [API Security](#api-security)
   * [Errors](#errors)
   * [Get Configuration](#get-service-provider-configuration)
   * [Connect to Service Provider](#connect-to-service-provider)
@@ -92,6 +92,40 @@ For initiating connect flow, service should generate deep-link for initiating co
 ``` 
   authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration
 ```  
+---
+
+## API Security
+The following section describes the different security approaches used for securing data flow.
+
+- All sensitive data should be encrypted (e.g. 2048-bit keys).
+- All communications should be performed over HTTPS channels
+- All requests from clients should be signed (if possible). 
+- The private key should be securely stored on client side. In case of possible security breach, the private key should be regenerated and the public key should be updated.
+
+**Before all, service client should provide public key (Mobile Application to Identity Service or Identity Service to Push Service).**
+
+### Signature Headers
+The following headers are required for your request to be considered signed:
+-   `Expires-at` - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone. We suggest to use +1 minute from the current time. The maximum value is 1 hour from now in UTC, otherwise  `SignatureExpired` error will be raised;
+-   `Signature`  -  `base64`  encoded  `SHA256`  signature of the string represented in the form  
+`request_method|original_url|Expires-at|post_body`  
+4 parameters concatenated with a vertical bar  `|`, signed with the client’s private key.
+
+Example:
+```
+  Expires-at: "1570032760"
+  Signature: "0H6xaZ8g67....H8="
+```  
+ 
+The fields  `request_method`, `original_url` and `post_body` from the `Signature` header represent:  
+- `request_method` - lowercase method name of the HTTP request. Example: `get`, `post`, `put`, `delete`, etc.;
+- `original_url`   - the full requested URL, with all its complementary parameters;
+- `Expires-at`     - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, should be equal to `Expires-at` header parameter;
+- `post_body`      - the request post body. Should be left empty if it is a GET request, or the body is empty;  
+  
+**Note:**  
+**_Signature field on mobile app is being created with body which is equal to raw string of request payload.
+As we know, sometimes in Web App Controller is received already parsed object. You must use raw string of request payload because signature generation/veification is very sensitive to `post_body` string._**
 
 ---
 ## Identity Service API
@@ -112,43 +146,15 @@ Several primitive types:
 **Array** - An array of values. Arrays are encoded by adding brackets.  For example: `"data": ["1", "2", "3"]`
 
 **Object/Hashmap/Dictionary** - An associative array of values. For example: `"data": { id: "1", connection_id: "333" }`
-  
-### API Security
-The following section describes the different security approaches used for securing data flow.
 
-####  Encryption
-All sensitive data is encrypted using 2048-bit keys.  
-All communications should be performed over HTTPS channels
-
-#### Signature
-All requests should be signed (if possible). 
-Before all, service client should provide public key (Mobile Application to Identity Service or Identity Service to Push Service). The private key should be securely stored on client side.
-In case of possible security breach, the private key should be regenerated and the public key should be updated.
+### Headers
 
 There are several common points about the request we send:
 - The `Content-Type` header is  `application/json`;
 - There is a `Signature` header that identifies the request was signed;
+- There is a `Expires-at` header that identifies expiration time of the request;
 - The JSON object sent will always have a  `data` field;
-
-#### Signature Headers
-The following headers are required for your request to be considered signed:
--   `Expires-at` - request expiration time as a UNIX timestamp in UTC timezone. We suggest to use +1 minute from the current time. The maximum value is 1 hour from now in UTC, otherwise  `SignatureExpired` error will be raised;
--   `Signature`  -  `base64`  encoded  `SHA256`  signature of the string represented in the form  
-`request_method|original_url|Expires-at|post_body`  
-4 parameters concatenated with a vertical bar  `|`, signed with the client’s private key.
-
-Example:
-```
-  Expires-at: "2017-04-19T13:53:31Z"
-  Signature: "0H6xaZ8g67....H8="
-```  
- 
-The fields  `request_method`, `original_url` and `post_body` from the `Signature` header represent:  
-- `request_method` - lowercase method name of the HTTP request. Example: `get`, `post`, `put`, `delete`, etc.;
-- `original_url`   - the full requested URL, with all its complementary parameters;
-- `Expires-at`     - request expiration time as a UNIX timestamp in UTC timezone, should be equal to `Expires-at` header parameter;
-- `post_body`      - the request post body. Should be left empty if it is a GET request, or the body is empty;
-
+  
 ### Errors
 
 Each authenticated endpoint can return next errors:
