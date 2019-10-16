@@ -120,7 +120,7 @@ Fork this repository
 	curl -w "\n" -d "user_id=1&title=Create%20a%20payment&description=550$%20for%20Air%20America&authorization_code=123456789" -X POST http://your_host:4567/admin/authorizations
 	```
 
-_Described above functions are available on Admin page `http://your_host:4567/admin`__
+_Described above functions are available on Admin page `http://your_host:4567/admin`_
   
 ----
 Copyright © 2019 Salt Edge. https://www.saltedge.com  
