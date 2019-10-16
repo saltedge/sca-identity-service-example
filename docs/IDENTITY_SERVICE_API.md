@@ -94,7 +94,7 @@ Deep-link should contain link to configuration endpoint (`configuration` param):
   authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration
 ```  
 
-Deep-link can contain extra authentication data (`connect_query` param), 
+Deep-link can contain extra authentication data (`connect_query` param),   
 which shold be received send while [Connect to provider](#connect-to-service-provider):  
 ``` 
   authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration&connect_query=A12345678
@@ -231,7 +231,7 @@ curl \
 - `return_url` **[string, required]** - a URL the Mobile Application will be redirected to at the end of the authentication process
 - `platform` **[string, required]** - mobile platform's name (e.g.  `android` or `ios`)
 - `push_token` **[string, optional]** - a token which uniquely identifies Mobile Application for the Push Notification system (e.g. Firebase Cloud Messaging, Apple Push Notifications) (i.e. unique address of current Mobile Application instance). Sometimes is not available for current application.
-- `connect_query` **[string, optional]** - a token which uniquely identifies the user which require creation of new connection. Is provided to mobile client via [deep-link](#deep-link). Can be used for skipping of authentication step in mobile client.  
+- `connect_query` **[string, optional]** - a token which uniquely identifies the user which require creation of new connection. It is Base64-encoded string that is embedded as query parameter in [Deep Link](#deep-link). Can be used for skipping of redundant authentication step in mobile client if user has passed it once before.  
   
 #### Request Example
 ```json
