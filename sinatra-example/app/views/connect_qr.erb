@@ -36,27 +36,38 @@
   td.black { background-color: #000; }
   td.white { background-color: #fff; }
   h1 {text-align:center;}
+  h3 {text-align:center;}
   p {text-align:center;}
 </style>
  
 <html>
+  <head>
+    <title>Connect</title>
+  </head>
   <body>
     <h1>Connect to Demo Service Provider</h1>
-    <br>
-    <p><a href='<%= @configuration_deeplink %>'>Mobile client deeplink</a><br>
-    <br>
-    <table align="center">
-      <% @qr.modules.each_index do |x| %>
-        <tr>
-          <% @qr.modules.each_index do |y| %>
-            <% if @qr.dark?(x,y) %>
-              <td class="black"/>
-            <% else %>
-              <td class="white"/>
+    <p>
+    <% if User.all.empty? %>
+      No registered users. <a href='/admin'>Add user before linking of Salt Edge Authenticator</a>
+    <% else %>
+        Scan QR code with Salt Edge Authenticator or click on deeplink in mobile browser.
+        <br>(You should have installed Salt Edge Authenticator application).
+      <br>
+      <h3><a href='<%= @configuration_deeplink %>'>Mobile client deeplink</a></h3>
+      <br>
+      <table align="center">
+        <% @qr.modules.each_index do |x| %>
+          <tr>
+            <% @qr.modules.each_index do |y| %>
+              <% if @qr.dark?(x,y) %>
+                <td class="black"/>
+              <% else %>
+                <td class="white"/>
+              <% end %>
             <% end %>
-          <% end %>
-        </tr>
-      <% end %>
-    </table>
+          </tr>
+        <% end %>
+      </table>
+    <% end %>
   </body>
 </html>

@@ -1,0 +1,67 @@
+<%# This file is part of the Salt Edge Authenticator distribution
+# (https://github.com/saltedge/sca-identity-service-example)
+# Copyright (c) 2019 Salt Edge Inc.
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3 or later.
+
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+# For the additional permissions granted for Salt Edge Authenticator
+# under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md %>
+<style type="text/css">
+  table {
+	  border-collapse: collapse;
+	}
+	table, th, td {
+  	border: 1px solid black;
+	}
+	th, td { 
+	  padding: 5px; 
+	  background-color:none; 
+    text-align: center; 
+    vertical-align: center;
+    align: center;
+	}
+  h1 {text-align:center;}
+</style>
+ 
+<html>
+  <head>
+    <title>Admin</title>
+  </head>
+  <body>
+    <h1>Admin features</h1>
+
+    <h2>Users</h2>
+    <table border="1">
+      <tr>
+      <th>User ID</th>
+      <th>User Name</th>
+      <th>Actions</th>
+      </tr>
+      <% @users.each do |user| %>
+      <tr>
+        <td><%= user.id %></td>
+        <td><%= user.name %></td>
+        <td><a href='/admin/connections?user_id=<%= user.id %>'>Show connections</a></td>
+      </tr>
+      <% end %>
+    </table>
+    <p> <b>Add new user:</b>
+    <form action="/admin/users" method="post">
+      Username: <input type="text" name="name"> Password: <input type="text" name="password"> <input type="submit" value="Create">
+      <input type="hidden" name="redirect" value="/admin">
+    </form>
+    <br>
+    <a href='/admin/connect'><h2>Connect Salt Edge Authenticator</h2></a>
+    <br>
+  </body>
+</html>

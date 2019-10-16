@@ -22,6 +22,8 @@ class CreateUsers < ActiveRecord::Migration[5.2]
     create_table :users do |t|
       t.string :name, index: {unique: true}, limit: 64
       t.string :password, limit: 64
+      t.string :auth_session_token, limit: 4096
+      t.datetime :auth_session_token_expires_at
       t.timestamps
     end
   end

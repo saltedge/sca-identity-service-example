@@ -1,0 +1,95 @@
+<%# This file is part of the Salt Edge Authenticator distribution
+# (https://github.com/saltedge/sca-identity-service-example)
+# Copyright (c) 2019 Salt Edge Inc.
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3 or later.
+
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+# For the additional permissions granted for Salt Edge Authenticator
+# under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md %>
+<style type="text/css">
+  table {
+	  border-collapse: collapse;
+	}
+	table, th, td {
+  	border: 1px solid black;
+	}
+	th, td { 
+	  padding: 5px; 
+	  background-color:none; 
+    text-align: center; 
+    vertical-align: center;
+    align: center;
+	}
+  h1 {text-align:center;}
+</style>
+ 
+<html>
+  <head>
+    <title>User connections</title>
+  </head>
+  <body>
+    <h1>User connections</h1>
+
+    <a href='/admin/connect?user_id=<%= @user_id %>'><h2>FAST LINK</h2></a>
+    <br>
+
+    <table border="1">
+      <tr>
+        <th>ID</th>
+        <th>platform</th>
+        <th>created_at</th>
+        <th>return_url</th>
+        <th>session_token</th>
+        <th>access_token</th>
+        <th>public_key</th>
+        <th>push_token</th>
+        <th>remove (X)</th>
+      </tr>
+      <% @user_connections.each do |item| %>
+      <tr>
+        <td><%= item.id %></td>
+        <td><%= item.platform %></td>
+        <td><%= item.created_at %></td>
+        <td><%= item.return_url[0...8] %></td>
+        <td><%= item.connect_session_token[0...8] %></td>
+        <td><%= item.access_token %></td>
+        <td><%= item.public_key[0...8] %></td>
+        <td><%= item.push_token[0...8] %></td>
+        <td>
+          <% if item.revoked %>
+            REVOKED
+          <% else %>
+            <form action="/admin/connections/remove", method="post">
+              <input type="hidden" name="id" value=<%= item.id %>>
+              <input type="hidden" name="redirect" value="/admin/connections?user_id=<%= @user_id %>">
+              <input class='btn btn-primary' type='submit' value='X'>
+            </form>
+          <% end %>
+        </td>
+      </tr>
+      <% end %>
+    </table>
+
+    <% unless @user_id.nil? %>
+    <h2>Create authorizaton for user:</h2>
+      <form action="/admin/authorizations" method="post">
+        Title: <input type="text" name="title"> 
+        Description: <input type="text" name="description"> 
+        <input type="submit" value="Create">
+        <input type="hidden" name="user_id" value="<%= @user_id %>">
+        <input type="hidden" name="redirect" value="/admin/connections?user_id=<%= @user_id %>">
+      </form>
+    <% end %>
+    <br>
+  </body>
+</html>
