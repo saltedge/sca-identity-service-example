@@ -20,6 +20,7 @@
 require 'securerandom'
 require 'json'
 require 'uri'
+require 'base64'
 require_relative 'crypt'
 require_relative 'sign'
 
@@ -68,10 +69,22 @@ module Sinatra
     end
 
     # Creates deep link with service configuration url
-    def create_deep_link(service_url)
+    def create_deep_link(service_url, user_id)
       configuration_url = "#{service_url}/api/authenticator/v1/configuration"
-      url_encoded_string = CGI::escape(configuration_url)
-      "authenticator://saltedge.com/connect?configuration=#{url_encoded_string}"
+      url_encoded_string = URI::encode(configuration_url)
+      default_deeplink = "authenticator://saltedge.com/connect?configuration=#{url_encoded_string}"
+
+      user = User.find_by(id: user_id) unless user_id.nil?
+      if user.nil?
+        default_deeplink
+      else
+        auth_session_token = SecureRandom.hex
+        user.update(
+          auth_session_token: auth_session_token,
+          auth_session_token_expires_at: Time.now.utc + 1 * 60
+        )
+        "#{default_deeplink}&connect_query=#{auth_session_token}"
+      end
     end
 
     # Creates service configuration response
@@ -97,20 +110,31 @@ module Sinatra
         'return_url'
       )&.none?(&:blank?)
 
+      auth_session_token = request_data['connect_query']
+      user = User.find_by(auth_session_token: auth_session_token) unless auth_session_token.nil?
+      user_id = user.id unless user.nil? || Time.now.to_i > user.auth_session_token_expires_at.to_i
+
       Connection.create(
         public_key:            request_data['public_key'],
         push_token:            request_data['push_token'],
         platform:              request_data['platform'],
         return_url:            request_data['return_url'],
-        connect_session_token: SecureRandom.hex
+        connect_session_token: SecureRandom.hex,
+        user_id:               user_id
       )
     end
 
     # Creates response with connect_url by new Connection
     def get_user_authentication_url(connection)
+      if connection.user_id.present?
+        url = redirect_url(connection, connection.user_id, 'success')
+      else
+        url = "https://#{request.host_with_port}/login?token=#{connection.connect_session_token}"
+      end
+
       {
         data: {
-          connect_url: "https://#{request.host_with_port}/login?token=#{connection.connect_session_token}",
+          connect_url: url,
           id:          connection.id.to_s
         }
       }.to_json
@@ -177,6 +201,11 @@ module Sinatra
     def create_new_authorization!(user_id, title, description, authorization_code)
       user = User.find_by(id: user_id)
       raise UserNotFound if user.nil?
+
+      if authorization_code.nil?
+        template = "#{user_id}|#{title}|#{description}|#{Time.now.utc}"
+        authorization_code = Base64.urlsafe_encode64(Digest::SHA256.hexdigest(template), padding: false)
+      end
 
       user.authorizations.create(
         expires_at:         Time.now.utc + 5 * 60,

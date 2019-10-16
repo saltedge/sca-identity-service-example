@@ -21,7 +21,7 @@ require_relative '../spec_helper.rb'
 
 describe "GET QR" do
   it "should load the QR page" do
-    get '/admin/qr'
+    get '/admin/connect'
     expect(last_response).to be_ok
   end
 end

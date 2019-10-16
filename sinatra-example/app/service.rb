@@ -57,7 +57,7 @@ namespace '/api/authenticator/v1' do
   end
 
   # CREATE NEW CONNECTION
-  # Mobile client query this endpoint after scaning QR code (with Provider info)
+  # Mobile client query this endpoint after scaning QR code and receiving configuration data
   # Create new Connection
   # Return new Connection Id and authentication page connect_url
   post "/connections" do
@@ -99,17 +99,45 @@ namespace '/api/authenticator/v1' do
   end
 end
 
-######################### EXAMPLE OF ADMIN (or HELPER) SERVICE ROUTES
+######################### EXAMPLE OF ADMIN (or HELPER) SERVICE ROUTES (FOR TEST PURPOUSE)
 namespace '/admin' do
-  # EXAMPLE OF QR CODE GENERATOR (FOR INTERNAL USE ONLY)
-  # Generates QR code with demo provider data
-  get '/qr' do
-    @configuration_deeplink = create_deep_link("https://#{request.host_with_port}")
-    @qr = create_qr_code(@configuration_deeplink)
-    erb :qr
+  # ADMIN PAGE (FOR TEST PURPOUSE)
+  get '' do
+    @users = User.all
+    erb :admin
   end
 
-  # REVOKE CONNECTION (FOR INTERNAL USE ONLY)
+  # EXAMPLE OF CONNECT QR CODE GENERATOR (FOR TEST PURPOUSE)
+  # Generates QR code with demo provider data and deeplink
+  get '/connect' do
+    @configuration_deeplink = create_deep_link("https://#{request.host_with_port}", params[:user_id])
+    @qr = create_qr_code(@configuration_deeplink)
+    erb :connect_qr
+  end
+
+  # REVOKE CONNECTION (FOR TEST PURPOUSE)
+  # Bank Core queries Identity Server to revoke connection by id
+  #
+  # curl -w "\n" -d "id=1" -X PUT http://localhost:4567/admin/connections/revoke
+  get '/connections' do
+    @user_id = params[:user_id]
+    user = User.find_by(id: @user_id) unless @user_id.nil?
+    redirect '/admin' if user.nil?
+
+    @user_connections = user.connections
+
+    erb :user_connections
+  end
+
+  # REMOVE CONNECTION FROM LIST AND REDIRECT BACK (FOR TEST PURPOUSE)
+  post '/connections/remove' do
+    raise StandardError::BadRequest unless params[:id].present?
+    Connection.find_by(id: params[:id]).update(revoked: true)
+
+    redirect params[:redirect] if params[:redirect].present?
+  end
+
+  # REVOKE CONNECTION (FOR TEST PURPOUSE)
   # Bank Core queries Identity Server to revoke connection by id
   #
   # curl -w "\n" -d "id=1" -X PUT http://localhost:4567/admin/connections/revoke
@@ -121,47 +149,57 @@ namespace '/admin' do
     { id: params[:id] }.to_json
   end
 
-  # CREATE USER (FOR TEST USE ONLY).
+  # CREATE USER (FOR TEST PURPOUSE).
   #
   # curl -w "\n" -d "name=Test&password=test" -X POST http://localhost:4567/admin/users
   post '/users' do
     raise StandardError::BadRequest unless params.values_at(:name, :password).none?(&:blank?)
 
-    user = User.create!(
-      name:     params[:name],
-      password: params[:password],
-    )
+    user = User.create!(name: params[:name], password: params[:password])
 
-    content_type :json
-    user.to_json
+    if params[:redirect].present?
+      redirect params[:redirect]
+    else
+      content_type :json
+      user.to_json
+    end
   end
 
-  # CREATE AUTHORIZATION FOR USER. (FOR INTERNAL USE ONLY)
+  # CREATE AUTHORIZATION FOR USER (FOR TEST PURPOUSE)
   # Bank Core queries Identity Server to create new Authorization
   #
   # example of authorization_code = sha256(AMOUNT|CURRENCY_CODE|MERCHANT_ID|MERCHANT_NAME|CURRENT_TIME_STAMP)
   # curl -w "\n" -d "user_id=1&title=Create%20a%20payment&description=550$%20for%20Air%20America&authorization_code=123456789" -X POST http://localhost:4567/admin/authorizations
   post '/authorizations' do
-    raise StandardError::BadRequest unless params.values_at(:user_id, :title, :description, :authorization_code).none?(&:blank?)
+    raise StandardError::BadRequest unless params.values_at(:user_id, :title, :description).none?(&:blank?)
 
-    authorization = create_new_authorization!(
-      params[:user_id],
-      params[:title],
-      params[:description],
-      params[:authorization_code]
-    )
+    connections = authorization.user.connections.where(revoked: false)
 
-    notification_sender = IdentityService::NotificationSender.new(
-      "fcm_push_key"              => Sinatra::Application.settings.fcm_push_key,
-      "apns_certificate_path"     => Sinatra::Application.settings.apns_certificate_path,
-      "apns_certificate_password" => Sinatra::Application.settings.apns_certificate_password
-    )
+    if connections.any?
+      authorization = create_new_authorization!(
+        params[:user_id],
+        params[:title],
+        params[:description],
+        params[:authorization_code]
+      )
 
-    authorization.user.connections.each { |connection| notification_sender.send(authorization, connection) }
-    200
+      notification_sender = IdentityService::NotificationSender.new(
+        "fcm_push_key"              => Sinatra::Application.settings.fcm_push_key,
+        "apns_certificate_path"     => Sinatra::Application.settings.apns_certificate_path,
+        "apns_certificate_password" => Sinatra::Application.settings.apns_certificate_password
+      )
+
+      connections.each { |connection| notification_sender.send(authorization, connection) }
+    end
+
+    if params[:redirect].present?
+      redirect params[:redirect]
+    else
+      200
+    end
   end
 end
-######################### EXAMPLE OF WEB LOGIN USED TO AUTHENTICATE USER AND RETURN ACCESS_TOKEN
+######################### EXAMPLE OF WEB LOGIN USED TO AUTHENTICATE USER AND RETURN ACCESS_TOKEN (FOR TEST PURPOUSE)
 namespace '/login' do
   # SHOW LOGIN PAGE
   get do
