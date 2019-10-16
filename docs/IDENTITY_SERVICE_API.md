@@ -88,10 +88,18 @@ Besides public API, may be implemented next useful end-points for internal usage
 
 ## Deep Link
 
-For initiating connect flow, service should generate deep-link for initiating connection in mobile application. Deep-link can be encoded as QR code. Deep-link should contain link to configuration endpoint.  
+For initiating connect flow, service should generate deep-link for initiating connection in mobile application. Deep-link can be encoded as QR code. 
+Deep-link should contain link to configuration endpoint (`configuration` param):  
 ``` 
   authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration
 ```  
+
+Deep-link can contain extra authentication data (`connect_query` param), 
+which shold be received send while [Connect to provider](#connect-to-service-provider):  
+``` 
+  authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration&connect_query=A12345678
+```  
+
 ---
 
 ## API Security
@@ -223,7 +231,8 @@ curl \
 - `return_url` **[string, required]** - a URL the Mobile Application will be redirected to at the end of the authentication process
 - `platform` **[string, required]** - mobile platform's name (e.g.  `android` or `ios`)
 - `push_token` **[string, optional]** - a token which uniquely identifies Mobile Application for the Push Notification system (e.g. Firebase Cloud Messaging, Apple Push Notifications) (i.e. unique address of current Mobile Application instance). Sometimes is not available for current application.
-
+- `connect_query` **[string, optional]** - a token which uniquely identifies the user which require creation of new connection. Is provided to mobile client via [deep-link](#deep-link). Can be used for skipping of authentication step in mobile client.  
+  
 #### Request Example
 ```json
 {
@@ -231,7 +240,8 @@ curl \
     "public_key": "-----BEGIN PUBLIC KEY-----\nMIGfMAGCSqGSIAB\n-----END PUBLIC KEY-----\n",
     "return_url": "authenticator://oauth/redirect",
     "platform": "android",
-    "push_token": "e886d1a84cfa3cd5343b70a3f9971758e"
+    "push_token": "e886d1a84cfa3cd5343b70a3f9971758e",
+    "connect_query": "A12345678"
   }
 }
 ```
@@ -249,6 +259,16 @@ curl \
   }
 }
 ```
+
+if `connect_query` is valid (exist and not expired), then return the successful authentication url
+```json
+{
+  "data": {
+    "connect_url": "authenticator://oauth/redirect?id=333&access_token=Oqws977brjJUfXbEnGqHNsIRl8PytSL60T7JIsRBCZM",
+    "id": "333"
+  }
+}
+```  
 ---
 ### Obtain access token
 Client (WebView on Mobile Application) should open `connect_url` and user should pass authentication procedure.  
