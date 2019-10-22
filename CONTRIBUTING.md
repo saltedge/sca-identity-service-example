@@ -3,17 +3,6 @@ First off, thanks for taking the time to contribute!
 
 The following is a set of guidelines for contributing to projects of Salt Edge Inc, which are hosted on GitHub. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
 
-
-## Sign Contributor License Agreement ("CLA")
-
-You must **[sign a Contributor License Agreement](https://forms.gle/nX4mFP8eg78NVgrVA)** before your pull request will be merged. This a one-time requirement for contributing to Salt Edge. Signing the CLA might sound scary but it's actually very simple and can be done in less than a minute. You can read more about Contributor License Agreements (CLA) on [Wikipedia](https://en.wikipedia.org/wiki/Contributor_License_Agreement).
-
-Signing the CLA doesn't have to be done up-front, it is only required for your pull request to be merged. You can clone, fork, and submit your pull request as usual.
-
-After what you sign CLA, project maintainers will add you to the contributors list in short time.  
-When your pull-request is created, it is classified by a CLA bot. Bot will verify whether you already are in contributors list, and will label PR with `CLA-signed`.
-Otherwise, the system will also tell you how you can sign the CLA. Once you have signed a CLA, the current and all future pull-requests will be labelled as `CLA-signed`.
-
 ## Code of Conduct
 
 This project and everyone participating in it is governed by the [Salt Edge Code of Conduct](./CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. 
