@@ -313,7 +313,7 @@ curl \
 #### Request Headers 
 - `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`; 
 - `Access-Token` **[string, required]** - access token, required to access resources which require authentication. 
-- `Expires-at` **[datetime, required]** - expires at datetime stamp, required to access resources which verify request signature.
+- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature.
 - `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature.
 
 #### Response Parameters
@@ -349,7 +349,7 @@ curl \
 #### Request Headers 
 - `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`; 
 - `Access-Token` **[string, required]** - access token, required to access resources which require authentication. 
-- `Expires-at` **[datetime, required]** - expires at datetime stamp, required to access resources which verify request signature.
+- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature.
 - `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature. 
 
 #### Response Body Parameters
@@ -421,7 +421,7 @@ curl \
 #### Request Headers 
 - `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`; 
 - `Access-Token` **[string, required]** - access token, required to access resources which require authentication. 
-- `Expires-at` **[datetime, required]** - expires at datetime stamp, required to access resources which verify request signature.
+- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature.
 - `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature.  
 
 #### Response Parameters
@@ -493,7 +493,7 @@ curl \
 #### Request Headers 
 - `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`; 
 - `Access-Token` **[string, required]** - access token, required to access resources which require authentication. 
-- `Expires-at` **[datetime, required]** - expires at datetime stamp, required to access resources which verify request signature.
+- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature.
 - `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature.  
 
 #### Request Body Parameters
