@@ -272,7 +272,7 @@ if `connect_query` is valid (exist and not expired), then return the successful 
 ---
 ### Obtain access token
 Client (WebView on Mobile Application) should open `connect_url` and user should pass authentication procedure.  
-When authentication flow is finished, client will be redirected to URL which should start with `return_url` ((passed on Connect)[#connect-to-service-provider]) and extra params. Once client has captured the redirect URL, it has to deserialize the JSON-encoded URL path following the custom scheme and the host.
+When authentication flow is finished, client will be redirected to URL which should start with `return_url` ([passed on Connect](#connect-to-service-provider)) and extra params. Once client has captured the redirect URL, it has to deserialize the JSON-encoded URL path following the custom scheme and the host.
 
 #### Redirect Parameters of successful authentication
 - `id` **[string, required]** - a unique ID of Connection
