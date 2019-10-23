@@ -95,7 +95,7 @@ Deep-link should contain link to configuration endpoint (`configuration` param):
 ```  
 
 Deep-link can contain extra authentication data (`connect_query` param),   
-which shold be received send while [Connect to provider](#connect-to-service-provider):  
+which should be sent while [connecting to provider](#connect-to-service-provider):  
 ``` 
   authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration&connect_query=A12345678
 ```  
