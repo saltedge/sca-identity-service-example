@@ -95,7 +95,7 @@ Deep-link should contain link to configuration endpoint (`configuration` param):
 ```  
 
 Deep-link can contain extra authentication data (`connect_query` param). This connect flow is named "Dynamic Connect".  
-Additional authentication paramter should be sent while [connecting to provider](#connect-to-service-provider):  
+Additional authentication parameter should be sent while [connecting to provider](#connect-to-service-provider):  
 ``` 
   authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration&connect_query=A12345678
 ```  
