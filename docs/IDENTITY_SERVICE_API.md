@@ -94,11 +94,12 @@ Deep-link should contain link to configuration endpoint (`configuration` param):
   authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration
 ```  
 
-Deep-link can contain extra authentication data (`connect_query` param),   
-which should be sent while [connecting to provider](#connect-to-service-provider):  
+Deep-link can contain extra authentication data (`connect_query` param). This connect flow is named "Dynamic Connect".  
+Additional authentication paramter should be sent while [connecting to provider](#connect-to-service-provider):  
 ``` 
   authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration&connect_query=A12345678
 ```  
+More information on "Dynamic Connect" can be found [here](https://github.com/saltedge/sca-identity-service-example/wiki/Enrollment-and-Strong-Authentication#dynamic-connect).
 
 ---
 
