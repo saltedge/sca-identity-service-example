@@ -1,0 +1,10 @@
+language: ruby
+before_install:
+  - cd sinatra-example
+install: bundle install
+before_script:
+  - cp config/travis.database.yml config/database.yml
+  - bundle exec rake db:create
+  - bundle exec rake db:migrate
+script:
+  - bundle exec rspec
