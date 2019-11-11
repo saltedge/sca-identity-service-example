@@ -519,7 +519,7 @@ curl \
 ```json
 {
   "data": {
-    "sucess": true,
+    "success": true,
     "id": "444"
   }
 }
