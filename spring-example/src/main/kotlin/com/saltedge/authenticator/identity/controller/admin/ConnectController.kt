@@ -25,6 +25,7 @@ import com.saltedge.authenticator.identity.tools.getQRCodeImage
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.ModelAndView
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -35,15 +36,26 @@ class ConnectController {
 	private val deepLinkPrefix = "authenticator://saltedge.com/connect"
 
 	@GetMapping
-	fun showConnect(request: HttpServletRequest): ModelAndView {
-		return ModelAndView("connect", mapOf("link" to createDeepLink(request)))
+	fun showConnect(
+		request: HttpServletRequest,
+		@RequestParam("user_id") userId: Long?
+	): ModelAndView {
+		val imageSrc = userId?.let { "connect/qr?user_id=$userId"  } ?: "connect/qr"
+		return ModelAndView("connect", mapOf(
+			"link" to createDeepLink(request, userId),
+			"src" to imageSrc
+		))
 	}
 
 	@GetMapping("/qr")
-	fun getQRCodeImage(request: HttpServletRequest, response: HttpServletResponse) {
-		val deepLinkString = createDeepLink(request)
+	fun getQRCodeImage(
+		request: HttpServletRequest,
+		response: HttpServletResponse,
+		@RequestParam("user_id") userId: Long?
+	) {
+		val deepLinkString = createDeepLink(request, userId)
 		getQRCodeImage(deepLinkString, 512, 512)?.let { image ->
-			response.contentType = "image/png";
+			response.contentType = "image/png"
 			val outputStream = response.outputStream
 			outputStream.write(image)
 			outputStream.flush()
@@ -51,7 +63,8 @@ class ConnectController {
 		}
 	}
 
-	private fun createDeepLink(request: HttpServletRequest): String {
-		return "${deepLinkPrefix}?configuration=https://${request.serverName}$CONFIGURATION_REQUEST_PATH"
+	private fun createDeepLink(request: HttpServletRequest, userId: Long?): String {
+		val connectQuery = userId?.let { "&connect_query=$userId" } ?: ""
+		return "${deepLinkPrefix}?configuration=https://${request.serverName}$CONFIGURATION_REQUEST_PATH$connectQuery"
 	}
 }

@@ -29,7 +29,8 @@ class CreateConnectionRequestData(
     @get:JsonProperty("public_key") var publicKey: String = "",
 	@get:JsonProperty("return_url") var returnUrl: String = "",
 	@get:JsonProperty("platform") var platform: String = "",
-	@get:JsonProperty("push_token") var pushToken: String = ""
+	@get:JsonProperty("push_token") var pushToken: String = "",
+	@get:JsonProperty("connect_query") var connectQuery: String? = null
 ) {
 	@JsonIgnore
 	fun isValid(): Boolean {

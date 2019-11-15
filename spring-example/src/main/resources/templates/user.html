@@ -26,7 +26,7 @@
 
     <h3>Connections</h3>
     <a href='/admin/connect'><h3>Connect Salt Edge Authenticator</h3></a>
-    <a href='/admin/connect'><h3>Fast Connect Salt Edge Authenticator</h3></a>
+    <a href='/admin/connect' th:href="@{'/admin/connect?user_id=' + ${user.id}}"><h3>Fast Connect Salt Edge Authenticator</h3></a>
     <table border="1">
         <tr>
             <th>ID</th>

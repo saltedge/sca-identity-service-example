@@ -64,6 +64,7 @@ class Connection() {
 		this.platform = requestData.platform
 		this.returnUrl = requestData.returnUrl
 		if (user == null) createConnectToken()
+		else this.accessToken = generateRandomString()
 		this.user = user
 	}
 
