@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In User</title>
+
+    <style type="text/css">
+      h1 {text-align:center;}
+    </style>
+</head>
+<body>
+    <h1>Sign In User</h1>
+
+    <form action="/admin/enroll" method="post">
+        <p>Username: <input type="text" name="name">
+        <p>Password: <input type="password" name="password">
+        <input type="hidden" name="token" th:value="${token}">
+        <p><input type="submit" value="Sign In">
+    </form>
+</body>
+</html>
