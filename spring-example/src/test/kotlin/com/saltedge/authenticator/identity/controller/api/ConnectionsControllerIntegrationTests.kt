@@ -28,6 +28,7 @@ import com.saltedge.authenticator.identity.TestTools
 import com.saltedge.authenticator.identity.model.Connection
 import com.saltedge.authenticator.identity.model.ConnectionsRepository
 import com.saltedge.authenticator.identity.model.User
+import com.saltedge.authenticator.identity.model.UsersRepository
 import com.saltedge.authenticator.identity.model.mapping.CreateConnectionRequest
 import com.saltedge.authenticator.identity.model.mapping.CreateConnectionRequestData
 import com.saltedge.authenticator.identity.tools.nowUtcSeconds
@@ -50,6 +51,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delet
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.*
 
 @RunWith(SpringRunner::class)
 @WebMvcTest(ConnectionsController::class)
@@ -57,7 +59,9 @@ class ConnectionsControllerIntegrationTests {
 	@Autowired
 	private val mvc: MockMvc? = null
 	@MockBean
-	private val repository: ConnectionsRepository? = null
+	private val usersRepository: UsersRepository? = null
+	@MockBean
+	private val connectionsRepository: ConnectionsRepository? = null
 	private val testConnection = Connection().apply {
 		publicKey = TestTools.rsaPublicKeyString
 		accessToken = "accessToken"
@@ -82,13 +86,44 @@ class ConnectionsControllerIntegrationTests {
 				.andExpect(jsonPath("$.data.connect_url", Matchers.startsWith("https://localhost/admin/enroll?token=")))
 				.andExpect(jsonPath("$.data.id", `is`("0")))
 
-		Mockito.verify(repository!!).save(connectionCaptor.capture())
+		Mockito.verify(connectionsRepository!!).save(connectionCaptor.capture())
 		val connection = connectionCaptor.value
 		assertThat(connection.publicKey).isEqualTo(requestData.data!!.publicKey)
 		assertThat(connection.pushToken).isEqualTo(requestData.data!!.pushToken)
 		assertThat(connection.platform).isEqualTo(requestData.data!!.platform)
 		assertThat(connection.returnUrl).isEqualTo(requestData.data!!.returnUrl)
 		assertThat(connection.connectToken).isNotEmpty()
+		assertThat(connection.accessToken).isEmpty()
+	}
+
+	@Test
+	fun createConnectionTest_returnSuccess_whenConnectQuerySent() {
+		given(usersRepository!!.findById(1L)).willReturn(Optional.of(User()))
+		val requestData = CreateConnectionRequest(CreateConnectionRequestData(
+			publicKey = "key",
+			returnUrl = "authenticator//connect",
+			platform = "android",
+			pushToken = "token",
+			connectQuery = "1"
+		))
+		val json: String = ObjectMapper().writeValueAsString(requestData)
+		val connectionCaptor = ArgumentCaptor.forClass(Connection::class.java)
+		mvc!!.perform(post(CONNECTIONS_REQUEST_PATH)
+			.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+			.content(json))
+
+			.andExpect(status().isOk)
+			.andExpect(jsonPath("$.data.connect_url", Matchers.startsWith("authenticator/connect?")))
+			.andExpect(jsonPath("$.data.id", `is`("0")))
+
+		Mockito.verify(connectionsRepository!!).save(connectionCaptor.capture())
+		val connection = connectionCaptor.value
+		assertThat(connection.publicKey).isEqualTo(requestData.data!!.publicKey)
+		assertThat(connection.pushToken).isEqualTo(requestData.data!!.pushToken)
+		assertThat(connection.platform).isEqualTo(requestData.data!!.platform)
+		assertThat(connection.returnUrl).isEqualTo(requestData.data!!.returnUrl)
+		assertThat(connection.connectToken).isEmpty()
+		assertThat(connection.accessToken).isNotEmpty()
 	}
 
 	@Test
@@ -119,7 +154,7 @@ class ConnectionsControllerIntegrationTests {
 				privateKey = TestTools.rsaPrivateKey
 		)
 
-		given(repository!!.findByAccessTokenAndRevokedFalse("accessToken")).willReturn(testConnection)
+		given(connectionsRepository!!.findByAccessTokenAndRevokedFalse("accessToken")).willReturn(testConnection)
 		val connectionCaptor = ArgumentCaptor.forClass(Connection::class.java)
 
 		mvc!!.perform(delete(CONNECTIONS_REQUEST_PATH)
@@ -133,7 +168,7 @@ class ConnectionsControllerIntegrationTests {
 				.andExpect(jsonPath("$.data.access_token", `is`("accessToken")))
 				.andExpect(jsonPath("$.data.success", `is`(true)))
 
-		Mockito.verify(repository).save(connectionCaptor.capture())
+		Mockito.verify(connectionsRepository).save(connectionCaptor.capture())
 		assertThat(connectionCaptor.value.revoked).isTrue()
 	}
 }
