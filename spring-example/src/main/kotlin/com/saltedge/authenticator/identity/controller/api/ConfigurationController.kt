@@ -35,8 +35,8 @@ const val CONFIGURATION_REQUEST_PATH: String = "$AUTHENTICATOR_API_BASE_PATH/con
 @RequestMapping(CONFIGURATION_REQUEST_PATH)
 class ConfigurationController {
 
-	@GetMapping
-	fun getConfiguration(request: HttpServletRequest): ResponseEntity<ConfigurationResponse> {
-		return ResponseEntity.ok(ConfigurationResponse(Configuration(connectUrl = "https://${request.serverName}")))
-	}
+    @GetMapping
+    fun getConfiguration(request: HttpServletRequest): ResponseEntity<ConfigurationResponse> {
+        return ResponseEntity.ok(ConfigurationResponse(Configuration(connectUrl = "https://${request.serverName}")))
+    }
 }

@@ -25,29 +25,27 @@ import javax.persistence.*
 
 @Entity
 class User() {
-	@Id
-	@GeneratedValue(strategy= GenerationType.AUTO)
-	public var id: Long? = null
-	private var createdAt: Long
-	private var updatedAt: Long
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    public var id: Long? = null
+    private var createdAt: Long = Date().time
+    private var updatedAt: Long
 
-	@Column(nullable = false, length = 64, unique = true)
-	var name: String = ""
-	@Column(nullable = false, length = 64)
-	var password: String = ""
+    @Column(nullable = false, length = 64, unique = true)
+    var name: String = ""
+    @Column(nullable = false, length = 64)
+    var password: String = ""
 
-	@Column(length = 4096)
-	private val authSessionToken: String? = null
-	private val authSessionTokenExpiresAt: Long? = null
+    @Column(length = 4096)
+    private val authSessionToken: String? = null
+    private val authSessionTokenExpiresAt: Long? = null
 
-	constructor(name: String, password: String) : this() {
-		this.name = name
-		this.password = password
-	}
+    constructor(name: String, password: String) : this() {
+        this.name = name
+        this.password = password
+    }
 
-	init {
-		val now = Date()
-		createdAt = now.time
-		updatedAt = createdAt
-	}
+    init {
+        updatedAt = createdAt
+    }
 }

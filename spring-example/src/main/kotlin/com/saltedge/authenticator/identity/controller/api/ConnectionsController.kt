@@ -41,47 +41,47 @@ const val CONNECTIONS_REQUEST_PATH: String = "$AUTHENTICATOR_API_BASE_PATH/conne
 @RestController
 @RequestMapping(CONNECTIONS_REQUEST_PATH)
 class ConnectionsController {
-	@Autowired
-	private var usersRepository: UsersRepository? = null
-	@Autowired
-	private var connectionsRepository: ConnectionsRepository? = null
+    @Autowired
+    private var usersRepository: UsersRepository? = null
+    @Autowired
+    private var connectionsRepository: ConnectionsRepository? = null
 
-	@PostMapping
-	fun createConnection(
-			request: HttpServletRequest,
-			@RequestBody newConnectionRequest: CreateConnectionRequest
-	): ResponseEntity<CreateConnectionResponse> {
-		val repository = connectionsRepository ?: return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null)
+    @PostMapping
+    fun createConnection(
+        request: HttpServletRequest,
+        @RequestBody newConnectionRequest: CreateConnectionRequest
+    ): ResponseEntity<CreateConnectionResponse> {
+        val repository = connectionsRepository ?: return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null)
 
-		newConnectionRequest.data?.let { data ->
-			val user = data.connectQuery?.toLongOrNull()?.let { userId ->
-				usersRepository?.findById(userId)?.let { if (it.isPresent) it.get() else null }
-			}
-			val connection = Connection(requestData = data, user = user)
-			repository.save(connection)
+        newConnectionRequest.data?.let { data ->
+            val user = data.connectQuery?.toLongOrNull()?.let { userId ->
+                usersRepository?.findById(userId)?.let { if (it.isPresent) it.get() else null }
+            }
+            val connection = Connection(requestData = data, user = user)
+            repository.save(connection)
 
-			return ResponseEntity.ok(CreateConnectionResponse(CreateConnectionResponseData(
-					connectionId = "${connection.id}",
-					authorizeUrl = createConnectionResponseUrl(request, connection)
-			)))
-		} ?: return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null)
-	}
+            return ResponseEntity.ok(CreateConnectionResponse(CreateConnectionResponseData(
+                connectionId = "${connection.id}",
+                authorizeUrl = createConnectionResponseUrl(request, connection)
+            )))
+        } ?: return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null)
+    }
 
-	@DeleteMapping
-	fun revokeConnection(
-			request: HttpServletRequest,
-			@RequestHeader(HEADER_KEY_ACCESS_TOKEN) accessToken: String?
-	): ResponseEntity<RevokeConnectionResponse> {
-		val connection = request.validateRequest(connectionsRepository = connectionsRepository) ?: throw ConnectionNotFoundException()
-		connectionsRepository?.save(connection.apply { revoked = true })
-		return ResponseEntity.ok(RevokeConnectionResponse(RevokeConnectionData(success = true, accessToken = accessToken ?: "")))
-	}
+    @DeleteMapping
+    fun revokeConnection(
+        request: HttpServletRequest,
+        @RequestHeader(HEADER_KEY_ACCESS_TOKEN) accessToken: String?
+    ): ResponseEntity<RevokeConnectionResponse> {
+        val connection = request.validateRequest(connectionsRepository = connectionsRepository) ?: throw ConnectionNotFoundException()
+        connectionsRepository?.save(connection.apply { revoked = true })
+        return ResponseEntity.ok(RevokeConnectionResponse(RevokeConnectionData(success = true, accessToken = accessToken ?: "")))
+    }
 
-	private fun createConnectionResponseUrl(request: HttpServletRequest, connection: Connection): String {
-		return if (connection.user == null) {
-			createUserEnrollUrl(request, connection.connectToken)
-		} else {
-			createUserEnrollSuccessUrl(connection)
-		}
-	}
+    private fun createConnectionResponseUrl(request: HttpServletRequest, connection: Connection): String {
+        return if (connection.user == null) {
+            createUserEnrollUrl(request, connection.connectToken)
+        } else {
+            createUserEnrollSuccessUrl(connection)
+        }
+    }
 }

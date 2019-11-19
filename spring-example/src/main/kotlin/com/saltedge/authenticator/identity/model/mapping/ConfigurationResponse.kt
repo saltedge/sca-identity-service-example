@@ -25,10 +25,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class ConfigurationResponse(@get:JsonProperty("data") val data: Configuration)
 
 data class Configuration(
-		@get:JsonProperty("connect_url") val connectUrl: String,
-		@get:JsonProperty("code") val code: String = "spring-demobank",
-		@get:JsonProperty("name") var name: String = "Spring Demobank",
-		@get:JsonProperty("logo_url") val logoUrl: String = "https://s3-media1.fl.yelpcdn.com/bphoto/9J0LUrYkKYuwcICwQztkxw/ls.jpg",
-		@get:JsonProperty("support_email") val supportEmail: String = "support@spring-demobank.com",
-		@get:JsonProperty("version") val version: String =  "1"
+    @get:JsonProperty("connect_url") val connectUrl: String,
+    @get:JsonProperty("code") val code: String = "spring-demobank",
+    @get:JsonProperty("name") var name: String = "Spring Demobank",
+    @get:JsonProperty("logo_url") val logoUrl: String = "https://s3-media1.fl.yelpcdn.com/bphoto/9J0LUrYkKYuwcICwQztkxw/ls.jpg",
+    @get:JsonProperty("support_email") val supportEmail: String = "support@spring-demobank.com",
+    @get:JsonProperty("version") val version: String =  "1"
 )

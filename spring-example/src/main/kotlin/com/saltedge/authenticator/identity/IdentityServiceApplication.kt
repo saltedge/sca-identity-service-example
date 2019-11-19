@@ -28,5 +28,5 @@ import org.springframework.stereotype.Controller
 open class IdentityServiceApplication
 
 fun main(args: Array<String>) {
-	runApplication<IdentityServiceApplication>(*args)
+    runApplication<IdentityServiceApplication>(*args)
 }

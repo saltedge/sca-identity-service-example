@@ -25,6 +25,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class CreateConnectionResponse(@get:JsonProperty("data") val data: CreateConnectionResponseData)
 
 data class CreateConnectionResponseData(
-		@get:JsonProperty("connect_url") val authorizeUrl: String,
-		@get:JsonProperty("id") val connectionId: String
+    @get:JsonProperty("connect_url") val authorizeUrl: String,
+    @get:JsonProperty("id") val connectionId: String
 )

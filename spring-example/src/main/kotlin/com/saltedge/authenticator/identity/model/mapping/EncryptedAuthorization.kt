@@ -23,11 +23,11 @@ package com.saltedge.authenticator.identity.model.mapping
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class EncryptedAuthorization(
-		@get:JsonProperty("iv") val iv: String,
-		@get:JsonProperty("key") val key: String,
-		@get:JsonProperty("algorithm") val algorithm: String,
-		@get:JsonProperty("data") val data: String
+        @get:JsonProperty("iv") val iv: String,
+        @get:JsonProperty("key") val key: String,
+        @get:JsonProperty("algorithm") val algorithm: String,
+        @get:JsonProperty("data") val data: String
 ) {
-	@get:JsonProperty("id") var id: String = ""
-	@get:JsonProperty("connection_id") var connectionId: String = ""
+    @get:JsonProperty("id") var id: String = ""
+    @get:JsonProperty("connection_id") var connectionId: String = ""
 }

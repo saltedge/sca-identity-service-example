@@ -44,87 +44,87 @@ const val AUTHORIZATIONS_REQUEST_PATH: String = "$AUTHENTICATOR_API_BASE_PATH/au
 @RestController
 @RequestMapping(AUTHORIZATIONS_REQUEST_PATH)
 class AuthorizationsController {
-	@Autowired
-	private var connectionsRepository: ConnectionsRepository? = null
-	@Autowired
-	private var authorizationsRepository: AuthorizationsRepository? = null
+    @Autowired
+    private var connectionsRepository: ConnectionsRepository? = null
+    @Autowired
+    private var authorizationsRepository: AuthorizationsRepository? = null
 
-	@GetMapping
-	fun getAuthorizations(
-			request: HttpServletRequest
-	): ResponseEntity<AuthorizationsResponse> {
-		val connection = request.validateRequest(connectionsRepository = connectionsRepository) ?: throw ConnectionNotFoundException()
+    @GetMapping
+    fun getAuthorizations(
+        request: HttpServletRequest
+    ): ResponseEntity<AuthorizationsResponse> {
+        val connection = request.validateRequest(connectionsRepository = connectionsRepository) ?: throw ConnectionNotFoundException()
 
-		val publicKey = connection.publicKey.toPublicKey() ?: throw ConnectionNotFoundException()
-		val user = connection.user ?: throw UserNotFoundException()
+        val publicKey = connection.publicKey.toPublicKey() ?: throw ConnectionNotFoundException()
+        val user = connection.user ?: throw UserNotFoundException()
 
-		val authorizations = authorizationsRepository?.findByUserAndExpiresAtGreaterThanAndConfirmedIsNull(
-				user = user,
-				currentDate = Date().time
-		) ?: emptyList()
+        val authorizations = authorizationsRepository?.findByUserAndExpiresAtGreaterThanAndConfirmedIsNull(
+            user = user,
+            currentDate = Date().time
+        ) ?: emptyList()
 
-		val result = authorizations.map { createEncryptedAuthorization(it, connection.id, publicKey) }
-		return ResponseEntity.ok(AuthorizationsResponse(result))
-	}
+        val result = authorizations.map { createEncryptedAuthorization(it, connection.id, publicKey) }
+        return ResponseEntity.ok(AuthorizationsResponse(result))
+    }
 
-	@GetMapping("/{authorizationId}")
-	fun getAuthorization(
-			request: HttpServletRequest,
-			@PathVariable(HEADER_KEY_AUTHORIZATION_ID) authorizationId: Long
-	): ResponseEntity<AuthorizationResponse> {
-		val connection = request.validateRequest(connectionsRepository = connectionsRepository) ?: throw ConnectionNotFoundException()
+    @GetMapping("/{authorizationId}")
+    fun getAuthorization(
+        request: HttpServletRequest,
+        @PathVariable(HEADER_KEY_AUTHORIZATION_ID) authorizationId: Long
+    ): ResponseEntity<AuthorizationResponse> {
+        val connection = request.validateRequest(connectionsRepository = connectionsRepository) ?: throw ConnectionNotFoundException()
 
-		val publicKey = connection.publicKey.toPublicKey() ?: throw ConnectionNotFoundException()
-		val user = connection.user ?: throw UserNotFoundException()
-		val authorization = authorizationsRepository?.findByIdAndUserAndExpiresAtGreaterThanAndConfirmedIsNull(
-				id = authorizationId,
-				user = user,
-				currentDate = Date().time
-		)?.get() ?: throw AuthorizationNotFoundException()
+        val publicKey = connection.publicKey.toPublicKey() ?: throw ConnectionNotFoundException()
+        val user = connection.user ?: throw UserNotFoundException()
+        val authorization = authorizationsRepository?.findByIdAndUserAndExpiresAtGreaterThanAndConfirmedIsNull(
+            id = authorizationId,
+            user = user,
+            currentDate = Date().time
+        )?.get() ?: throw AuthorizationNotFoundException()
 
-		return ResponseEntity.ok(AuthorizationResponse(createEncryptedAuthorization(authorization, connection.id, publicKey)))
-	}
+        return ResponseEntity.ok(AuthorizationResponse(createEncryptedAuthorization(authorization, connection.id, publicKey)))
+    }
 
-	@PutMapping("/{authorizationId}")
-	fun updateAuthorization(
-			request: HttpServletRequest,
-			@PathVariable(HEADER_KEY_AUTHORIZATION_ID) authorizationId: Long
-	): ResponseEntity<UpdateAuthorizationResponse> {
-		val requestBody = extractRequestBody(request, UpdateAuthorizationRequest::class.java)
-		val updateAuthorizationRequest = requestBody.second
-		val connection = request.validateRequest(requestBody.first, connectionsRepository) ?: throw ConnectionNotFoundException()
+    @PutMapping("/{authorizationId}")
+    fun updateAuthorization(
+        request: HttpServletRequest,
+        @PathVariable(HEADER_KEY_AUTHORIZATION_ID) authorizationId: Long
+    ): ResponseEntity<UpdateAuthorizationResponse> {
+        val requestBody = extractRequestBody(request, UpdateAuthorizationRequest::class.java)
+        val updateAuthorizationRequest = requestBody.second
+        val connection = request.validateRequest(requestBody.first, connectionsRepository) ?: throw ConnectionNotFoundException()
 
-		val user = connection.user ?: throw UserNotFoundException()
-		val authorization = authorizationsRepository?.findByIdAndUserAndExpiresAtGreaterThanAndConfirmedIsNull(
-				id = authorizationId,
-				user = user,
-				currentDate = Date().time
-		)?.get() ?: throw AuthorizationNotFoundException()
+        val user = connection.user ?: throw UserNotFoundException()
+        val authorization = authorizationsRepository?.findByIdAndUserAndExpiresAtGreaterThanAndConfirmedIsNull(
+            id = authorizationId,
+            user = user,
+            currentDate = Date().time
+        )?.get() ?: throw AuthorizationNotFoundException()
 
-		val confirmSuccess = authorization.authorizationCode == updateAuthorizationRequest?.data?.authorizationCode
-		val shouldBeConfirmed = updateAuthorizationRequest?.data?.confirm
-		if (confirmSuccess && shouldBeConfirmed != null) {
-			authorization.confirmed = shouldBeConfirmed
-			authorizationsRepository?.save(authorization)
-		}
-		return ResponseEntity.ok(UpdateAuthorizationResponse(UpdateAuthorizationData(confirmSuccess, authorizationId.toString())))
-	}
+        val confirmSuccess = authorization.authorizationCode == updateAuthorizationRequest?.data?.authorizationCode
+        val shouldBeConfirmed = updateAuthorizationRequest?.data?.confirm
+        if (confirmSuccess && shouldBeConfirmed != null) {
+            authorization.confirmed = shouldBeConfirmed
+            authorizationsRepository?.save(authorization)
+        }
+        return ResponseEntity.ok(UpdateAuthorizationResponse(UpdateAuthorizationData(confirmSuccess, authorizationId.toString())))
+    }
 
-	private fun createEncryptedAuthorization(authorization: Authorization, connectionId: Long, publicKey: PublicKey): EncryptedAuthorization {
-			val authorizationHash = mapOf(
-					"id" to "${authorization.id}",
-					"connection_id" to "$connectionId",
-					"title" to authorization.title,
-					"description" to authorization.description,
-					"authorization_code" to authorization.authorizationCode,
-					"created_at" to authorization.createdAt.toIso8601(),
-					"expires_at" to authorization.expiresAt.toIso8601()
-			)
+    private fun createEncryptedAuthorization(authorization: Authorization, connectionId: Long, publicKey: PublicKey): EncryptedAuthorization {
+        val authorizationHash = mapOf(
+            "id" to "${authorization.id}",
+            "connection_id" to "$connectionId",
+            "title" to authorization.title,
+            "description" to authorization.description,
+            "authorization_code" to authorization.authorizationCode,
+            "created_at" to authorization.createdAt.toIso8601(),
+            "expires_at" to authorization.expiresAt.toIso8601()
+        )
 
-		val authorizationJson = ObjectMapper().writeValueAsString(authorizationHash)
-		return CryptTools.encrypt(data = authorizationJson, publicKey = publicKey).apply {
-			this.id = "${authorization.id}"
-			this.connectionId = "$connectionId"
-		}
-	}
+        val authorizationJson = ObjectMapper().writeValueAsString(authorizationHash)
+        return CryptTools.encrypt(data = authorizationJson, publicKey = publicKey).apply {
+            this.id = "${authorization.id}"
+            this.connectionId = "$connectionId"
+        }
+    }
 }

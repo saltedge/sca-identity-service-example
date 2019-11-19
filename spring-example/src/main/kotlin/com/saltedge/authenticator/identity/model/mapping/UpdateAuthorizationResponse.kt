@@ -25,6 +25,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class UpdateAuthorizationResponse(@get:JsonProperty("data") val data: UpdateAuthorizationData)
 
 data class UpdateAuthorizationData(
-		@get:JsonProperty("success") val success: Boolean? = null,
-		@get:JsonProperty("id") val authorizationId: String? = null
+        @get:JsonProperty("success") val success: Boolean? = null,
+        @get:JsonProperty("id") val authorizationId: String? = null
 )

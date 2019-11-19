@@ -37,74 +37,73 @@ import java.util.*
 @Controller
 @RequestMapping(value = ["/admin/authorizations"])
 class AuthorizationsAdminController {
-	@Autowired
-	private var usersRepository: UsersRepository? = null
-	@Autowired
-	private var connectionsRepository: ConnectionsRepository? = null
-	@Autowired
-	private var authorizationsRepository: AuthorizationsRepository? = null
-	@Autowired
-	private val env: Environment? = null
-	@Autowired
-	private val restTemplate: RestTemplate? = null
+    @Autowired
+    private var usersRepository: UsersRepository? = null
+    @Autowired
+    private var connectionsRepository: ConnectionsRepository? = null
+    @Autowired
+    private var authorizationsRepository: AuthorizationsRepository? = null
+    @Autowired
+    private val env: Environment? = null
+    @Autowired
+    private val restTemplate: RestTemplate? = null
 
-	@PostMapping
-	fun createDemoAuthorization(
-			@RequestParam("user_id") userId: Long,
-			@RequestParam title: String? = null,
-			@RequestParam description: String? = null
-	): ModelAndView {
-		usersRepository?.findById(userId)?.get()?.let { user ->
-			createAuthorizationModel(
-					title = title ?: "Payment for 100.00 EUR",
-					description = description ?: "Confirm payment 100.00 EUR from account GB1234567890 to Salt Edge Air Ticket Processor",
-					user = user
-			).apply {
-				authorizationsRepository?.save(this)
-				sendAuthorizationNotifications(authorization = this, user = user)
-			}
-		}
-		return ModelAndView("redirect:/admin/users?user_id=$userId")
-	}
+    @PostMapping
+    fun createDemoAuthorization(
+        @RequestParam("user_id") userId: Long,
+        @RequestParam title: String? = null,
+        @RequestParam description: String? = null
+    ): ModelAndView {
+        usersRepository?.findById(userId)?.get()?.let { user ->
+            createAuthorizationModel(
+                title = title ?: "Payment for 100.00 EUR",
+                description = description ?: "Confirm payment 100.00 EUR from account GB1234567890 to Salt Edge Air Ticket Processor",
+                user = user
+            ).apply {
+                authorizationsRepository?.save(this)
+                sendAuthorizationNotifications(authorization = this, user = user)
+            }
+        }
+        return ModelAndView("redirect:/admin/users?user_id=$userId")
+    }
 
-	private fun createAuthorizationModel(title: String, description: String, user: User): Authorization {
-		val createdAt: Long = Date().time
+    private fun createAuthorizationModel(title: String, description: String, user: User): Authorization {
+        val createdAt: Long = Date().time
 
-		return Authorization(
-				title = title,
-				description = description,
-				user = user,
-				createdAt = createdAt,
-				authorizationCode = generateAuthorizationCode(
-						title = title,
-						description = description,
-						userId = user.id ?: 0,
-						createdAt = createdAt
-				)
-		)
-	}
+        return Authorization(
+            title = title,
+            description = description,
+            user = user,
+            createdAt = createdAt,
+            authorizationCode = generateAuthorizationCode(
+                title = title,
+                description = description,
+                userId = user.id ?: 0,
+                createdAt = createdAt
+            )
+        )
+    }
 
-	private fun sendAuthorizationNotifications(authorization: Authorization, user: User) {
-		println("sendAuthorizationNotifications")
-		val connections = connectionsRepository?.findByUserAndRevokedFalse(user) ?: return
-		sendAuthorizationNotifications(connections, authorization)
-	}
+    private fun sendAuthorizationNotifications(authorization: Authorization, user: User) {
+        val connections = connectionsRepository?.findByUserAndRevokedFalse(user) ?: return
+        sendAuthorizationNotifications(connections, authorization)
+    }
 
-	private fun sendAuthorizationNotifications(connections: List<Connection>, authorization: Authorization) {
-		val pushServiceUrl = env?.getProperty("push_service.url") ?: return
-		val pushServiceAppId = env.getProperty("push_service.app_id") ?: return
-		val pushServiceAppSecret = env.getProperty("push_service.app_secret") ?: return
+    private fun sendAuthorizationNotifications(connections: List<Connection>, authorization: Authorization) {
+        val pushServiceUrl = env?.getProperty("push_service.url") ?: return
+        val pushServiceAppId = env.getProperty("push_service.app_id") ?: return
+        val pushServiceAppSecret = env.getProperty("push_service.app_secret") ?: return
 
-		if (pushServiceUrl.isNotEmpty() && pushServiceAppId.isNotEmpty() && pushServiceAppSecret.isNotEmpty()) {
-			val result = restTemplate?.postForEntity(pushServiceUrl, NotificationsRequest(connections, authorization), String::class.java)
-			println("sendAuthorizationNotifications result:${result?.statusCode}")
-		} else {
-			println("No valid Push Service Params")
-		}
-	}
+        if (pushServiceUrl.isNotEmpty() && pushServiceAppId.isNotEmpty() && pushServiceAppSecret.isNotEmpty()) {
+            val result = restTemplate?.postForEntity(pushServiceUrl, NotificationsRequest(connections, authorization), String::class.java)
+            println("sendAuthorizationNotifications result:${result?.statusCode}")
+        } else {
+            println("No valid Push Service Params")
+        }
+    }
 
-	@Bean
-	fun rest(): RestTemplate {
-		return RestTemplate()
-	}
+    @Bean
+    fun rest(): RestTemplate {
+        return RestTemplate()
+    }
 }

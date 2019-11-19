@@ -24,15 +24,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 
 class UpdateAuthorizationRequest(
-		@get:JsonProperty("data") var data: UpdateAuthorizationRequestData? = null
+        @get:JsonProperty("data") var data: UpdateAuthorizationRequestData? = null
 )
 
 class UpdateAuthorizationRequestData(
-		@get:JsonProperty("confirm") var confirm: Boolean? = null,
-		@get:JsonProperty("authorization_code") var authorizationCode: String? = null
+        @get:JsonProperty("confirm") var confirm: Boolean? = null,
+        @get:JsonProperty("authorization_code") var authorizationCode: String? = null
 ) {
-	@JsonIgnore
-	fun isValid(): Boolean {
-		return confirm != null && authorizationCode != null
-	}
+    @JsonIgnore
+    fun isValid(): Boolean {
+        return confirm != null && authorizationCode != null
+    }
 }

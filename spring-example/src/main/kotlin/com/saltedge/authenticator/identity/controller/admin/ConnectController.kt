@@ -33,38 +33,37 @@ import javax.servlet.http.HttpServletResponse
 @Controller
 @RequestMapping("/admin/connect")
 class ConnectController {
-	private val deepLinkPrefix = "authenticator://saltedge.com/connect"
+    private val deepLinkPrefix = "authenticator://saltedge.com/connect"
 
-	@GetMapping
-	fun showConnect(
-		request: HttpServletRequest,
-		@RequestParam("user_id") userId: Long?
-	): ModelAndView {
-		val imageSrc = userId?.let { "connect/qr?user_id=$userId"  } ?: "connect/qr"
-		return ModelAndView("connect", mapOf(
-			"link" to createDeepLink(request, userId),
-			"src" to imageSrc
-		))
-	}
+    @GetMapping
+    fun showConnect(
+        request: HttpServletRequest,
+        @RequestParam("user_id") userId: Long?
+    ): ModelAndView {
+        val imageSrc = userId?.let { "connect/qr?user_id=$userId"  } ?: "connect/qr"
+        return ModelAndView("connect", mapOf(
+            "link" to createDeepLink(request, userId),
+            "src" to imageSrc
+        ))
+    }
 
-	@GetMapping("/qr")
-	fun getQRCodeImage(
-		request: HttpServletRequest,
-		response: HttpServletResponse,
-		@RequestParam("user_id") userId: Long?
-	) {
-		val deepLinkString = createDeepLink(request, userId)
-		getQRCodeImage(deepLinkString, 512, 512)?.let { image ->
-			response.contentType = "image/png"
-			val outputStream = response.outputStream
-			outputStream.write(image)
-			outputStream.flush()
-			outputStream.close()
-		}
-	}
+    @GetMapping("/qr")
+    fun getQRCodeImage(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        @RequestParam("user_id") userId: Long?
+    ) {
+        getQRCodeImage(text = createDeepLink(request, userId), width = 512, height = 512)?.let { image ->
+            response.contentType = "image/png"
+            val outputStream = response.outputStream
+            outputStream.write(image)
+            outputStream.flush()
+            outputStream.close()
+        }
+    }
 
-	private fun createDeepLink(request: HttpServletRequest, userId: Long?): String {
-		val connectQuery = userId?.let { "&connect_query=$userId" } ?: ""
-		return "${deepLinkPrefix}?configuration=https://${request.serverName}$CONFIGURATION_REQUEST_PATH$connectQuery"
-	}
+    private fun createDeepLink(request: HttpServletRequest, userId: Long?): String {
+        val connectQuery = userId?.let { "&connect_query=$userId" } ?: ""
+        return "${deepLinkPrefix}?configuration=https://${request.serverName}$CONFIGURATION_REQUEST_PATH$connectQuery"
+    }
 }

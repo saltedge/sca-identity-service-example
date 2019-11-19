@@ -25,7 +25,7 @@ import java.util.stream.Collectors
 import javax.servlet.http.HttpServletRequest
 
 fun <T> extractRequestBody(request: HttpServletRequest, type: Class<T>): Pair<String, T?>  {
-	val body: String = request.reader.lines().collect(Collectors.joining(System.lineSeparator()))
-	val model = ObjectMapper().readValue<T>(body, type)
-	return Pair(body, model)
+    val body: String = request.reader.lines().collect(Collectors.joining(System.lineSeparator()))
+    val model = ObjectMapper().readValue<T>(body, type)
+    return Pair(body, model)
 }

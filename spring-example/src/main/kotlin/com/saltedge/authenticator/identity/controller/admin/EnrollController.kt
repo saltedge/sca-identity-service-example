@@ -39,58 +39,58 @@ private const val ENROLL_PATH = "/admin/enroll"
 @Controller
 @RequestMapping(ENROLL_PATH)
 class EnrollController {
-	@Autowired
-	private var usersRepository: UsersRepository? = null
-	@Autowired
-	private var connectionsRepository: ConnectionsRepository? = null
+    @Autowired
+    private var usersRepository: UsersRepository? = null
+    @Autowired
+    private var connectionsRepository: ConnectionsRepository? = null
 
-	@GetMapping
-	fun showSignIn(@RequestParam token: String? = null): ModelAndView {
-		return ModelAndView("sign_in", mapOf("token" to token))
-	}
+    @GetMapping
+    fun showSignIn(@RequestParam token: String? = null): ModelAndView {
+        return ModelAndView("sign_in", mapOf("token" to token))
+    }
 
-	@PostMapping
-	fun signInUser(@RequestParam name: String,
-				   @RequestParam password: String,
-				   @RequestParam token: String? = null): ModelAndView {
-		val authToken = token ?: return ModelAndView("error")
-		val repository = connectionsRepository ?: return ModelAndView("error")
-		val connection = repository.findByConnectToken(authToken)
-				?: return ModelAndView("error")
-		val redirectString = if (name.isNotBlank() && password.isNotBlank()) {
-			val user = usersRepository?.findByNameAndPassword(name = name, password = password)
-					?: return ModelAndView("error")
+    @PostMapping
+    fun signInUser(@RequestParam name: String,
+                   @RequestParam password: String,
+                   @RequestParam token: String? = null): ModelAndView {
+        val authToken = token ?: return ModelAndView("error")
+        val repository = connectionsRepository ?: return ModelAndView("error")
+        val connection = repository.findByConnectToken(authToken)
+            ?: return ModelAndView("error")
+        val redirectString = if (name.isNotBlank() && password.isNotBlank()) {
+            val user = usersRepository?.findByNameAndPassword(name = name, password = password)
+                ?: return ModelAndView("error")
 
-			connection.user = user
-			connection.accessToken = generateRandomString()
-			connectionsRepository?.save(connection)
-			createUserEnrollSuccessUrl(connection)
-		} else {
-			createRedirectUrl(
-				returnUrl = connection.returnUrl,
-				params = mapOf("error_class" to "AUTHENTICATION_ERROR", "error_message" to "AUTHENTICATION_ERROR_MESSAGE")
-			)
-		}
-		return ModelAndView("redirect:$redirectString")
-	}
+            connection.user = user
+            connection.accessToken = generateRandomString()
+            connectionsRepository?.save(connection)
+            createUserEnrollSuccessUrl(connection)
+        } else {
+            createRedirectUrl(
+                returnUrl = connection.returnUrl,
+                params = mapOf("error_class" to "AUTHENTICATION_ERROR", "error_message" to "AUTHENTICATION_ERROR_MESSAGE")
+            )
+        }
+        return ModelAndView("redirect:$redirectString")
+    }
 }
 
 fun createUserEnrollUrl(request: HttpServletRequest, sessionToken: String): String {
-	val builder = UriComponentsBuilder.fromHttpUrl("https://${request.serverName}")
-	builder.path(ENROLL_PATH)
-	builder.queryParam("token", sessionToken)
-	return builder.toUriString()
+    val builder = UriComponentsBuilder.fromHttpUrl("https://${request.serverName}")
+    builder.path(ENROLL_PATH)
+    builder.queryParam("token", sessionToken)
+    return builder.toUriString()
 }
 
 fun createUserEnrollSuccessUrl(connection: Connection): String {
-	return createRedirectUrl(
-		returnUrl = connection.returnUrl,
-		params = mapOf("id" to connection.id.toString(), "access_token" to connection.accessToken)
-	)
+    return createRedirectUrl(
+        returnUrl = connection.returnUrl,
+        params = mapOf("id" to connection.id.toString(), "access_token" to connection.accessToken)
+    )
 }
 
 fun createRedirectUrl(returnUrl: String, params: Map<String, String>): String {
-	val builder = UriComponentsBuilder.fromUriString(returnUrl)
-	params.forEach { (key, value) -> builder.queryParam(key, value) }
-	return builder.toUriString()
+    val builder = UriComponentsBuilder.fromUriString(returnUrl)
+    params.forEach { (key, value) -> builder.queryParam(key, value) }
+    return builder.toUriString()
 }

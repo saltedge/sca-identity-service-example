@@ -26,58 +26,58 @@ import javax.persistence.*
 
 @Entity
 class Authorization() {
-	@Id
-	@GeneratedValue(strategy= GenerationType.AUTO)
-	var id: Long = 0
-	var createdAt: Long = 0
-	var updatedAt: Long = 0
-	var expiresAt: Long = 0
-	var confirmed: Boolean? = null
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    var id: Long = 0
+    var createdAt: Long = 0
+    var updatedAt: Long = 0
+    var expiresAt: Long = 0
+    var confirmed: Boolean? = null
 
-	@Column(length = 4096)
-	var title: String = ""
+    @Column(length = 4096)
+    var title: String = ""
 
-	@Column(length = 4096)
-	var description: String = ""
+    @Column(length = 4096)
+    var description: String = ""
 
-	@Column(length = 4096)
-	var authorizationCode: String = ""
+    @Column(length = 4096)
+    var authorizationCode: String = ""
 
-	@ManyToOne
-	var user: User? = null
+    @ManyToOne
+    var user: User? = null
 
-	internal constructor(title: String,
-						 description: String,
-						 authorizationCode: String,
-						 user: User,
-						 createdAt: Long = Date().time) : this() {
-		this.title = title
-		this.description = description
-		this.authorizationCode = authorizationCode
-		this.user = user
-		this.createdAt = createdAt
-		this.updatedAt = createdAt
-		this.expiresAt = createdAt + 5 * 60 * 1000
-	}
+    internal constructor(title: String,
+                         description: String,
+                         authorizationCode: String,
+                         user: User,
+                         createdAt: Long = Date().time) : this() {
+        this.title = title
+        this.description = description
+        this.authorizationCode = authorizationCode
+        this.user = user
+        this.createdAt = createdAt
+        this.updatedAt = createdAt
+        this.expiresAt = createdAt + 5 * 60 * 1000
+    }
 
-	fun isExpired(): Boolean {
-		return expiresAt <= Date().time
-	}
+    fun isExpired(): Boolean {
+        return expiresAt <= Date().time
+    }
 
-	fun getCreatedAtString(): String {
-		return Date(createdAt).toIso8601()
-	}
+    fun getCreatedAtString(): String {
+        return Date(createdAt).toIso8601()
+    }
 
-	fun getExpiresAtString(): String {
-		return Date(expiresAt).toIso8601()
-	}
+    fun getExpiresAtString(): String {
+        return Date(expiresAt).toIso8601()
+    }
 
-	fun getStatus(): String {
-		return when {
-			confirmed == true -> "CONFIRMED"
-			confirmed == false -> "DENIED"
-			this.isExpired() -> "EXPIRED"
-			else -> "WAITING CONFIRM"
-		}
-	}
+    fun getStatus(): String {
+        return when {
+            confirmed == true -> "CONFIRMED"
+            confirmed == false -> "DENIED"
+            this.isExpired() -> "EXPIRED"
+            else -> "WAITING CONFIRM"
+        }
+    }
 }

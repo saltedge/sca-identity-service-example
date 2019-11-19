@@ -25,6 +25,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class RevokeConnectionResponse(@get:JsonProperty("data") val data: RevokeConnectionData)
 
 data class RevokeConnectionData(
-		@get:JsonProperty("success") val success: Boolean,
-		@get:JsonProperty("access_token") val accessToken: String
+        @get:JsonProperty("success") val success: Boolean,
+        @get:JsonProperty("access_token") val accessToken: String
 )

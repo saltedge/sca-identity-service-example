@@ -32,46 +32,46 @@ import org.springframework.web.servlet.ModelAndView
 @Controller
 @RequestMapping(value = ["/admin/users"])
 class UsersAdminController {
-	@Autowired
-	private var usersRepository: UsersRepository? = null
-	@Autowired
-	private var connectionsRepository: ConnectionsRepository? = null
-	@Autowired
-	private var authorizationsRepository: AuthorizationsRepository? = null
+    @Autowired
+    private var usersRepository: UsersRepository? = null
+    @Autowired
+    private var connectionsRepository: ConnectionsRepository? = null
+    @Autowired
+    private var authorizationsRepository: AuthorizationsRepository? = null
 
-	@GetMapping
-	fun showUsers(@RequestParam("user_id") userId: Long?): ModelAndView {
-		if (userId == null) {
-			return ModelAndView(
-					"users",
-					mapOf(
-							"users" to usersRepository?.findAll(),
-							"connections" to connectionsRepository?.findByUserIsNull()
-					)
-			)
-		}
+    @GetMapping
+    fun showUsers(@RequestParam("user_id") userId: Long?): ModelAndView {
+        if (userId == null) {
+            return ModelAndView(
+                "users",
+                mapOf(
+                    "users" to usersRepository?.findAll(),
+                    "connections" to connectionsRepository?.findByUserIsNull()
+                )
+            )
+        }
 
-		val user: User = usersRepository?.findById(userId)?.get() ?: return ModelAndView("user")
-		val connections: List<Connection> = connectionsRepository?.findByUser(user)?.sortedBy { it.revoked } ?: emptyList()
-		val authorizations: List<Authorization> = authorizationsRepository?.findByUser(user)
-				?.sortedWith(compareBy({ it.isExpired() }, { it.confirmed == null })) ?: emptyList()
+        val user: User = usersRepository?.findById(userId)?.get() ?: return ModelAndView("user")
+        val connections: List<Connection> = connectionsRepository?.findByUser(user)?.sortedBy { it.revoked } ?: emptyList()
+        val authorizations: List<Authorization> = authorizationsRepository?.findByUser(user)
+            ?.sortedWith(compareBy({ it.isExpired() }, { it.confirmed == null })) ?: emptyList()
 
-		return ModelAndView(
-				"user",
-				mapOf(
-						"user" to user,
-						"connections" to connections,
-						"authorizations" to authorizations,
-						"connectionsIsNotEmpty" to connections.isNotEmpty()
-				)
-		)
-	}
+        return ModelAndView(
+            "user",
+            mapOf(
+                "user" to user,
+                "connections" to connections,
+                "authorizations" to authorizations,
+                "connectionsIsNotEmpty" to connections.isNotEmpty()
+            )
+        )
+    }
 
-	@PostMapping
-	fun createUser(@RequestParam name: String, @RequestParam password: String): ModelAndView {
-		if (name.isNotBlank() && password.isNotBlank()) {
-			usersRepository?.save(User(name = name, password = password))
-		}
-		return ModelAndView("redirect:/admin/users")
-	}
+    @PostMapping
+    fun createUser(@RequestParam name: String, @RequestParam password: String): ModelAndView {
+        if (name.isNotBlank() && password.isNotBlank()) {
+            usersRepository?.save(User(name = name, password = password))
+        }
+        return ModelAndView("redirect:/admin/users")
+    }
 }

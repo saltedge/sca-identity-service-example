@@ -27,55 +27,53 @@ import javax.persistence.*
 
 @Entity
 class Connection() {
-	@Id
-	@GeneratedValue(strategy= GenerationType.AUTO)
-	var id: Long = 0
-	private val createdAt: Long
-	private val updatedAt: Long
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    var id: Long = 0
+    private val createdAt: Long = Date().time
+    private val updatedAt: Long
 
-	@Column(length = 4096)
-	var publicKey: String = ""
+    @Column(length = 4096)
+    var publicKey: String = ""
 
-	@Column(length = 4096)
-	var pushToken: String = ""
+    @Column(length = 4096)
+    var pushToken: String = ""
 
-	@Column(length = 32)
-	var platform: String = ""
+    @Column(length = 32)
+    var platform: String = ""
 
-	@Column(length = 4096)
-	var returnUrl: String = ""
+    @Column(length = 4096)
+    var returnUrl: String = ""
 
-	@Column(length = 4096)
-	var connectToken: String = ""
+    @Column(length = 4096)
+    var connectToken: String = ""
 
-	private var connectTokenExpiresAt: Calendar? = null
+    private var connectTokenExpiresAt: Long? = null
 
-	@Column(length = 4096)
-	var accessToken: String = ""
+    @Column(length = 4096)
+    var accessToken: String = ""
 
-	var revoked: Boolean = false
+    var revoked: Boolean = false
 
-	@ManyToOne
-	var user: User? = null
+    @ManyToOne
+    var user: User? = null
 
-	constructor(requestData: CreateConnectionRequestData, user: User? = null) : this() {
-		this.publicKey = requestData.publicKey
-		this.pushToken = requestData.pushToken
-		this.platform = requestData.platform
-		this.returnUrl = requestData.returnUrl
-		if (user == null) createConnectToken()
-		else this.accessToken = generateRandomString()
-		this.user = user
-	}
+    constructor(requestData: CreateConnectionRequestData, user: User? = null) : this() {
+        this.publicKey = requestData.publicKey
+        this.pushToken = requestData.pushToken
+        this.platform = requestData.platform
+        this.returnUrl = requestData.returnUrl
+        if (user == null) createConnectToken()
+        else this.accessToken = generateRandomString()
+        this.user = user
+    }
 
-	init {
-		val now = Date()
-		createdAt = now.time
-		updatedAt = createdAt
-	}
+    init {
+        updatedAt = createdAt
+    }
 
-	private fun createConnectToken() {
-		this.connectToken = generateRandomString()
-		this.connectTokenExpiresAt = Calendar.getInstance().apply { add(Calendar.MINUTE, 5) }
-	}
+    private fun createConnectToken() {
+        this.connectToken = generateRandomString()
+        this.connectTokenExpiresAt = Date().time + 5 * 60 * 1000
+    }
 }
