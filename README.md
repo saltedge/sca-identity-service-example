@@ -33,7 +33,10 @@ We found that our clients are looking for SCA solution alongside with [PSD2](htt
 
 ## Project content
 
-Repository contains simple example of [Authenticator Identity Service based on Sinatra framework (`/sinatra-example`)](sinatra-example/README.md). 
+Repository contains simple examples of Authenticator Identity Service 
+* [on Sinatra framework (`/sinatra-example`)](sinatra-example/README.md); 
+* [on Spring Boot framework (`/spring-example`)](spring-example/README.md). 
+
 It will help you to implement our solution in your system. 
 
 We have already published Authenticator Identity Service mobile clients for Apple iOS and Google Android system.  

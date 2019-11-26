@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Users</title>
+
+    <style type="text/css">
+      table {
+          border-collapse: collapse;
+        }
+        table, th, td {
+        border: 1px solid black;
+        }
+        th, td {
+          padding: 5px;
+          background-color:none;
+        text-align: center;
+        vertical-align: center;
+        align: center;
+        }
+      h1 {text-align:center;}
+    </style>
+</head>
+<body>
+
+    <h1>Users</h1>
+    <table border="1">
+        <tr>
+            <th>User ID</th>
+            <th>User Name</th>
+            <th>Actions</th>
+        </tr>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}">&nbsp;</td>
+            <td th:text="${user.name}">&nbsp;</td>
+            <td><a href="/admin/users?user_id=" th:href="@{/admin/users?user_id={id}(id = ${user.id})}">Details</a></td>
+        </tr>
+        </tbody>
+    </table>
+    <p> <b>Add new user:</b>
+    <form action="/admin/users" method="post">
+        Username: <input type="text" name="name"> Password: <input type="text" name="password"> <input type="submit" value="Create">
+    </form>
+    <br>
+    <a href='/admin/connect'><h2>Connect Salt Edge Authenticator</h2></a>
+
+    <h2>Connections without user</h2>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Platform</th>
+            <th>Connect session token</th>
+            <th>Access token</th>
+        </tr>
+        <tbody>
+        <tr th:each="connection : ${connections}">
+            <td th:text="${connection.id}">&nbsp;</td>
+            <td th:text="${connection.platform}">&nbsp;</td>
+            <td th:text="${connection.connectToken}">&nbsp;</td>
+            <td th:text="${connection.accessToken}">&nbsp;</td>
+        </tr>
+        </tbody>
+    </table>
+</body>
+</html>
