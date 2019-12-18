@@ -536,11 +536,12 @@ template = "#{payee_details}|#{amount}|#{time}|#{user_id}|#{description}|#{salt}
 authorization_code = Base64.urlsafe_encode64(Digest::SHA256.hexdigest(template), padding: false)
 ```
 
-Java (JDK 9) example:
+Java (JDK 8) example:
 ```java
-String template = payee_details + "|" + amount + "|" + time + "|" + user_id " | " + description + "|" + salt
-byte[] hashbytes = MessageDigest.getInstance(SHA3_256).digest(originalString.getBytes(StandardCharsets.UTF_8));
-authorizationCode = Base64.getEncoder().withoutPadding().encodeToString(hashbytes);
+    String template = payment.accountId.toString() + "|" + payment.amount + "|" + payment.getCreatedAt().toString() + 
+        "|" + payment.user.id.toString() + " | " + payment.description + "|" + SALT;
+    byte[] hashBytes = MessageDigest.getInstance("SHA-256").digest(template.getBytes(StandardCharsets.UTF_8));
+    return Base64.getEncoder().withoutPadding().encodeToString(hashBytes);
 ```
 
 ----  
