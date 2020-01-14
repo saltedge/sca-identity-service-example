@@ -46,7 +46,7 @@ You can find source code of mobile application here:
 
 You can download mobile application:  
 <a href='https://play.google.com/store/apps/details?id=com.saltedge.authenticator'>
-    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Get_it_on_Google_play.svg/1000px-Get_it_on_Google_play.svg.png' alt='Get it on Google Play' height="56px"/>
+    <img src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' alt='Get it on Google Play' height="56px"/>
 </a> 
 <a href='https://apps.apple.com/md/app/priora-authenticator/id1277625653'>
     <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Download_on_the_App_Store_Badge.svg/1000px-Download_on_the_App_Store_Badge.svg.png' alt='Get it on App Store' height="56px"/>
