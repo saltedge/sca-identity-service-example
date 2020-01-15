@@ -107,7 +107,7 @@ More information on "Dynamic Connect" can be found [here](https://github.com/sal
 The following section describes the different security approaches used for securing data flow.
 
 - All sensitive data should be encrypted (e.g. 2048-bit keys).
-- All communications should be performed over HTTPS channel with certificate issued by CA (self-signed certificated not allowed).
+- All communications should be performed over HTTPS channel with certificate issued by CA (self-signed certificates not allowed).
 - All requests from clients should be signed (if possible). 
 - The private key should be securely stored on client side. In case of possible security breach, the private key should be regenerated and the public key should be updated.
 
