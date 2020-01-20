@@ -232,6 +232,7 @@ curl \
 - `return_url` **[string, required]** - a URL the Mobile Application will be redirected to at the end of the authentication process
 - `platform` **[string, required]** - mobile platform's name (e.g.  `android` or `ios`)
 - `push_token` **[string, optional]** - a token which uniquely identifies Mobile Application for the Push Notification system (e.g. Firebase Cloud Messaging, Apple Push Notifications) (i.e. unique address of current Mobile Application instance). Sometimes is not available for current application.
+- `provider_code` **[string, optional]** - code of the Service Provider
 - `connect_query` **[string, optional]** - a token which uniquely identifies the user which require creation of new connection. It is Base64-encoded string that is embedded as query parameter in [Deep Link](#deep-link). Can be used for skipping of redundant authentication step in mobile client if user has passed it once before.  
   
 #### Request Example
@@ -242,6 +243,7 @@ curl \
     "return_url": "authenticator://oauth/redirect",
     "platform": "android",
     "push_token": "e886d1a84cfa3cd5343b70a3f9971758e",
+    "provider_code": "demobank",
     "connect_query": "A12345678"
   }
 }
