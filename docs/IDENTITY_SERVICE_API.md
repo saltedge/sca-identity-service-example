@@ -528,6 +528,68 @@ curl \
 ```  
 ----
 
+---
+### Instant Action
+
+`Action` is an entity, with the purpose of fast and password free customer authentication.
+Initialization of the `Instant Action` procedure starts with generating a QR code, which contains an encoded deep link.
+Deep link contains unique ID of the newly generated `Action` entity, base url of the Identity Service by which application finds the related `Connection` for future request signing and `return_to` url for redirecting back from Salt Edge Authenticator to Action initiator application (`return_to` is optional).
+After what `Action` is sent to Identity Service, service provider should perform related `Action` procedure (e.g. sign-in).
+
+#### Action Deep Link Example:
+
+`authenticator://saltedge.com/action?action_uuid=123456&connect_url=http://someurl.com&return_to=http://return.com`
+
+#### Action Deep Link Parameters:
+
+- `action_uuid` **[string, required]** - an unique identifier of the action
+- `connect_url` **[string, required]** - base url of the Identity Service's Connection
+- `return_to` **[string, optional]** - an url, which is used for redirect
+
+#### Perform Action:
+
+`POST` `/api/authenticator/v1/action/:uuid`
+
+```bash
+curl \
+  -H 'Content-Type: application/json' \
+  -H 'Access-Token: replace_with_your_token' \
+  -H 'Expires-at: expires_at_time' \
+  -H 'Signature: generated_signature' \
+  -X POST \
+  https://connector.service_host.com/api/authenticator/v1/action/123456
+```
+
+#### Request Path Parameters:
+
+`uuid` - The uuid of the action, received from the `deeplink`
+
+#### Request Headers:
+- `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default en.
+- `Access-Token` **[string, required]** - access token, required to access resources which require authentication.
+- `Expires-at` **[datetime, required]** - expires at datetime stamp, required to access resources which verify request signature.
+- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature.
+
+#### Response Body Parameters:
+
+- `success` **[boolean, required]** - result of the operation
+- `connection_id` **[string, optional]** - an unique ID of Mobile Client (Service Connection)
+- `authorization_id` **[string, optional]** - an unique code of authorization model
+
+#### Response Example
+```json
+{
+  "data": [
+    {
+      "success": true,
+      "connection_id": "333",
+      "authorization_id": "9998"
+    }
+  ]
+}
+```
+----
+
 ## Authorization code builder example
 
 If authorization code is generating as sha256, than resulting string should be Base64 encoded without paddings.
