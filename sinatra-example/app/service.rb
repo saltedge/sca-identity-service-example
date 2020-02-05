@@ -28,6 +28,7 @@ require_relative 'helpers/qr_helper'
 require_relative 'helpers/enroll_helper'
 require_relative 'helpers/errors'
 require_relative 'helpers/notification_sender'
+require_relative 'model/action'
 require_relative 'model/user'
 require_relative 'model/connection'
 require_relative 'model/authorization'
@@ -96,6 +97,27 @@ namespace '/api/authenticator/v1' do
   # Return result of operation
   put "/authorizations/:authorization_id" do
     update_authorization!(params[:authorization_id])
+  end
+end
+
+get '/' do
+  @action = Action.new()
+
+  @instant_action_deeplink = create_instant_action_deep_link(@action.uuid, "", "https://#{request.host_with_port}")
+
+  @qr = create_qr_code(@instant_action_deeplink)
+  erb :sign_in
+end
+
+post '/user' do
+  @user_name    = params[:name]
+  user_password = params[:password]
+  user          = User.find_by(name: @user_name, password: user_password)
+  if user.nil?
+    erb :login_error
+  else
+    session['user_id'] = user.id
+    erb :login_confirm
   end
 end
 

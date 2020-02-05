@@ -36,6 +36,9 @@ end
 
 module Sinatra
   module ServiceHelper
+
+    DEEPLINK_URL = 'authenticator://saltedge.com/connect'
+
     # Verifies that request has ACCESS_TOKEN header and related Connection exist
     def verify_identity
       raise AuthorizationRequired unless access_token
@@ -85,6 +88,10 @@ module Sinatra
         )
         "#{default_deeplink}&connect_query=#{auth_session_token}"
       end
+    end
+
+    def create_instant_action_deep_link(action_uuid, return_to = "", connect_url)
+      "#{DEEPLINK_URL}/action?action_uuid=#{action_uuid}&return_to=#{URI::encode(return_to)}&connect_url=#{URI::encode(connect_url)}"
     end
 
     # Creates service configuration response
