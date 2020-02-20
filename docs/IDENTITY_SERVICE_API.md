@@ -4,9 +4,9 @@
 * [Identity Service Models](#identity-service-models)
 * [Deep Link](#deep-link)
 * [API Security](#api-security)
+* [API Errors](#api-errors)
 * [Public API](#identity-service-api)
   * [API Data Types](#api-data-types)
-  * [Errors](#errors)
   * [Get Configuration](#get-service-provider-configuration)
   * [Connect to Service Provider](#connect-to-service-provider)
   * [Obtain Access Token](#obtain-access-token)
@@ -135,7 +135,30 @@ The fields  `request_method`, `original_url` and `post_body` from the `Signature
 **Note:**  
 **_Signature field on mobile app is being created with body which is equal to raw string of request payload.
 As we know, sometimes in Web App Controller is received already parsed object. You must use raw string of request payload because signature generation/veification is very sensitive to `post_body` string._**
+  
+---
 
+## API Errors
+During any request on Salt Edge SCA Service side, a number of errors may appear. In order to standardize errors while still giving some degree of freedom in explaining an error callback, parameters should include both `error_class` and `error_message`. Error message serves the purpose of communicating the issue to the Client, whereas error class should be used by client application in order to be able to handle various scenarios.
+
+Contents of the `error_message` are entirely up to the Salt Edge SCA Service, they may even be localized. However, values sent within `error_class` parameter should be from the standardized list. This list may and will be extended over time.
+  
+### Bad Request errors (code: 400):  
+* `WrongRequestFormat` - some of request params are not valid;
+* `AccessTokenMissing` - `access_token` header is missing;
+* `SignatureMissing` - `signature` header is missing;
+* `SignatureExpired` - `expires_at` header is missing or `expires_at` is before now;
+* `InvalidSignature` - `signature` param is invalid;
+* `ActionExpired` - Action entity is expired.
+  
+### Unauthorized errors (code: 401):  
+* `ConnectionNotFound` - connection associated with by `access_token` header not found or it is invalid;  
+* `UserNotFound` - connection associated with Connection not found.  
+  
+### Not Found errors (code: 404):  
+* `AuthorizationNotFound` - authorization queried by `authorization_id` param not found;  
+* `ActionNotFound` - action queried by `action_id` param not found.
+  
 ---
 ## Identity Service API
 
@@ -164,17 +187,6 @@ There are several common points about the request we send:
 - There is a `Expires-at` header that identifies expiration time of the request;
 - The JSON object sent will always have a  `data` field;
   
-### Errors
-
-Each authenticated endpoint can return next errors:
-* `BadRequest` - some of request params are not valid.
-* `AuthorizationRequired` - `access_token` param is missing.
-* `SignatureExpired` - `expires_at` param is missing or `expires_at` is before now.
-* `SignatureMissing` - `signature` param is missing.
-* `InvalidSignature` - `signature` param is invalid.
-* `ConnectionNotFound` - connection associated with by `access_token` param not found
-* `AuthorizationNotFound` - authorization queried by `authorization_id` param not found
-
 ---
 ### Get Service provider configuration   
 Public resource (not authenticated) for fetching of initial data of Service Provider.
@@ -209,7 +221,11 @@ curl \
     "version": "1"
   }
 }
-```
+```  
+
+**Note:**  
+**[See Response Errors](#api-errors)**
+  
 ---
 ### Connect to Service Provider
 Create the new Mobile Client's model (i.e. Service Connection) and return Connect URL for future user authentication.
@@ -271,7 +287,11 @@ if `connect_query` is valid (exist and not expired), then return the successful 
     "id": "333"
   }
 }
-```  
+```
+
+**Note:**  
+**[See Response Errors](#api-errors)**
+  
 ---
 ### Obtain access token
 Client (WebView on Mobile Application) should open `connect_url` and user should pass authentication procedure.  
@@ -332,6 +352,10 @@ curl \
   }
 }
 ```
+
+**Note:**  
+**[See Response Errors](#api-errors)**
+  
 ---
 ### Show Authorizations List
 Return list of all current Authorizations which require end-user confirmation for Service Provider by `Access-Token` from headers.  
@@ -401,6 +425,9 @@ curl \
 }
 ```
 
+**Note:**  
+**[See Response Errors](#api-errors)**
+  
 ---
 ### Show Authorization
 Return the one authorization which requireы end-user confirmation for Service Provider by `Access-Token` from headers and by `id` parameter.
@@ -471,6 +498,9 @@ curl \
 }
 ```
 
+**Note:**  
+**[See Response Errors](#api-errors)**
+  
 ---
 ### Confirm or Deny Authorization
 Confirms/Denies authorization model (e.g. payment, operation, etc) from Service Provider.  
@@ -526,6 +556,10 @@ curl \
   }
 }
 ```  
+
+**Note:**  
+**[See Response Errors](#api-errors)**
+  
 ----
 
 ## Authorization code builder example
