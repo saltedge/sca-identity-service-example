@@ -25,6 +25,8 @@ class ConnectionNotFound < StandardError; end
 
 class UserNotFound < StandardError; end
 
+class UserAlreadyExists < StandardError; end
+
 class AuthorizationNotFound < StandardError; end
 
 class SignatureExpired < StandardError; end

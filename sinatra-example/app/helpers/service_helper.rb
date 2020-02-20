@@ -90,7 +90,7 @@ module Sinatra
       end
     end
 
-    def create_instant_action_deep_link(action_uuid, return_to = "", connect_url)
+    def self.create_instant_action_deep_link(action_uuid, return_to = "", connect_url)
       "#{DEEPLINK_URL}/action?action_uuid=#{action_uuid}&return_to=#{URI::encode(return_to)}&connect_url=#{URI::encode(connect_url)}"
     end
 
@@ -205,7 +205,7 @@ module Sinatra
       { data: { success: valid_code, id: authorization_id } }.to_json
     end
 
-    def create_new_authorization!(user_id, title, description, authorization_code)
+    def self.create_new_authorization!(user_id, title, description, authorization_code)
       user = User.find_by(id: user_id)
       raise UserNotFound if user.nil?
 

@@ -1,0 +1,237 @@
+<style type="text/css">
+    body {font-family: Arial, Helvetica, sans-serif;}
+
+    .top-header { color:white;background-color:#525D76;text-align:center; }
+    .column {
+        float: left;
+        width: calc(50% - 20px);
+        padding: 10px;
+        min-height: 320px; /* Should be removed. Only for demonstration */
+    }
+    /* Clear floats after the columns */
+    .row:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
+    table {border-collapse: collapse;}
+    table, th, td {border: 1px solid black;}
+    th, td {
+        padding: 5px;
+        background-color:none;
+        text-align: center;
+        vertical-align: center;
+        align: center;
+    }
+
+    /* The Modal (background) */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content/Box */
+    .modal-content {
+        background-color: #fefefe;
+        margin: 10% auto; /* 10% from the top and centered */
+        padding: 10px;
+        border: 1px solid #888;
+        width: 360px; /* Could be more or less, depending on screen size */
+    }
+
+    table {
+      border-width: 0;
+      border-style: none;
+      border-color: #0000ff;
+      border-collapse: collapse;
+    }
+    td {
+       border-width: 0;
+       border-style: none;
+       border-color: #0000ff;
+       border-collapse: collapse;
+       padding: 0;
+       margin: 0;
+       width: 4px;
+       height: 4px;
+    }
+    td.black { background-color: #000; }
+    td.white { background-color: #fff; }
+
+    /* The Close Button */
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .qr_img {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+    }
+</style>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1 class="top-header">User Dashboard: <%= @user.name %> </h1>
+
+    <a href="/users/sign_in"><b>SIGN OUT</b></a>
+
+    <div class="row">
+        <div class="column" style="background-color:#ddd;">
+            <h2>Connections (Authenticators):</h2>
+
+            <button id="connectQrButton">Create new</button>
+
+            <br>
+            <br>
+
+            <% unless @user.connections.empty? %>
+                <table border="1">
+                    <tr>
+                       <th>ID</th>
+                       <th>platform</th>
+                       <th>access_token</th>
+                       <th>[X]</th>
+                    </tr>
+                <% @user.connections.each do |item| %>
+                    <tr>
+                        <td><%= item.id %></td>
+                        <td><%= item.platform %></td>
+                        <td><%= item.accessToken %></td>
+                        <td>
+                            <% if item.revoked %>
+                                <b>R</b>
+                            <% else %>
+                                <form method="post" action="/connections/remove">
+                                <input type="hidden" name="id" value="<%= item.id %>">
+                                <input class='btn btn-primary' type='submit' value='X'>
+                                </form>
+                            <% end %>
+                        </td>
+                    </tr>
+                    <% end %>
+                </table>
+            <% else %>
+                <p>Not registered</p>
+            <% end %>
+
+            <!-- The Modal -->
+            <div id="connectQrModal" class="modal">
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <table align="center">
+                        <% @qr.modules.each_index do |x| %>
+                        <tr>
+                            <% @qr.modules.each_index do |y| %>
+                            <% if @qr.dark?(x,y) %>
+                                <td class="black"/>
+                            <% else %>
+                                <td class="white"/>
+                            <% end %>
+                            <% end %>
+                        </tr>
+                    <% end %>
+                  </table>
+
+                    <a href="${authenticator_link}"><h3 style="text-align:center;">or OPEN with Authenticator App</h3></a>
+
+                    <div>
+                        <a href='https://play.google.com/store/apps/details?id=com.saltedge.authenticator'>
+                            <img src='https://cdn.worldvectorlogo.com/logos/google-play-badge.svg' alt='Get it on Google Play' height="44px"/>
+                        </a>
+                        <a href='https://apps.apple.com/md/app/priora-authenticator/id1277625653'>
+                            <img src='https://cdn.worldvectorlogo.com/logos/download-on-the-app-store-apple.svg' alt='Get it on App Store' height="44px"/>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="column" style="background-color:#eee;">
+            <h2>Authorizations (Transactions):</h2>
+
+            <form method="post" action="/users/dashboard">
+                <input type="hidden" name="action" value="create_authorization">
+                <input type="hidden" name="user_id" value="${user.id}">
+                <input type="submit" value="Create new">
+            </form>
+
+            <br>
+
+            <% unless @user.authorizations.empty? %>
+                <table border="1">
+                    <tr>
+                       <th>ID</th>
+                       <th>Title</th>
+                       <th>ExpiresAt</th>
+                       <th>Status</th>
+                    </tr>
+                <% @user.authorizations.each do |item| %>
+                    <tr>
+                        <td><%= item.id %></td>
+                        <td><%= item.title %></td>
+                        <td><%= item.getExpiresAtUTC() %></td>
+                        <td><%= item.getStatus() %></td>
+                    </tr>
+                <% end %>
+            </table>
+            <% else %>
+                <p>Not registered</p>
+            <% end %>
+            <br>
+        </div>
+    </div>
+
+    <script>
+        // Get the modal
+        var modal = document.getElementById("connectQrModal");
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("connectQrButton");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal
+        btn.onclick = function() {
+          modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+          modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+          if (event.target == modal) {
+            modal.style.display = "none";
+          }
+        }
+    </script>
+</body>
+</html>

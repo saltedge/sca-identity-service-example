@@ -2,15 +2,15 @@
     <div class="wrapper">
         <div class="form-wrapper">
         <h3>Log in</h3>
-        <form method="post" action="/user">
+        <form method="post" action="/users/sign_in">
             <div class="input-wrapper">
             <label for="username">Username</label>
-            <input type="text" id="username" class="form-input">
+            <input type="text" name="username" id="username" class="form-input">
             </div>
 
             <div class="input-wrapper">
             <label for="password">Password</label>
-            <input type="password" id="password" class="form-input">
+            <input type="password" name="password" id="password" class="form-input">
             </div>
 
             <div class="with-margin centered">
@@ -23,7 +23,7 @@
         </div>
 
         <div>
-          <a href="/login">Sign up</a>
+          <a href="/users/register">Sign up</a>
         </div>
         </div>
 
