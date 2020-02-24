@@ -1,16 +1,11 @@
-require 'pry'
-
-class UserAuthorizeController < Sinatra::Base
+class UserAuthorizeController < BaseController
   register Sinatra::Namespace
-
-  configure do
-    set :views, "app/views"
-  end
+  include Sinatra::ServiceHelper
 
   get '/' do
     @action = Action.new()
 
-    @instant_action_deeplink = Sinatra::ServiceHelper.create_instant_action_deep_link(@action.uuid, "", "https://#{request.host_with_port}")
+    @instant_action_deeplink = create_instant_action_deep_link(@action.uuid, "", "https://#{request.host_with_port}")
 
     @qr = Sinatra::QrHelper.create_qr_code(@instant_action_deeplink)
     erb :index
@@ -45,6 +40,7 @@ class UserAuthorizeController < Sinatra::Base
     user = User.create!(name: params[:username], password: params[:password])
 
     if params[:redirect].present?
+      binding.pry
       redirect params[:redirect]
     else
       redirect "admin/connections?user_id=#{user.id}"

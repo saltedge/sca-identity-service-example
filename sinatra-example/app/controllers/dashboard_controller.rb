@@ -1,11 +1,6 @@
-class DashboardController < Sinatra::Base
+class DashboardController < BaseController
   register Sinatra::Namespace
   include Sinatra::ServiceHelper
-
-  configure do
-    set :views, "app/views"
-  end
-
 
   ######################### EXAMPLE OF ADMIN (or HELPER) SERVICE ROUTES (FOR TEST PURPOUSE)
   namespace '/admin' do
@@ -22,7 +17,7 @@ class DashboardController < Sinatra::Base
 
       @user_connections = user.connections
 
-      @configuration_deeplink = create_deep_link("https://#{request.host_with_port}", params[:user_id])
+      @configuration_deeplink = create_deep_link(APP_SETTINGS.service_url, params[:user_id])
 
       @qr = Sinatra::QrHelper.create_qr_code(@configuration_deeplink)
 
@@ -34,7 +29,7 @@ class DashboardController < Sinatra::Base
       raise StandardError::BadRequest unless params[:id].present?
       Connection.find_by(id: params[:id]).update(revoked: true)
 
-      redirect params[:redirect] if params[:redirect].present?
+      redirect "admin/connections?user_id=#{params[:user_id]}" if params[:user_id].present?
     end
 
     # REVOKE CONNECTION (FOR TEST PURPOUSE)
@@ -76,7 +71,7 @@ class DashboardController < Sinatra::Base
       # connections = authorization.user.connections.where(revoked: false)
 
       # if connections.any?
-        authorization = Sinatra::ServiceHelper.create_new_authorization!(
+        authorization = create_new_authorization!(
           params[:user_id],
           params[:title],
           params[:description],
