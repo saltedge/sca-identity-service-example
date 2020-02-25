@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'org.springframework.boot' version "2.2.2.RELEASE"
+    id 'io.spring.dependency-management' version "1.0.8.RELEASE"
+}
+
+group 'com.saltedge.sca.sdk'
+version '1.0.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
+shadowJar {
+    destinationDirectory = file('../out')
+    manifest {
+        attributes('Implementation-Title': project.name,
+                'Implementation-Version': project.version)
+    }
+    from sourceSets.main.allSource
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'com.google.guava:guava:28.2-jre'
+    implementation 'com.h2database:h2:1.4.200'
+    implementation("com.google.zxing:core:3.4.0")
+    implementation("com.google.zxing:javase:3.4.0")
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}

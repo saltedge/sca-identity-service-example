@@ -1,0 +1,3 @@
+rootProject.name = 'saltedge-sca-service-spring'
+include 'saltedge-sca-service-sdk'
+include 'example'
