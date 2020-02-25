@@ -1,0 +1,78 @@
+<style type="text/css">
+    body {font-family: Arial, Helvetica, sans-serif;}
+
+    * {
+      box-sizing: border-box;
+    }
+    .top-header {
+        color:white;
+        background-color:#525D76;
+        text-align:center;
+    }
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 0 10px;
+    }
+    .input-wrapper, .wrapper {
+      width: 100%;
+      display: inline-flex;
+    }
+    .wrapper {
+      justify-content: space-between;
+      align-items: center;
+    }
+    .input-wrapper {
+      justify-content: space-around;
+      margin-top: 10px;
+    }
+    .with-margin {
+      margin-top: 10px;
+    }
+    .form-input {
+      margin-left: 10px;
+      position: relative;
+      clear: both;
+    }
+    .form-wrapper {
+        width: 250px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .qr-wrapper {
+        width: 250px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .centered {
+      text-align: center;
+    }
+    table {
+      border-width: 0;
+      border-style: none;
+      border-color: #0000ff;
+      border-collapse: collapse;
+    }
+    td {
+       border-width: 0;
+       border-style: none;
+       border-color: #0000ff;
+       border-collapse: collapse;
+       padding: 0;
+       margin: 0;
+       width: 4px;
+       height: 4px;
+    }
+    td.black { background-color: #000; }
+    td.white { background-color: #fff; }
+    .bottom-box {
+        width: 250px;
+        padding: 10px;
+        text-align: center;
+        border:1px solid gray;
+        border-radius: 8px;
+    }
+</style>

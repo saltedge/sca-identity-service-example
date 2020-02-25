@@ -1,6 +1,6 @@
 language: ruby
 before_install:
-  - cd sinatra-example
+  - cd saltedge-sca-service-sinatra
 install: bundle install
 before_script:
   - cp config/travis.database.yml config/database.yml
