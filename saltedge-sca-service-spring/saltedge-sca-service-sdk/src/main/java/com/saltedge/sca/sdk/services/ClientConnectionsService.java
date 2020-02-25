@@ -85,10 +85,10 @@ public class ClientConnectionsService {
 
     private ClientConnectionEntity createClientConnectionEntity(CreateConnectionRequest.Data requestData, String userId) {
         ClientConnectionEntity entity = new ClientConnectionEntity();
-        entity.setPublicKey(requestData.publicKey);
-        entity.setPushToken(requestData.pushToken);
-        entity.setPlatform(requestData.platform);
-        entity.setReturnUrl(requestData.returnUrl);
+        entity.setPublicKey(requestData.getPublicKey());
+        entity.setPushToken(requestData.getPushToken());
+        entity.setPlatform(requestData.getPlatform());
+        entity.setReturnUrl(requestData.getReturnUrl());
         return (userId == null) ? createAuthenticationToken(entity) : authenticateClientConnection(entity, userId);
     }
 

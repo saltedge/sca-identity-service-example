@@ -68,10 +68,10 @@ public class ClientConnectionsServiceTests {
 		CreateConnectionRequest.Data requestData = new CreateConnectionRequest.Data(keyValue, DEFAULT_AUTHENTICATOR_RETURN_TO, "android", "token", null);
 		ClientConnectionEntity savedEntity = new ClientConnectionEntity();
 		savedEntity.setId(1L);
-		savedEntity.setPublicKey(requestData.publicKey);
-		savedEntity.setPushToken(requestData.pushToken);
-		savedEntity.setPlatform(requestData.platform);
-		savedEntity.setReturnUrl(requestData.returnUrl);
+		savedEntity.setPublicKey(requestData.getPublicKey());
+		savedEntity.setPushToken(requestData.getPushToken());
+		savedEntity.setPlatform(requestData.getPlatform());
+		savedEntity.setReturnUrl(requestData.getReturnUrl());
 
 		given(providerApi.findUserIdByAuthorizationSessionSecret("test")).willReturn(null);
 		given(providerApi.getAuthorizationPageUrl(anyString())).willReturn("http://host.org/oauth");
@@ -102,10 +102,10 @@ public class ClientConnectionsServiceTests {
 		CreateConnectionRequest.Data requestData = new CreateConnectionRequest.Data(keyValue, DEFAULT_AUTHENTICATOR_RETURN_TO, "android", "token", null);
 		ClientConnectionEntity savedEntity = new ClientConnectionEntity();
 		savedEntity.setId(1L);
-		savedEntity.setPublicKey(requestData.publicKey);
-		savedEntity.setPushToken(requestData.pushToken);
-		savedEntity.setPlatform(requestData.platform);
-		savedEntity.setReturnUrl(requestData.returnUrl);
+		savedEntity.setPublicKey(requestData.getPublicKey());
+		savedEntity.setPushToken(requestData.getPushToken());
+		savedEntity.setPlatform(requestData.getPlatform());
+		savedEntity.setReturnUrl(requestData.getReturnUrl());
 		savedEntity.setUserId("1");
 
 		given(providerApi.findUserIdByAuthorizationSessionSecret("test")).willReturn("1");
@@ -166,7 +166,7 @@ public class ClientConnectionsServiceTests {
 
 	@Test
 	public void givenInvalidParams_whenRevokeConnection_thenThrowConstraintViolationException() {
-		assertThrows(ConstraintViolationException.class, () -> testService.revokeConnection(null));
+		assertThrows(ConstraintViolationException.class, () -> testService.revokeConnection((ClientConnectionEntity) null));
 	}
 
 	@Test

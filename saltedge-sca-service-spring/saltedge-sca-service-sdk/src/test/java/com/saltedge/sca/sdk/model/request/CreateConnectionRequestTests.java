@@ -44,19 +44,19 @@ public class CreateConnectionRequestTests extends ValidationTestAbs {
 
         assertThat(validator.validate(model)).isNotEmpty();
 
-        model.data = new CreateConnectionRequest.Data();
+        model.setData(new CreateConnectionRequest.Data());
 
         assertThat(validator.validate(model)).isNotEmpty();
 
-        model.data.returnUrl = DEFAULT_AUTHENTICATOR_RETURN_TO;
-        model.data.platform = "ios";
-        model.data.pushToken = "token";
-        model.data.publicKey = keyValue;
-        model.data.connectQuery = null;
+        model.getData().setReturnUrl(DEFAULT_AUTHENTICATOR_RETURN_TO);
+        model.getData().setPlatform("ios");
+        model.getData().setPushToken("token");
+        model.getData().setPublicKey(keyValue);
+        model.getData().setConnectQuery(null);
 
         assertThat(validator.validate(model)).isEmpty();
 
-        model.data.connectQuery = "123";
+        model.getData().setConnectQuery("123");
 
         assertThat(validator.validate(model)).isEmpty();
     }

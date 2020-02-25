@@ -34,7 +34,7 @@ public class CreateConnectionRequest {
     @JsonProperty(ScaSdkConstants.KEY_DATA)
     @NotNull
     @Valid
-    public CreateConnectionRequest.Data data;
+    private CreateConnectionRequest.Data data;
 
     public CreateConnectionRequest() {
     }
@@ -43,25 +43,33 @@ public class CreateConnectionRequest {
         this.data = data;
     }
 
+    public Data getData() {
+        return data;
+    }
+
+    public void setData(Data data) {
+        this.data = data;
+    }
+
     public static class Data {
         @JsonProperty("public_key")
         @PublicKeyConstraint
-        public String publicKey = "";
+        private String publicKey = "";
 
         @JsonProperty("return_url")
         @NotNull
-        public String returnUrl = "";
+        private String returnUrl = "";
 
         @JsonProperty(KEY_PLATFORM)
         @NotEmpty
-        public String platform = "";
+        private String platform = "";
 
         @JsonProperty(KEY_PUSH_TOKEN)
         @NotNull
-        public String pushToken = "";
+        private String pushToken = "";
 
         @JsonProperty(KEY_CONNECT_QUERY)
-        public String connectQuery;
+        private String connectQuery;
 
         public Data() {
         }
@@ -71,6 +79,46 @@ public class CreateConnectionRequest {
             this.returnUrl = returnUrl;
             this.platform = platform;
             this.pushToken = pushToken;
+            this.connectQuery = connectQuery;
+        }
+
+        public String getPublicKey() {
+            return publicKey;
+        }
+
+        public String getReturnUrl() {
+            return returnUrl;
+        }
+
+        public String getPlatform() {
+            return platform;
+        }
+
+        public String getPushToken() {
+            return pushToken;
+        }
+
+        public String getConnectQuery() {
+            return connectQuery;
+        }
+
+        public void setPublicKey(String publicKey) {
+            this.publicKey = publicKey;
+        }
+
+        public void setReturnUrl(String returnUrl) {
+            this.returnUrl = returnUrl;
+        }
+
+        public void setPlatform(String platform) {
+            this.platform = platform;
+        }
+
+        public void setPushToken(String pushToken) {
+            this.pushToken = pushToken;
+        }
+
+        public void setConnectQuery(String connectQuery) {
             this.connectQuery = connectQuery;
         }
     }

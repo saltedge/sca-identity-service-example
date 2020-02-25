@@ -57,8 +57,8 @@ class ConnectionsController {
             @Valid @RequestBody CreateConnectionRequest newConnectionRequest
     ) {
         if (newConnectionRequest == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        String authorizationSessionSecret = newConnectionRequest.data.connectQuery;
-        CreateConnectionResponse result = connectionsService.createConnection(newConnectionRequest.data, authorizationSessionSecret);
+        String authorizationSessionSecret = newConnectionRequest.getData().getConnectQuery();
+        CreateConnectionResponse result = connectionsService.createConnection(newConnectionRequest.getData(), authorizationSessionSecret);
         return ResponseEntity.ok(result);
     }
 
