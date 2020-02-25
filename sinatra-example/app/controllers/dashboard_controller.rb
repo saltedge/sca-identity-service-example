@@ -76,18 +76,16 @@ class DashboardController < BaseController
         "Confirm payment #{amount} EUR from account GB1234567890 to Salt Edge Payment Processor",
       )
 
-      # connections = authorization.user.connections.where(revoked: false)
+      connections = authorization.user.connections.where(revoked: false)
 
-      # if connections.any?
-
-        # notification_sender = IdentityService::NotificationSender.new(
-        #   "fcm_push_key"              => Sinatra::Application.settings.fcm_push_key,
-        #   "apns_certificate_path"     => Sinatra::Application.settings.apns_certificate_path,
-        #   "apns_certificate_password" => Sinatra::Application.settings.apns_certificate_password
-        # )
-
-        # connections.each { |connection| notification_sender.send(authorization, connection) }
-      # end
+      if connections.any?
+        notification_sender = IdentityService::NotificationSender.new(
+          "push_service_url"        => APP_SETTINGS.push_service_url,
+          "push_service_app_id"     => APP_SETTINGS.push_service_app_id,
+          "push_service_app_secret" => APP_SETTINGS.push_service_app_secret
+        )
+        connections.each { |connection| notification_sender.send(authorization, connection) }
+      end
 
       if params[:redirect].present?
         redirect params[:redirect]

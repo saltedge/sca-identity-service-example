@@ -19,68 +19,40 @@
 
 require 'fcm'
 require 'apnotic'
+require 'rest-client'
 
 module IdentityService
   class NotificationSender
     def initialize(params={})
-      @fcm_push_key              = params["fcm_push_key"]
-      @apns_certificate_path     = params["apns_certificate_path"]
-      @apns_certificate_password = params["apns_certificate_password"]
+      @push_service_url        = params["push_service_url"]
+      @push_service_app_id     = params["push_service_app_id"]
+      @push_service_app_secret = params["push_service_app_secret"]
     end
 
     def send(authorization, connection)
       return if connection.push_token.nil? || connection.push_token.empty? || connection.platform.nil? || connection.platform.empty?
+
+      payload = {
+        "data" => []
+      }
 
       notification_title = "Authorization Request"
       notification_description = "Tap to confirm/deny action"
       notification_data = {
         "title"            => notification_title,
         "body"             => notification_description,
-        "authorization_id" => authorization.id.to_s,
-        "connection_id"    => connection.id.to_s,
-        "expires_at"       => authorization.expires_at.round(10).iso8601(3)
+        "expires_at"       => authorization.expires_at.round(10).iso8601(3),
+        "push_token"       => connection.push_token,
+        "platform"         => connection.platform,
+        "data"             => {
+          "connection_id"    => connection.id.to_s,
+          "authorization_id" => authorization.id.to_s
+        }
       }
 
-      if connection.platform == "android"
-        send_fcm_notification(notification_title, notification_description, notification_data, connection.push_token)
-      elsif connection.platform == "ios"
-        send_apns_notification(notification_title, notification_description, notification_data, connection.push_token)
-      end
-    end
+      payload["data"] << notification_data
 
-    private
-
-    def apns_certificate
-      @apns_certificate ||= File.read(@apns_certificate_path) if File.exist?(@apns_certificate_path)
-    end
-
-    def send_fcm_notification(notification_title, notification_description, notification_data, push_token)
-      tokens = [push_token]
-
-      fcm = FCM.new(@fcm_push_key)
-      options = {
-        "notification" => {
-          "title" => notification_title,
-          "body" => notification_description
-        },
-        "data" => notification_data
-      }
-      response = fcm.send(tokens, options)
-    rescue => error
-      puts error.message
-    end
-
-    def send_apns_notification(notification_title, notification_description, notification_data, push_token)
-      connection = Apnotic::Connection.new(cert_path: @apns_certificate_path, cert_pass: @apns_certificate_password)
-
-      notification = Apnotic::Notification.new(push_token)
-      notification.alert = {
-        title =>  notification_title,
-        body  =>  notification_description
-      }
-      
-      response = connection.push(notification)
-      connection.close
+      RestClient.post @push_service_url, payload, {'Content-Type': :json, 'App-id': @push_service_app_id, 'App-secret': @push_service_app_secret}
     end
   end
 end
