@@ -65,18 +65,20 @@ class DashboardController < BaseController
     #
     # example of authorization_code = sha256(AMOUNT|CURRENCY_CODE|MERCHANT_ID|MERCHANT_NAME|CURRENT_TIME_STAMP)
     # curl -w "\n" -d "user_id=1&title=Create%20a%20payment&description=550$%20for%20Air%20America&authorization_code=123456789" -X POST http://localhost:4567/admin/authorizations
-    post '/authorizations' do
-      raise StandardError::BadRequest unless params.values_at(:user_id, :title, :description).none?(&:blank?)
+    post '/authorizations/create' do
+      raise StandardError::BadRequest unless params.values_at(:user_id).none?(&:blank?)
+
+      amount = rand(1..200)
+
+      authorization = create_new_authorization!(
+        params[:user_id],
+        "Payment for #{amount} EUR",
+        "Confirm payment #{amount} EUR from account GB1234567890 to Salt Edge Payment Processor",
+      )
 
       # connections = authorization.user.connections.where(revoked: false)
 
       # if connections.any?
-        authorization = create_new_authorization!(
-          params[:user_id],
-          params[:title],
-          params[:description],
-          params[:authorization_code]
-        )
 
         # notification_sender = IdentityService::NotificationSender.new(
         #   "fcm_push_key"              => Sinatra::Application.settings.fcm_push_key,
@@ -90,7 +92,7 @@ class DashboardController < BaseController
       if params[:redirect].present?
         redirect params[:redirect]
       else
-        200
+        redirect "admin/connections?user_id=#{params[:user_id]}"
       end
     end
   end

@@ -98,7 +98,7 @@
 <body>
     <h1 class="top-header">User Dashboard: <%= @user.name %> </h1>
 
-    <a href="/users/sign_in"><b>SIGN OUT</b></a>
+    <a href="/"><b>SIGN OUT</b></a>
 
     <div class="row">
         <div class="column" style="background-color:#ddd;">
@@ -175,9 +175,9 @@
         <div class="column" style="background-color:#eee;">
             <h2>Authorizations (Transactions):</h2>
 
-            <form method="post" action="/users/dashboard">
+            <form method="post" action="/admin/authorizations/create">
                 <input type="hidden" name="action" value="create_authorization">
-                <input type="hidden" name="user_id" value="${user.id}">
+                <input type="hidden" name="user_id" value= <%= @user.id %> >
                 <input type="submit" value="Create new">
             </form>
 
@@ -195,8 +195,8 @@
                     <tr>
                         <td><%= item.id %></td>
                         <td><%= item.title %></td>
-                        <td><%= item.getExpiresAtUTC() %></td>
-                        <td><%= item.getStatus() %></td>
+                        <td><%= item.expires_at %></td>
+                        <td><%= item.status %></td>
                     </tr>
                 <% end %>
             </table>

@@ -21,9 +21,6 @@ class UserAuthorizeController < BaseController
       erb :login_error
     else
       redirect "admin/connections?user_id=#{user.id}"
-      # session['user_id'] = user.id
-
-      # erb :login_confirm
     end
   end
 

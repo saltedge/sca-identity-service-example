@@ -207,14 +207,12 @@ module Sinatra
       { data: { success: valid_code, id: authorization_id } }.to_json
     end
 
-    def create_new_authorization!(user_id, title, description, authorization_code)
+    def create_new_authorization!(user_id, title, description)
       user = User.find_by(id: user_id)
       raise UserNotFound if user.nil?
-
-      if authorization_code.nil?
-        template = "#{user_id}|#{title}|#{description}|#{Time.now.utc}"
-        authorization_code = Base64.urlsafe_encode64(Digest::SHA256.hexdigest(template), padding: false)
-      end
+    
+      template = "#{user_id}|#{title}|#{description}|#{Time.now.utc}"
+      authorization_code = Base64.urlsafe_encode64(Digest::SHA256.hexdigest(template), padding: false)
 
       user.authorizations.create(
         expires_at:         Time.now.utc + 5 * 60,

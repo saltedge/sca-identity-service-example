@@ -20,4 +20,18 @@
 class Authorization < ActiveRecord::Base
   belongs_to :user
   validates_presence_of :expires_at, :title, :description, :authorization_code, :user_id
+
+  def status
+    if confirmed != nil
+      confirmed ? "CONFIRMED" : "DENIED"
+    elsif expired
+      "EXPIRED"
+    else
+      "WAITING_CONFIRMATION"
+    end
+  end  
+
+  def expired
+    expires_at != nil && expires_at < Time.now.getutc
+  end
 end
