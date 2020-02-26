@@ -18,9 +18,10 @@
 # under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 
 development: &common_settings
-  fcm_push_key:
-  apns_certificate_path:
-  apns_certificate_password:
+  push_service_url:
+  push_service_app_id:
+  push_service_app_secret:
+  service_url:
 test:
   <<: *common_settings
 production:

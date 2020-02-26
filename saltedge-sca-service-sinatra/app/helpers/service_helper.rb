@@ -23,6 +23,7 @@ require 'uri'
 require 'base64'
 require_relative 'crypt'
 require_relative 'sign'
+require_relative 'enroll_helper'
 
 class Object
   def present?
@@ -36,6 +37,10 @@ end
 
 module Sinatra
   module ServiceHelper
+    include Sinatra::EnrollHelper
+
+    DEEPLINK_URL = 'authenticator://saltedge.com/connect'
+
     # Verifies that request has ACCESS_TOKEN header and related Connection exist
     def verify_identity
       raise AuthorizationRequired unless access_token
@@ -48,7 +53,7 @@ module Sinatra
       expires_at        = request.env["HTTP_EXPIRES_AT"]
       request_method    = request.request_method.downcase
       original_url      = request.url
-      body              = raw_request_body.force_encoding(Encoding::UTF_8)
+      body              = (+raw_request_body).force_encoding(Encoding::UTF_8)
       data              = "#{request_method}|#{original_url}|#{expires_at}|#{body}"
 
       raise SignatureMissing unless current_signature.present?
@@ -85,6 +90,10 @@ module Sinatra
         )
         "#{default_deeplink}&connect_query=#{auth_session_token}"
       end
+    end
+
+    def create_instant_action_deep_link(action_uuid, return_to = "", connect_url)
+      "#{DEEPLINK_URL}/action?action_uuid=#{action_uuid}&return_to=#{URI::encode(return_to)}&connect_url=#{URI::encode(connect_url)}"
     end
 
     # Creates service configuration response
@@ -198,14 +207,12 @@ module Sinatra
       { data: { success: valid_code, id: authorization_id } }.to_json
     end
 
-    def create_new_authorization!(user_id, title, description, authorization_code)
+    def create_new_authorization!(user_id, title, description)
       user = User.find_by(id: user_id)
       raise UserNotFound if user.nil?
-
-      if authorization_code.nil?
-        template = "#{user_id}|#{title}|#{description}|#{Time.now.utc}"
-        authorization_code = Base64.urlsafe_encode64(Digest::SHA256.hexdigest(template), padding: false)
-      end
+    
+      template = "#{user_id}|#{title}|#{description}|#{Time.now.utc}"
+      authorization_code = Base64.urlsafe_encode64(Digest::SHA256.hexdigest(template), padding: false)
 
       user.authorizations.create(
         expires_at:         Time.now.utc + 5 * 60,
@@ -280,6 +287,5 @@ module Sinatra
     def connection
       @connection ||= Connection.find_by(access_token: access_token, revoked: false)
     end
-
   end
 end

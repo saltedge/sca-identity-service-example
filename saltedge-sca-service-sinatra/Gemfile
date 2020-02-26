@@ -27,8 +27,7 @@ gem 'sinatra-activerecord' # ActiveRecord implementation
 gem 'sqlite3'              # SQLite DB
 gem 'json'                 # JSON implementation
 gem 'rqrcode'              # QR code generator
-gem 'fcm'                  # FCM Push service client
-gem 'apnotic'              # APNS Push service client
+gem 'pry'
 
 group :development do
   gem 'rubocop', '~> 0.71.0', require: false

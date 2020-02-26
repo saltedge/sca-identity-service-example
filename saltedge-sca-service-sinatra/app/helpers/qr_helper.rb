@@ -21,7 +21,7 @@ require 'rqrcode'
 
 module Sinatra
   module QrHelper
-    def create_qr_code(configuration_url)
+    def self.create_qr_code(configuration_url)
       RQRCode::QRCode.new(configuration_url)
     end
   end

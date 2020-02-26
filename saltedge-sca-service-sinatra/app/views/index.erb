@@ -1,0 +1,117 @@
+<div class="container">
+    <div class="wrapper">
+        <div class="form-wrapper">
+        <h3>Log in</h3>
+        <form method="post" action="/users/sign_in">
+            <div class="input-wrapper">
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" class="form-input">
+            </div>
+
+            <div class="input-wrapper">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" class="form-input">
+            </div>
+
+            <div class="with-margin centered">
+              <input type="submit" value="Sign in">
+            </div>
+        </form>
+
+        <div>
+          <p>New user?</p>
+        </div>
+
+        <div>
+          <a href="/users/register">Sign up</a>
+        </div>
+        </div>
+
+        <div>
+        <h2>OR</h2>
+        </div>
+
+        <div class="centered">
+          <h3>Scan with Salt Edge Authenticator</h3>
+
+          <div class="qr-section">
+          <table align="center">
+          <% @qr.modules.each_index do |x| %>
+            <tr>
+              <% @qr.modules.each_index do |y| %>
+                <% if @qr.dark?(x,y) %>
+                  <td class="black"/>
+                    <% else %>
+                      <td class="white"/>
+                    <% end %>
+                <% end %>
+            </tr>
+            <% end %>
+            </table>
+
+          <a href="#" class="with-margin">Open in Authenticator</a>
+          </div>
+        </div>
+</div>
+
+<style>
+    * {
+      box-sizing: border-box;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0 10px;
+    }
+    .input-wrapper, .wrapper {
+      width: 100%;
+      display: inline-flex;
+    }
+    .wrapper {
+      justify-content: space-between;
+      align-items: center;
+    }
+    .input-wrapper {
+      justify-content: space-around;
+      margin-top: 10px;
+    }
+    .with-margin {
+      margin-top: 10px;
+    }
+    .form-input {
+      margin-left: 10px;
+      position: relative;
+      clear: both;
+    }
+    .form-wrapper {
+      width: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .qr-section {
+      width: 250px;
+      height: 250px;
+    }
+    .centered {
+      text-align: center;
+    }
+    table {
+      border-width: 0;
+      border-style: none;
+      border-color: #0000ff;
+      border-collapse: collapse;
+    }
+    td {
+       border-width: 0;
+       border-style: none;
+       border-color: #0000ff;
+       border-collapse: collapse;
+       padding: 0;
+       margin: 0;
+       width: 4px;
+       height: 4px;
+    }
+    td.black { background-color: #000; }
+    td.white { background-color: #fff; }
+</style>
