@@ -1,4 +1,5 @@
 class BaseController < Sinatra::Base
+  include Sinatra::ServiceHelper
   register Sinatra::Namespace
 
   set :raise_errors, false
