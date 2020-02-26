@@ -1,6 +1,4 @@
 class UserAuthorizeController < BaseController
-  include Sinatra::ServiceHelper
-
   get '/' do
     @action = Action.new()
 

@@ -1,6 +1,4 @@
 class DashboardController < BaseController
-  include Sinatra::ServiceHelper
-
   ######################### EXAMPLE OF ADMIN (or HELPER) SERVICE ROUTES (FOR TEST PURPOUSE)
   namespace '/admin' do
     # REVOKE CONNECTION (FOR TEST PURPOUSE)
