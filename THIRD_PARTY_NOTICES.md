@@ -10,7 +10,6 @@ If you modify this Program, or any covered work, by linking or combining it with
 * [sqlite3-ruby (Modified BSD license)](https://raw.githubusercontent.com/sparklemotion/sqlite3-ruby/master/LICENSE)
 * [json-ruby (FreeBSD license)](https://www.ruby-lang.org/en/about/license.txt)
 * [rqrcode (MIT license)](https://raw.githubusercontent.com/whomwah/rqrcode/master/LICENSE)
-* [fcm-ruby-push-notifications (MIT license)](https://raw.githubusercontent.com/santhums/ruby-push-notifications/master/LICENSE)
 * [rubocop (MIT license)](https://raw.githubusercontent.com/rubocop-hq/rubocop/master/LICENSE.txt)
 * [rack-test (MIT license)](https://raw.githubusercontent.com/rack-test/rack-test/master/MIT-LICENSE.txt)
 * [rspec (MIT license)](https://raw.githubusercontent.com/rspec/rspec/master/LICENSE.md)

@@ -17,8 +17,6 @@
 # For the additional permissions granted for Salt Edge Authenticator
 # under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 
-require 'fcm'
-require 'apnotic'
 require 'rest-client'
 
 module IdentityService
