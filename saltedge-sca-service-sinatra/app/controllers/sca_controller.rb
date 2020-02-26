@@ -1,7 +1,4 @@
-require 'pry'
-
 class SCAController < BaseController
-  register Sinatra::Namespace
   include Sinatra::ServiceHelper
 
   ######################### EXAMPLE OF IDENTITY SERVICE API

@@ -1,4 +1,6 @@
 class BaseController < Sinatra::Base
+  register Sinatra::Namespace
+
   set :raise_errors, false
   set :show_exceptions, false
 

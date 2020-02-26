@@ -1,5 +1,4 @@
 class DashboardController < BaseController
-  register Sinatra::Namespace
   include Sinatra::ServiceHelper
 
   ######################### EXAMPLE OF ADMIN (or HELPER) SERVICE ROUTES (FOR TEST PURPOUSE)

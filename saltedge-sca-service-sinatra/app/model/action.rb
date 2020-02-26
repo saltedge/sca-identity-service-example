@@ -3,7 +3,7 @@ class Action
     attr_accessor :id, :uuid, :type, :status, :created_at, :expires_at
 
     STATUSES = ["waiting_confirmation", "pending", "confirmed", "denied"].freeze
-    TYPES = ["sca", "normal"].freeze
+    TYPES    = ["sca", "normal"].freeze
 
     STATUSES.each do |status|
         const_set(status.upcase, status)

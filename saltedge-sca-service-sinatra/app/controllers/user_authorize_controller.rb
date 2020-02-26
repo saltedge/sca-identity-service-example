@@ -1,5 +1,4 @@
 class UserAuthorizeController < BaseController
-  register Sinatra::Namespace
   include Sinatra::ServiceHelper
 
   get '/' do
@@ -37,7 +36,6 @@ class UserAuthorizeController < BaseController
     user = User.create!(name: params[:username], password: params[:password])
 
     if params[:redirect].present?
-      binding.pry
       redirect params[:redirect]
     else
       redirect "admin/connections?user_id=#{user.id}"

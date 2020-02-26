@@ -1,5 +1,5 @@
 application.yml
 database.yml
-*.DS_Store
+.DS_Store
 *.sqlite3
 tmp/**

@@ -63,7 +63,7 @@ Fork this repository
 
 1. Run application
 	```
-	bundle exec ruby app/service.rb
+	bundle exec ruby app/config.ru
 	```
 
 ## Run Sinatra example in Docker container
