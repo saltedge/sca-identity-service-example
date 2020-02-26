@@ -10,7 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_27_090159) do
+ActiveRecord::Schema.define(version: 2020_02_26_102512) do
+
+  create_table "actions", force: :cascade do |t|
+  end
 
   create_table "authorizations", force: :cascade do |t|
     t.string "user_id"
