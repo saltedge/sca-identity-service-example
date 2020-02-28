@@ -23,6 +23,7 @@ package com.saltedge.sca.sdk.models.persistent;
 import com.saltedge.sca.sdk.models.ActionStatus;
 import com.saltedge.sca.sdk.models.AuthenticateAction;
 import com.saltedge.sca.sdk.models.converter.StringMapConverter;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -43,9 +44,6 @@ public class AuthenticateActionEntity extends BaseEntity implements Authenticate
     @Column
     private LocalDateTime expiresAt;
 
-    @Column(nullable = false)
-    private Boolean requireSca = false;
-
     @Column(length = 4096)
     private String title;
 
@@ -62,24 +60,17 @@ public class AuthenticateActionEntity extends BaseEntity implements Authenticate
     public AuthenticateActionEntity() { }
 
     public AuthenticateActionEntity(String code, String uuid) {
-        this.code = code;
-        this.uuid = uuid;
-        this.requireSca = false;
+        this(code, uuid, LocalDateTime.now().plusMinutes(5));
     }
 
     public AuthenticateActionEntity(
             String code,
             String uuid,
-            Boolean requireSca,
-            String title,
-            String description
+            LocalDateTime actionExpiresAt
     ) {
         this.code = code;
         this.uuid = uuid;
-        this.expiresAt = LocalDateTime.now().plusMinutes(5);
-        this.requireSca = requireSca;
-        this.title = title;
-        this.description = description;
+        this.expiresAt = actionExpiresAt;
     }
 
     @Override
@@ -109,16 +100,6 @@ public class AuthenticateActionEntity extends BaseEntity implements Authenticate
         this.expiresAt = expiresAt;
     }
 
-    @Override
-    public Boolean getRequireSca() {
-        return requireSca;
-    }
-
-    public void setRequireSca(Boolean requireSca) {
-        this.requireSca = requireSca;
-    }
-
-    @Override
     public String getTitle() {
         return title;
     }
@@ -127,7 +108,6 @@ public class AuthenticateActionEntity extends BaseEntity implements Authenticate
         this.title = title;
     }
 
-    @Override
     public String getDescription() {
         return description;
     }
@@ -161,13 +141,13 @@ public class AuthenticateActionEntity extends BaseEntity implements Authenticate
 
     @Override
     public Boolean isAuthenticated() {
-        return userId != null;
+        return !StringUtils.isEmpty(userId);
     }
 
     @Override
-    public ActionStatus getActionStatus() {
-        if (this.isExpired()) return ActionStatus.EXPIRED;
-        else if (this.isAuthenticated()) return ActionStatus.AUTHENTICATED;
-        else return ActionStatus.WAITING_CONFIRMATION;
+    public ActionStatus getStatus() {
+        if (isAuthenticated()) return ActionStatus.AUTHENTICATED;
+        if (isExpired()) return ActionStatus.EXPIRED;
+        return ActionStatus.WAITING_AUTHENTICATION;
     }
 }

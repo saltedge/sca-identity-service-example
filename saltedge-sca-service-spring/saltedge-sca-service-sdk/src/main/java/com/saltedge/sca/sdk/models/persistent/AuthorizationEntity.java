@@ -21,6 +21,7 @@
 package com.saltedge.sca.sdk.models.persistent;
 
 import com.saltedge.sca.sdk.models.Authorization;
+import com.saltedge.sca.sdk.models.AuthorizationStatus;
 import com.saltedge.sca.sdk.tools.DateTools;
 
 import javax.persistence.Column;
@@ -28,6 +29,9 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 
+/**
+ * @see com.saltedge.sca.sdk.models.Authorization
+ */
 @Entity(name = "Transaction_Authorization")
 @Table(name = "Transaction_Authorization")
 public class AuthorizationEntity extends BaseEntity implements Authorization {
@@ -70,10 +74,11 @@ public class AuthorizationEntity extends BaseEntity implements Authorization {
         return DateTools.convertDateToIso8601(expiresAt);
     }
 
-    public String getStatus() {
-        if (confirmed != null) return confirmed ? "CONFIRMED" : "DENIED";
-        if (this.isExpired()) return "EXPIRED";
-        return "WAITING_CONFIRMATION";
+    @Override
+    public AuthorizationStatus getStatus() {
+        if (confirmed != null) return confirmed ? AuthorizationStatus.CONFIRMED : AuthorizationStatus.DENIED;
+        if (this.isExpired()) return AuthorizationStatus.EXPIRED;
+        return AuthorizationStatus.WAITING_CONFIRMATION;
     }
 
     @Override

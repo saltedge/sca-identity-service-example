@@ -30,8 +30,8 @@ class UsersService {
     @Autowired
     lateinit var usersRepository: UsersRepository
 
-    fun findAndValidateUser(userId: Long): User? {
-        return  usersRepository.findFirstById(userId)//userId.toLongOrNull()?.let { }
+    fun findUser(userId: Long): User? {
+        return usersRepository.findFirstById(userId)
     }
 
     fun findUserIdByAuthSessionCode(sessionSecret: String?): String? {

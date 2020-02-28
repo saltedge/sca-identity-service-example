@@ -20,9 +20,8 @@
  */
 package com.saltedge.sca.sdk.provider;
 
-import com.saltedge.sca.sdk.models.ActionProcessResult;
-
-import javax.validation.constraints.NotNull;
+import com.saltedge.sca.sdk.models.AuthenticateAction;
+import com.saltedge.sca.sdk.models.Authorization;
 
 /**
  * Interface for communication between SCA Service and Service Provider application.
@@ -35,4 +34,6 @@ public interface ServiceProvider {
     String getProviderName();
     String getProviderLogoUrl();
     String getProviderSupportEmail();
+    Long onAuthenticateAction(AuthenticateAction action);
+    void onAuthorizationConfirmed(Authorization authorization);
 }

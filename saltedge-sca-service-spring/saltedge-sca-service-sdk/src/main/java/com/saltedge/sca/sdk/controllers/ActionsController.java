@@ -23,7 +23,7 @@ package com.saltedge.sca.sdk.controllers;
 import com.saltedge.sca.sdk.ScaSdkConstants;
 import com.saltedge.sca.sdk.models.api.requests.EmptyAuthenticatedRequest;
 import com.saltedge.sca.sdk.models.api.responces.ActionResponse;
-import com.saltedge.sca.sdk.services.ActionsService;
+import com.saltedge.sca.sdk.services.AuthenticateActionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +41,7 @@ import javax.validation.constraints.NotEmpty;
 public class ActionsController {
     public final static String ACTIONS_REQUEST_PATH = ScaSdkConstants.AUTHENTICATOR_API_BASE_PATH + "/action";
     @Autowired
-    protected ActionsService actionsService;
+    protected AuthenticateActionsService actionsService;
 
     @PostMapping("/{" + ScaSdkConstants.KEY_ACTION_UUID + "}")
     public ResponseEntity<ActionResponse> onSubmitAction(

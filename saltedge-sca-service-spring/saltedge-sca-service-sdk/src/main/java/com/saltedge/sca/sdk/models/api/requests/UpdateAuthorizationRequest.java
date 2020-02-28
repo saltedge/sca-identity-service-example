@@ -44,7 +44,7 @@ public class UpdateAuthorizationRequest extends AuthenticatedRequestAbs {
     public static class Data {
         @JsonProperty("confirm")
         @NotNull
-        public Boolean confirm;
+        public Boolean confirmAuthorization;
 
         @JsonProperty(KEY_AUTHORIZATION_CODE)
         @NotNull
@@ -53,8 +53,8 @@ public class UpdateAuthorizationRequest extends AuthenticatedRequestAbs {
         public Data() {
         }
 
-        public Data(@NotNull Boolean confirm, @NotNull String authorizationCode) {
-            this.confirm = confirm;
+        public Data(@NotNull Boolean confirmAuthorization, @NotNull String authorizationCode) {
+            this.confirmAuthorization = confirmAuthorization;
             this.authorizationCode = authorizationCode;
         }
     }

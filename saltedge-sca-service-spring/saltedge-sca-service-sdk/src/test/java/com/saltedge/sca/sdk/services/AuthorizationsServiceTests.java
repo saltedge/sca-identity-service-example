@@ -57,8 +57,8 @@ public class AuthorizationsServiceTests {
 
 	@Test
 	public void givenInvalidParams_whenCreateAuthorization_thenThrowConstraintViolationException() {
-		assertThrows(ConstraintViolationException.class, () -> testService.createAuthorization(null, null, null));
-		assertThrows(ConstraintViolationException.class, () -> testService.createAuthorization("", "", ""));
+		assertThrows(ConstraintViolationException.class, () -> testService.createAuthorization(null, null, null, null));
+		assertThrows(ConstraintViolationException.class, () -> testService.createAuthorization("", "", "", ""));
 	}
 
 	@Test
@@ -69,7 +69,7 @@ public class AuthorizationsServiceTests {
 		given(testRepository.save(any(AuthorizationEntity.class))).willReturn(savedEntity);
 
 		//when
-		testService.createAuthorization("1", "test title", "test desc");
+		testService.createAuthorization("1", "code", "test title", "test desc");
 
 		//then
 		ArgumentCaptor<AuthorizationEntity> entityCaptor = ArgumentCaptor.forClass(AuthorizationEntity.class);
@@ -80,14 +80,14 @@ public class AuthorizationsServiceTests {
 		assertThat(entityCaptor.getValue().getConfirmed()).isNull();
 		assertThat(entityCaptor.getValue().getTitle()).isEqualTo("test title");
 		assertThat(entityCaptor.getValue().getDescription()).isEqualTo("test desc");
-		assertThat(entityCaptor.getValue().getAuthorizationCode()).isNotEmpty();
+		assertThat(entityCaptor.getValue().getAuthorizationCode()).isEqualTo("code");
 		assertThat(entityCaptor.getValue().getUserId()).isEqualTo("1");
 	}
 
 	@Test
 	public void givenInvalidParams_whenGetAuthorizations_thenThrowConstraintViolationException() {
-		assertThrows(ConstraintViolationException.class, () -> testService.getAuthorizations(null));
-		assertThrows(ConstraintViolationException.class, () -> testService.getAuthorizations(""));
+		assertThrows(ConstraintViolationException.class, () -> testService.getAllAuthorizations(null));
+		assertThrows(ConstraintViolationException.class, () -> testService.getAllAuthorizations(""));
 	}
 
 	@Test
@@ -98,7 +98,7 @@ public class AuthorizationsServiceTests {
 		given(testRepository.findByUserId("1")).willReturn(Lists.list(savedEntity));
 
 		//when
-		List<Authorization> result = testService.getAuthorizations("1");
+		List<Authorization> result = testService.getAllAuthorizations("1");
 
 		//then
 		assertThat(result).hasSize(1);

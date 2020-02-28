@@ -1,8 +1,8 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '5.2.0'
     id 'org.springframework.boot' version "2.2.2.RELEASE"
     id 'io.spring.dependency-management' version "1.0.8.RELEASE"
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
 group 'com.saltedge.sca.sdk'
@@ -25,8 +25,7 @@ jar {
 shadowJar {
     destinationDirectory = file('../out')
     manifest {
-        attributes('Implementation-Title': project.name,
-                'Implementation-Version': project.version)
+        attributes('Implementation-Title': project.name, 'Implementation-Version': project.version)
     }
     from sourceSets.main.allSource
 }

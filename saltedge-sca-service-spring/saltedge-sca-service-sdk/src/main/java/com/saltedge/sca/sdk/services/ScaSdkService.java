@@ -21,7 +21,6 @@
 package com.saltedge.sca.sdk.services;
 
 import com.saltedge.sca.sdk.controllers.ConfigurationController;
-import com.saltedge.sca.sdk.models.ActionStatus;
 import com.saltedge.sca.sdk.models.AuthenticateAction;
 import com.saltedge.sca.sdk.models.Authorization;
 import com.saltedge.sca.sdk.models.ClientConnection;
@@ -37,6 +36,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.saltedge.sca.sdk.ScaSdkConstants.*;
@@ -54,7 +54,7 @@ public class ScaSdkService {
     @Autowired
     private ClientConnectionsService connectionsService;
     @Autowired
-    private ActionsService actionsService;
+    private AuthenticateActionsService actionsService;
 
     public List<ClientConnection> getClientConnections(@NotEmpty String userId) {
         return connectionsService.getConnections(userId);
@@ -74,12 +74,12 @@ public class ScaSdkService {
         return (StringUtils.isEmpty(connectSecret)) ? link : link + "&" + KEY_CONNECT_QUERY + "=" + connectSecret;
     }
 
-    public Authorization createAuthorization(@NotEmpty String userId, @NotEmpty String title, @NotEmpty String description) {
-        return authorizationsService.createAuthorization(userId, title, description);
+    public Authorization createAuthorization(@NotEmpty String userId, @NotEmpty String confirmationCode, @NotEmpty String title, @NotEmpty String description) {
+        return authorizationsService.createAuthorization(userId, confirmationCode, title, description);
     }
 
-    public List<Authorization> getAuthorizations(@NotEmpty String userId) {
-        return authorizationsService.getAuthorizations(userId);
+    public List<Authorization> getAllAuthorizations(@NotEmpty String userId) {
+        return authorizationsService.getAllAuthorizations(userId);
     }
 
     public String onUserAuthenticationSuccess(@NotNull String authSessionSecret, @NotEmpty String userId) {
@@ -98,20 +98,20 @@ public class ScaSdkService {
         return createUserAuthErrorUrl(returnUrl, "AUTHENTICATION_FAILED", errorMessage);
     }
 
-    public AuthenticateAction createAction(@NotEmpty String code) {
-        return actionsService.createAction(code);
+    public AuthenticateAction createAction(
+            @NotEmpty String actionCode,
+            String uuid,
+            LocalDateTime actionExpiresAt
+    ) {
+        return actionsService.createAction(actionCode, uuid, actionExpiresAt);
     }
 
-    public AuthenticateAction getActionByUUID(@NotEmpty String actionUUID) {
+    public AuthenticateAction getActionByUUID(@NotNull String actionUUID) {
+        if (StringUtils.isEmpty(actionUUID)) return null;
         return actionsService.getActionByUUID(actionUUID);
     }
 
-    public ActionStatus getActionStatus(@NotEmpty String actionUUID) {
-        AuthenticateAction action = actionsService.getActionByUUID(actionUUID);
-        return (action == null) ? null : action.getActionStatus();
-    }
-
-    public String createActionAppLink(@NotEmpty String actionUUID) {
+    public String createAuthenticateActionAppLink(@NotEmpty String actionUUID) {
         String identityServiceUrl = EnvironmentTools.getScaServiceUrl(env);
         return APP_LINK_PREFIX_ACTION + "?" + KEY_ACTION_UUID + "=" + actionUUID + "&" + KEY_CONNECT_URL + "=" + identityServiceUrl;
     }

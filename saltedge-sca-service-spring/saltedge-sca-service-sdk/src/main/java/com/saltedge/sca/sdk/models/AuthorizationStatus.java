@@ -20,20 +20,6 @@
  */
 package com.saltedge.sca.sdk.models;
 
-import java.time.LocalDateTime;
-
-/**
- * SCA Authorization field description
- *
- * @see com.saltedge.sca.sdk.models.persistent.AuthorizationEntity
- */
-public interface Authorization extends BaseEntityAbs {
-    LocalDateTime getExpiresAt();
-    String getTitle();
-    String getDescription();
-    String getExpiresAtUTC();
-    String getAuthorizationCode();
-    String getUserId();
-    Boolean getConfirmed();
-    AuthorizationStatus getStatus();//TODO rm
+public enum AuthorizationStatus {
+    CONFIRMED, DENIED, EXPIRED, WAITING_CONFIRMATION
 }

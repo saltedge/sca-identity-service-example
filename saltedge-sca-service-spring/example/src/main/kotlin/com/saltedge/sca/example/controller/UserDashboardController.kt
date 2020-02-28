@@ -24,6 +24,7 @@ import com.saltedge.sca.example.model.User
 import com.saltedge.sca.example.services.UsersService
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_USER_ID
 import com.saltedge.sca.sdk.services.ScaSdkService
+import com.saltedge.sca.sdk.tools.CodeBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
@@ -43,16 +44,16 @@ class UserDashboardController {
     private lateinit var scaSdkService: ScaSdkService
 
     companion object {
-        fun redirectToDashboard(userId: Long): ModelAndView {
-            return ModelAndView("redirect:$DASHBOARD_PATH?user_id=$userId")
-        }
+        fun redirectToDashboard(userId: Long): ModelAndView = ModelAndView(createRedirectToDashboard(userId))
+
+        fun createRedirectToDashboard(userId: Long): String = "redirect:$DASHBOARD_PATH?user_id=$userId"
     }
 
     @GetMapping
     fun showDashboard(
             @RequestParam(value = KEY_USER_ID, required = false) userId: Long?
     ): ModelAndView {
-        val user = userId?.let { usersService.findAndValidateUser(it) } ?: return ModelAndView("users_dashboard_denied")
+        val user = userId?.let { usersService.findUser(it) } ?: return ModelAndView("users_dashboard_denied")
         return ModelAndView("users_dashboard").addDashboardData(user)
     }
 
@@ -61,7 +62,7 @@ class UserDashboardController {
             @RequestParam(value = KEY_USER_ID) userId: Long,
             @RequestParam("action") actionCode: String?
     ): ModelAndView {
-        val user = usersService.findAndValidateUser(userId) ?: return ModelAndView("users_dashboard_denied")
+        val user = usersService.findUser(userId) ?: return ModelAndView("users_dashboard_denied")
 
         when (actionCode) {
             "create_authorization" -> createAuthorization(template = actionCode, user = user)
@@ -73,7 +74,7 @@ class UserDashboardController {
         val connections = scaSdkService.getClientConnections(user.id.toString())
         val userConnectSecret = usersService.getOrCreateUserConnectSecret(user.id)
         val appLink: String = scaSdkService.createConnectAppLink(userConnectSecret)
-        val authorizations = scaSdkService.getAuthorizations(user.id.toString())
+        val authorizations = scaSdkService.getAllAuthorizations(user.id.toString())
         this.addObject("user", user)
                 .addObject("connections", connections)
                 .addObject("authenticator_link", appLink)
@@ -87,7 +88,8 @@ class UserDashboardController {
         val amountString = "%.2f".format(amount)
         scaSdkService.createAuthorization(
                 user.id.toString(),
-                "Payment for $amountString EUR",
+                CodeBuilder.generateRandomString(),
+                "Demo Payment for $amountString EUR",
                 "Confirm payment $amountString EUR from account GB1234567890 to Salt Edge Payment Processor"
         )
     }

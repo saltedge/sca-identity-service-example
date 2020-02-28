@@ -27,21 +27,18 @@ import com.saltedge.sca.sdk.models.api.requests.UpdateAuthorizationRequest;
 import com.saltedge.sca.sdk.models.api.responces.AuthorizationResponse;
 import com.saltedge.sca.sdk.models.api.responces.AuthorizationsResponse;
 import com.saltedge.sca.sdk.models.api.responces.UpdateAuthorizationResponse;
-import com.saltedge.sca.sdk.models.persistent.AuthorizationEntity;
-import com.saltedge.sca.sdk.models.persistent.AuthorizationsCollector;
-import com.saltedge.sca.sdk.models.persistent.AuthorizationsRepository;
+import com.saltedge.sca.sdk.services.AuthorizationsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * REST Controller designated for serving Service Provider's SCA authorizations
+ * REST Controller designated for serving SCA Authorizations
  * @see {https://github.com/saltedge/sca-identity-service-example/blob/master/docs/IDENTITY_SERVICE_API.md#show-authorizations-list}
  */
 @RestController
@@ -50,46 +47,34 @@ import java.util.List;
 public class AuthorizationsController {
     public final static String AUTHORIZATIONS_REQUEST_PATH = ScaSdkConstants.AUTHENTICATOR_API_BASE_PATH + "/authorizations";
     @Autowired
-    private AuthorizationsRepository authorizationsRepository;
+    private AuthorizationsService authorizationsService;
 
     @GetMapping
-    public ResponseEntity<AuthorizationsResponse> getAuthorizations(EmptyAuthenticatedRequest request) {
-        List<EncryptedAuthorization> result = AuthorizationsCollector.collectActiveAuthorizations(
-                authorizationsRepository,
-                request.getConnection()
-        );
+    public ResponseEntity<AuthorizationsResponse> getActiveAuthorizations(EmptyAuthenticatedRequest request) {
+        List<EncryptedAuthorization> result = authorizationsService.getActiveAuthorizations(request.getConnection());
         return ResponseEntity.ok(new AuthorizationsResponse(result));
     }
 
     @GetMapping("/{" + ScaSdkConstants.KEY_AUTHORIZATION_ID + "}")
-    public ResponseEntity<AuthorizationResponse> getAuthorization(
+    public ResponseEntity<AuthorizationResponse> getActiveAuthorization(
             @PathVariable(ScaSdkConstants.KEY_AUTHORIZATION_ID) @NotNull Long authorizationId,
             EmptyAuthenticatedRequest request
     ) {
-        EncryptedAuthorization authorization = AuthorizationsCollector.collectActiveAuthorization(
-                authorizationsRepository,
-                request.getConnection(),
-                authorizationId
-        );
+        EncryptedAuthorization authorization = authorizationsService.getActiveAuthorization(request.getConnection(), authorizationId);
         return ResponseEntity.ok(new AuthorizationResponse(authorization));
     }
 
     @PutMapping("/{" + ScaSdkConstants.KEY_AUTHORIZATION_ID + "}")
-    public ResponseEntity<UpdateAuthorizationResponse> updateAuthorization(
+    public ResponseEntity<UpdateAuthorizationResponse> confirmAuthorization(
             @PathVariable(ScaSdkConstants.KEY_AUTHORIZATION_ID) @NotNull Long authorizationId,
             @Valid UpdateAuthorizationRequest request
     ) {
-        AuthorizationEntity authorization = AuthorizationsCollector.findActiveAuthorization(
-                authorizationsRepository,
+        boolean result = authorizationsService.confirmAuthorization(
                 request.getConnection(),
-                authorizationId
+                authorizationId,
+                request.data.authorizationCode,
+                request.data.confirmAuthorization
         );
-
-        boolean confirmSuccess = authorization.getAuthorizationCode().equals(request.data.authorizationCode);
-        if (confirmSuccess) {
-            authorization.setConfirmed(request.data.confirm);
-            authorizationsRepository.save(authorization);
-        }
-        return ResponseEntity.ok(new UpdateAuthorizationResponse(confirmSuccess, authorizationId.toString()));
+        return ResponseEntity.ok(new UpdateAuthorizationResponse(result, authorizationId.toString()));
     }
 }

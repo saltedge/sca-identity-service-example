@@ -9,11 +9,11 @@
 
     <script language="javascript">
         function refreshStatus() {
-            var action_uuid = "${action_uuid}"
+            var payment_uuid = "${payment.uuid}"
             var token = $('input[name="csrfToken"]').attr('value');
 
             $.ajax({
-                url: "/sca/login/status?action_uuid=" + action_uuid,
+                url: "/sca/payment/status?payment_uuid=" + payment_uuid,
                 method: "get",
                 dataType: "json",
                 headers: {
@@ -21,22 +21,17 @@
                 },
                 success: function(data) {
                     var status = data["status"]
-                    var redirect = data["redirect"]
+                    var userName = data["user_name"]
+                    var showAuth = data["show_auth"]
 
-                    switch(status) {
-                        case "expired":
-                            document.getElementById("login_action").style.visibility = "hidden"
-                            break
-                        case "authenticated":
-                            var link  = document.createElement('a');
-                            link.href = redirect;
-                            document.body.appendChild(link);
-                            link.click();
-                            break
-                        default:
-                            polling()
-                            break
+                    document.getElementById("payment-status").textContent = status
+                    document.getElementById("payment-user").textContent = userName
+                    if (showAuth) {
+                        document.getElementById("auth_block").style.visibility = "visible"
+                    } else {
+                        document.getElementById("auth_block").style.visibility = "hidden"
                     }
+                    polling()
                 },
                 fail: function(data) {
                     console.log(data);  debugger;
@@ -53,13 +48,27 @@
     </script>
 </head>
 <body>
-    <h1 class="top-header">Salt Edge SCA Example Login</h1>
+    <h1 class="top-header">Payment Order Example</h1>
     <div class="container">
-        <div class="wrapper">
+        <div>
+            <a href="/payments/order?create_new=true"><h3 style="display: inline;">[Create new]</h3></a>
+
+            <a href="/"><h3 style="display: inline;">[Index]</h3></a>
+
+            <a href="/users/sign_in"><h3 style="display: inline;">[Dashboard]</h3></a>
+        </div>
+        <div style="border:1px solid gray;padding: 10px;">
+            <p>Payee: ${payment.payeeName} ${payment.payeeAddress}
+            <p>Amount: ${payment.amount} ${payment.currency}
+            <p>User: <span id="payment-user">${userName}</span>
+            <p>Status: <span id="payment-status">${payment.status}</span>
+        </div>
+
+        <div class="wrapper" id="auth_block">
 
             <div class="form-wrapper">
-                <h3>Input credentials</h3>
-                <form method="post" action="/users/sign_in">
+                <h3>Authorize with credentials</h3>
+                <form method="post" action="/payments/sign_in">
                     <div class="input-wrapper">
                         <label for="username">Username</label>
                         <input type="text" id="username" name="username" class="form-input">
@@ -71,7 +80,8 @@
                     </div>
 
                     <div class="with-margin centered">
-                        <input type="submit" value="Login" style="font-size:20px">
+                        <input type="hidden" name="payment_uuid" value="${payment.uuid}">
+                        <input type="submit" value="Authorize" style="font-size:20px">
                     </div>
                 </form>
 
@@ -80,30 +90,20 @@
                 <#else>
                     <p></p>
                 </#if>
-
-                <div class="bottom-box">
-                    <p>New user?</p>
-                    <a href="/users/register"><h3>Register</h3></a>
-                </div>
             </div>
 
-            <#if show_sca_options?? && show_sca_options>
+
             <div>
                 <h2>OR</h2>
             </div>
 
             <div id="sca_options" class="centered">
                 <div id="login_action" class="qr-wrapper">
-                    <h3>Instant Login with<br>Authenticator</h3>
+                    <h3>Authorize with Authenticator</h3>
                     <img class="qr_img" src="${qr_img_src}" width="256" height="256" align="middle">
-                    <a href="${authenticator_link}"><h3 style="text-align:center;">Click to Instant Login</h3></a>
-                </div>
-                <div class="bottom-box">
-                    <p>New Authenticator?</p>
-                    <a href="/users/connect_sca"><h3>Connect</h3></a>
+                    <a href="${authenticator_link}"><h3 style="text-align:center;">Click to Authorize</h3></a>
                 </div>
             </div>
-            </#if>
 
         </div>
     </div>

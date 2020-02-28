@@ -25,27 +25,16 @@ import java.util.Map;
 
 /**
  * Model of AuthenticateAction. Describe action
+ *
+ * @see com.saltedge.sca.sdk.models.persistent.AuthenticateActionEntity
  */
 public interface AuthenticateAction extends BaseEntityAbs {
     String getCode();
-
     String getUUID();
-
     LocalDateTime getExpiresAt();
-
-    Boolean getRequireSca();
-
-    String getTitle();
-
-    String getDescription();
-
     String getUserId();
-
     Boolean isExpired();
-
     Boolean isAuthenticated();
-
-    ActionStatus getActionStatus();
-
+    ActionStatus getStatus();
     Map<String, String> getExtra();
 }

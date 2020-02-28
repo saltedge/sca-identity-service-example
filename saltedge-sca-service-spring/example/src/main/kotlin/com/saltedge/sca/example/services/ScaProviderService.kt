@@ -20,9 +20,13 @@
  */
 package com.saltedge.sca.example.services
 
+import com.saltedge.sca.example.controller.SCA_ACTION_LOGIN
+import com.saltedge.sca.example.controller.SCA_ACTION_PAYMENT
 import com.saltedge.sca.example.controller.SIGN_IN_SCA_PATH
 import com.saltedge.sca.example.tools.getApplicationUrl
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_SECRET
+import com.saltedge.sca.sdk.models.AuthenticateAction
+import com.saltedge.sca.sdk.models.Authorization
 import com.saltedge.sca.sdk.provider.ServiceProvider
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -32,12 +36,14 @@ import org.springframework.stereotype.Service
 import org.springframework.web.util.UriComponentsBuilder
 
 @Service
-class ScaConnectorService : ServiceProvider {
-    private val log: Logger = LoggerFactory.getLogger(ScaConnectorService::class.java)
+class ScaProviderService : ServiceProvider {
+    private val log: Logger = LoggerFactory.getLogger(ScaProviderService::class.java)
     @Autowired
     lateinit var env: Environment
     @Autowired
     lateinit var usersService: UsersService
+    @Autowired
+    lateinit var paymentsService: PaymentsService
 
     override fun getProviderName(): String {
         return "Spring Bank Example"
@@ -70,5 +76,26 @@ class ScaConnectorService : ServiceProvider {
             e.printStackTrace()
             null
         }
+    }
+
+    override fun onAuthenticateAction(action: AuthenticateAction): Long? {
+        if (action.isExpired) return null
+        when (action.code) {
+            SCA_ACTION_LOGIN -> return null
+            SCA_ACTION_PAYMENT -> {
+                return paymentsService.onAuthenticatePaymentOrder(
+                        paymentUUID = action.uuid,
+                        userId = action.userId.toLongOrNull() ?: return null
+                )
+            }
+            else -> return null
+        }
+    }
+
+    override fun onAuthorizationConfirmed(authorization: Authorization) {
+        paymentsService.onAuthorizePaymentOrder(
+                paymentUUID = authorization.authorizationCode ?: return,
+                confirmed = authorization.confirmed ?: return
+        )
     }
 }

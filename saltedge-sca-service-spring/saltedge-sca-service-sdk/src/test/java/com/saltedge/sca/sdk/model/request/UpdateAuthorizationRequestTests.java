@@ -37,22 +37,22 @@ public class UpdateAuthorizationRequestTests extends ValidationTestAbs {
 
         assertThat(validator.validate(model)).isNotEmpty();
 
-        model.data.confirm = null;
+        model.data.confirmAuthorization = null;
         model.data.authorizationCode = null;
 
         assertThat(validator.validate(model)).isNotEmpty();
 
-        model.data.confirm = true;
+        model.data.confirmAuthorization = true;
         model.data.authorizationCode = null;
 
         assertThat(validator.validate(model)).isNotEmpty();
 
-        model.data.confirm = null;
+        model.data.confirmAuthorization = null;
         model.data.authorizationCode = "";
 
         assertThat(validator.validate(model)).isNotEmpty();
 
-        model.data.confirm = false;
+        model.data.confirmAuthorization = false;
         model.data.authorizationCode = "";
 
         assertThat(validator.validate(model)).isEmpty();

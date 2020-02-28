@@ -18,11 +18,14 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.sca.sdk.models.persistent;
+package com.saltedge.sca.sdk.services;
 
 import com.saltedge.sca.sdk.errors.NotFound;
 import com.saltedge.sca.sdk.models.api.EncryptedAuthorization;
 import com.saltedge.sca.sdk.models.converter.AuthorizationConverter;
+import com.saltedge.sca.sdk.models.persistent.AuthorizationEntity;
+import com.saltedge.sca.sdk.models.persistent.AuthorizationsRepository;
+import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
 
 import java.security.PublicKey;
 import java.time.LocalDateTime;
@@ -35,7 +38,7 @@ import java.util.stream.Collectors;
 public class AuthorizationsCollector {
 
     /**
-     * Finds Active (not expired and not confirmed) Authorization entities by User ID and encrypts them.
+     * Collects Active (not expired and not confirmed) Authorization entities by User ID and encrypts them.
      *
      * @param authorizationsRepository
      * @param connection to Client Authenticator with RSA Public Key
@@ -58,7 +61,7 @@ public class AuthorizationsCollector {
     }
 
     /**
-     * Finds Active (not expired and not confirmed) Authorization entity by ID and User ID, and encrypts it.
+     * Collects Active (not expired and not confirmed) Authorization entity by ID and User ID, and encrypts it.
      *
      * @param authorizationsRepository
      * @param connection
@@ -76,7 +79,7 @@ public class AuthorizationsCollector {
     }
 
     /**
-     * Finds Active (not expired and not confirmed) Authorization entity by ID and User ID
+     * Collects Active (not expired and not confirmed) Authorization entity by ID and User ID
      *
      * @param authorizationsRepository
      * @param connection
