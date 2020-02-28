@@ -20,8 +20,6 @@
  */
 package com.saltedge.sca.sdk.services;
 
-import com.saltedge.sca.sdk.models.ActionStatus;
-import com.saltedge.sca.sdk.models.persistent.AuthenticateActionEntity;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
 import com.saltedge.sca.sdk.provider.ServiceProvider;
 import org.junit.Test;
@@ -58,7 +56,7 @@ public class ScaSdkServiceTests {
 	@MockBean
 	private ClientConnectionsService connectionsService;
 	@MockBean
-	private ActionsService actionsService;
+	private AuthenticateActionsService actionsService;
 
 	@Test
 	public void givenConnectionsService_whenGetClientConnections_thenReturnListOfConnections() {
@@ -98,7 +96,7 @@ public class ScaSdkServiceTests {
 
 	@Test
 	public void givenInvalidActionUUID_whenCreateActionAppLink_thenThrowConstraintViolationException() {
-		assertThrows(ConstraintViolationException.class, () -> testService.createActionAppLink(""));
+		assertThrows(ConstraintViolationException.class, () -> testService.createAuthenticateActionAppLink(""));
 	}
 
 	@Test
@@ -107,7 +105,7 @@ public class ScaSdkServiceTests {
 		// Test properties
 
 		//when
-		String result = testService.createActionAppLink("123");
+		String result = testService.createAuthenticateActionAppLink("123");
 
 		//then
 		assertThat(result).isEqualTo("authenticator://saltedge.com/action?action_uuid=123&connect_url=http://sca.host.org");
@@ -119,10 +117,10 @@ public class ScaSdkServiceTests {
 		// AuthorizationsService
 
 		//when
-		testService.createAuthorization("1", "test title", "test desc");
+		testService.createAuthorization("1", "code", "test title", "test desc");
 
 		//then
-		verify(authorizationsService).createAuthorization("1", "test title", "test desc");
+		verify(authorizationsService).createAuthorization("1", "code", "test title", "test desc");
 	}
 
 	@Test
@@ -131,10 +129,10 @@ public class ScaSdkServiceTests {
 		// AuthorizationsService
 
 		//when
-		testService.getAuthorizations("1");
+		testService.getAllAuthorizations("1");
 
 		//then
-		verify(authorizationsService).getAuthorizations("1");
+		verify(authorizationsService).getAllAuthorizations("1");
 	}
 
 	@Test
@@ -211,10 +209,10 @@ public class ScaSdkServiceTests {
 		// ActionsService
 
 		//when
-		testService.createAction("action_code");
+		testService.createAction("action_code", "uuid", null);
 
 		//then
-		verify(actionsService).createAction("action_code");
+		verify(actionsService).createAction("action_code", "uuid", null);
 	}
 
 	@Test
@@ -227,29 +225,5 @@ public class ScaSdkServiceTests {
 
 		//then
 		verify(actionsService).getActionByUUID("action_uuid");
-	}
-
-	@Test
-	public void givenService_whenGetActionStatus_thenReturnNull() {
-		//given
-		given(actionsService.getActionByUUID("action_uuid")).willReturn(null);
-
-		//when
-		ActionStatus result = testService.getActionStatus("action_uuid");
-
-		//then
-		assertThat(result).isNull();
-	}
-
-	@Test
-	public void givenService_whenGetActionStatus_thenReturnStatus() {
-		//given
-		given(actionsService.getActionByUUID("action_uuid")).willReturn(new AuthenticateActionEntity());
-
-		//when
-		ActionStatus result = testService.getActionStatus("action_uuid");
-
-		//then
-		assertThat(result).isEqualTo(ActionStatus.WAITING_CONFIRMATION);
 	}
 }

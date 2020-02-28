@@ -22,7 +22,7 @@ package com.saltedge.sca.example.controller
 
 import com.saltedge.sca.example.services.UserAuthService
 import com.saltedge.sca.example.tools.COOKIE_AUTHENTICATION_ACTION
-import com.saltedge.sca.example.tools.saveAuthenticationActionCookie
+import com.saltedge.sca.example.tools.saveActionCookie
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_ACTION_UUID
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_SECRET
 import com.saltedge.sca.sdk.services.ScaSdkService
@@ -43,7 +43,7 @@ const val SIGN_IN_CONNECT_SCA_PATH = "/users/connect_sca"
 
 @Controller
 class UserSignInController {
-    private val log = LoggerFactory.getLogger(UserSignInController::class.java)
+    private val log = LoggerFactory.getLogger(PaymentsController::class.java)
     private val signInQrTemplate = "users_sign_in_qr"
     private val signUpTemplate = "users_register"
     @Autowired
@@ -56,8 +56,8 @@ class UserSignInController {
             @CookieValue(value = COOKIE_AUTHENTICATION_ACTION, defaultValue = "") savedActionUUID: String,
             response: HttpServletResponse
     ): ModelAndView {
-        val actionUUID: String = userAuthService.getOrCreateAuthenticateAction(savedActionUUID)
-        if (savedActionUUID != actionUUID) saveAuthenticationActionCookie(actionUUID, response)
+        val actionUUID: String = userAuthService.getOrCreateAuthSession(savedActionUUID)
+        if (savedActionUUID != actionUUID) saveActionCookie(COOKIE_AUTHENTICATION_ACTION, actionUUID, response)
         val appLink: String = userAuthService.createActionAppLink(actionUUID)
         val existUsers = userAuthService.hasUsers()
         return ModelAndView(signInQrTemplate)

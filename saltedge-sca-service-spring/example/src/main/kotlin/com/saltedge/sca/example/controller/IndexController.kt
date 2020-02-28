@@ -20,19 +20,14 @@
  */
 package com.saltedge.sca.example.controller
 
-import com.saltedge.sca.sdk.models.persistent.AuthorizationsRepository
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.servlet.ModelAndView
 
 @Controller
 class IndexController {
-    @Autowired
-    private val repository: AuthorizationsRepository? = null
-
     @GetMapping(value = ["/"])
     fun showIndex(): ModelAndView {
-        return ModelAndView("redirect:$SIGN_IN_PATH")
+        return ModelAndView("index")
     }
 }

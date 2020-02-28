@@ -20,17 +20,26 @@
  */
 package com.saltedge.sca.sdk.services;
 
+import com.saltedge.sca.sdk.ScaSdkConstants;
 import com.saltedge.sca.sdk.models.Authorization;
+import com.saltedge.sca.sdk.models.api.EncryptedAuthorization;
 import com.saltedge.sca.sdk.models.converter.AuthorizationConverter;
+import com.saltedge.sca.sdk.models.persistent.AuthorizationEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationsRepository;
+import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
+import com.saltedge.sca.sdk.provider.ServiceProvider;
+import com.saltedge.sca.sdk.tools.CodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,14 +51,74 @@ public class AuthorizationsService {
     private AuthorizationsRepository authorizationsRepository;
     @Autowired
     private ClientNotificationService clientNotificationService;
+    @Autowired
+    private ServiceProvider serviceProvider;
 
-    public Authorization createAuthorization(@NotEmpty String userId, @NotEmpty String title, @NotEmpty String description) {
-        Authorization authorization = AuthorizationConverter.createAndSaveAuthorization(userId, title, description, authorizationsRepository);
+    public Authorization createAuthorization(
+            @NotEmpty String userId,
+            @NotEmpty String confirmationCode,
+            @NotEmpty String title,
+            @NotEmpty String description
+    ) {
+        Authorization authorization = createAndSaveAuthorization(userId, confirmationCode, title, description);
         clientNotificationService.sendNotificationsForUser(userId, authorization);
         return authorization;
     }
 
-    public List<Authorization> getAuthorizations(@NotEmpty String userId) {
+    public List<Authorization> getAllAuthorizations(@NotEmpty String userId) {
         return authorizationsRepository.findByUserId(userId).stream().map(item -> (Authorization) item).collect(Collectors.toList());
+    }
+
+    public Authorization getAuthorization(Long authorizationId) {
+        if (StringUtils.isEmpty(authorizationId)) return null;
+        return authorizationsRepository.findById(authorizationId).orElse(null);
+    }
+
+    public List<EncryptedAuthorization> getActiveAuthorizations(@NotNull ClientConnectionEntity connection) {
+        return AuthorizationsCollector.collectActiveAuthorizations(authorizationsRepository, connection);
+    }
+
+    public EncryptedAuthorization getActiveAuthorization(@NotNull ClientConnectionEntity connection, @NotNull Long authorizationId) {
+        return AuthorizationsCollector.collectActiveAuthorization(authorizationsRepository, connection, authorizationId);
+    }
+
+    public boolean confirmAuthorization(
+            @NotNull ClientConnectionEntity connection,
+            @NotNull Long authorizationId,
+            @NotNull String authorizationCode,
+            @NotNull boolean confirmAuthorization
+    ) {
+        AuthorizationEntity authorization = AuthorizationsCollector.findActiveAuthorization(
+                authorizationsRepository,
+                connection,
+                authorizationId
+        );
+
+        boolean canUpdateAuthorization = authorization.getAuthorizationCode().equals(authorizationCode);
+        if (canUpdateAuthorization) {
+            authorization.setConfirmed(confirmAuthorization);
+            authorizationsRepository.save(authorization);
+            serviceProvider.onAuthorizationConfirmed(authorization);
+        }
+        return canUpdateAuthorization;
+    }
+
+    private Authorization createAndSaveAuthorization(
+            String userId,
+            String confirmationCode,
+            String title,
+            String description
+    ) {
+        String titleValue = (title == null) ? "Authorization Request" : title;
+        String descriptionValue = (description == null) ? "Confirm your identity" : description;
+        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(ScaSdkConstants.AUTHORIZATION_DEFAULT_LIFETIME_MINUTES);
+        AuthorizationEntity model = new AuthorizationEntity(
+                titleValue,
+                descriptionValue,
+                expiresAt,
+                confirmationCode,
+                userId
+        );
+        return authorizationsRepository.save(model);
     }
 }

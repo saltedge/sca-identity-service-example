@@ -20,15 +20,14 @@
  */
 package com.saltedge.sca.example.model
 
-import com.saltedge.sca.sdk.tools.CodeBuilder
+import com.saltedge.sca.sdk.models.AuthenticateAction
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
-import java.util.*
 import javax.persistence.*
 
 @Entity
-class User() {
+class PaymentOrder() {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     public var id: Long = 0
@@ -41,29 +40,30 @@ class User() {
     @UpdateTimestamp
     private val updatedAt: LocalDateTime? = null
 
-    @Column(nullable = false, length = 64, unique = true)
-    var name: String = ""
+    @Column(nullable = false, length = 4096, unique = true)
+    var uuid: String = ""
 
     @Column(nullable = false, length = 64)
-    var password: String = ""
+    var amount: String = ""
 
-    @Column(length = 4096)
-    var authSessionSecret: String? = null
+    @Column(nullable = false, length = 3)
+    var currency: String = ""
+
+    @Column(nullable = false, length = 4096)
+    var payeeName: String = ""
+
+    @Column(nullable = false, length = 4096)
+    var payeeAddress: String = ""
 
     @Column
-    private var authSessionSecretExpiresAt: Long? = null
+    var userId: Long? = null
 
-    constructor(name: String, password: String) : this() {
-        this.name = name
-        this.password = password
-    }
+    @Column(nullable = false, length = 256)
+    var status: String = "waiting_confirmation"
 
-    fun authSessionSecretIsExpired(): Boolean {
-        return (authSessionSecretExpiresAt ?: return true) <= Date().time
-    }
+    fun isClosed(): Boolean = status == "closed_success" || status == "closed_deny" || status == "closed_error"
 
-    fun createAuthSessionSecret() {
-        this.authSessionSecret = CodeBuilder.generateRandomString()
-        this.authSessionSecretExpiresAt = Date().time + 5 * 60 * 1000
-    }
+    fun isWaitingConfirmation(): Boolean = status == "waiting_confirmation"
+
+    fun isAuthenticated(): Boolean = userId != null
 }

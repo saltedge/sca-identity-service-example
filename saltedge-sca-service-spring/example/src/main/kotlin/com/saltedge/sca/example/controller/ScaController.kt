@@ -20,9 +20,14 @@
  */
 package com.saltedge.sca.example.controller
 
+import com.saltedge.sca.example.model.PaymentOrder
+import com.saltedge.sca.example.services.PaymentsService
 import com.saltedge.sca.example.services.UsersService
+import com.saltedge.sca.example.tools.COOKIE_AUTHENTICATION_ACTION
+import com.saltedge.sca.example.tools.clearActionCookie
 import com.saltedge.sca.sdk.ScaSdkConstants
 import com.saltedge.sca.sdk.errors.NotFound
+import com.saltedge.sca.sdk.models.ActionStatus
 import com.saltedge.sca.sdk.services.ScaSdkService
 import com.saltedge.sca.sdk.tools.QrTools
 import org.slf4j.LoggerFactory
@@ -31,13 +36,14 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.servlet.ModelAndView
 import javax.servlet.http.HttpServletResponse
 
 const val SCA_CONNECT_QR_PATH = "/sca/connect/qr"
 const val SCA_ACTION_QR_PATH = "/sca/action/qr"
-const val SCA_ACTIONS_STATUS_PATH = "/sca/actions/status"
-const val SCA_ACTIONS_EXECUTE_PATH = "/sca/actions/execute"
+const val SCA_LOGIN_STATUS_PATH = "/sca/login/status"
+const val SCA_PAYMENT_STATUS_PATH = "/sca/payment/status"
+const val SCA_ACTION_LOGIN = "authenticate_login_action"
+const val SCA_ACTION_PAYMENT = "authenticate_payment_action"
 
 @Controller
 class ScaController {
@@ -46,6 +52,8 @@ class ScaController {
     private lateinit var scaSdkService: ScaSdkService
     @Autowired
     private lateinit var usersService: UsersService
+    @Autowired
+    private lateinit var paymentsService: PaymentsService
 
     @GetMapping(SCA_CONNECT_QR_PATH)
     fun getConnectQRImage(
@@ -68,7 +76,7 @@ class ScaController {
             @RequestParam(ScaSdkConstants.KEY_ACTION_UUID) actionId: String?,
             response: HttpServletResponse
     ) {
-        val appLink: String = scaSdkService.createActionAppLink(actionId)
+        val appLink: String = scaSdkService.createAuthenticateActionAppLink(actionId)
         QrTools.encodeTextAsQrPngImage(appLink, 256, 256)?.let { image ->
             response.contentType = "image/png"
             val outputStream = response.outputStream
@@ -78,21 +86,63 @@ class ScaController {
         }
     }
 
-    @GetMapping(SCA_ACTIONS_STATUS_PATH)
+    @GetMapping(SCA_LOGIN_STATUS_PATH)
     @ResponseBody
-    fun getActionStatus(@RequestParam(ScaSdkConstants.KEY_ACTION_UUID) actionUUID: String?): Map<String, String> {
-        val status = scaSdkService.getActionStatus(actionUUID) ?: throw NotFound.ActionNotFound()
-        return mapOf("status" to status.toString().toLowerCase())
-    }
-
-    @GetMapping(SCA_ACTIONS_EXECUTE_PATH)
-    fun executeAction(@RequestParam(ScaSdkConstants.KEY_ACTION_UUID) actionUUID: String?): ModelAndView {
+    fun getScaLoginStatus(
+            @RequestParam(ScaSdkConstants.KEY_ACTION_UUID) actionUUID: String?,
+            response: HttpServletResponse
+    ): Map<String, String> {
         val action = scaSdkService.getActionByUUID(actionUUID) ?: throw NotFound.ActionNotFound()
-        val userId = action.userId?.toLongOrNull() ?: return ModelAndView("redirect:$SIGN_IN_PATH")
-        return if (action.isAuthenticated) {
-            UserDashboardController.redirectToDashboard(userId)
+        return if (action.status == ActionStatus.AUTHENTICATED) {
+            val userId = action.userId?.toLongOrNull() ?: return mapOf("status" to action.status.toString().toLowerCase())
+            clearActionCookie(COOKIE_AUTHENTICATION_ACTION, response)
+
+            mapOf(
+                    "status" to action.status.toString().toLowerCase(),
+                    "redirect" to UserDashboardController.createRedirectToDashboard(userId)
+            )
         } else {
-            ModelAndView("redirect:$SIGN_IN_PATH")
+            mapOf("status" to action.status.toString().toLowerCase())
         }
     }
+
+    @GetMapping(SCA_PAYMENT_STATUS_PATH)
+    @ResponseBody
+    fun getScaPaymentStatus(
+            @RequestParam("payment_uuid") paymentUUID: String,
+            response: HttpServletResponse
+    ): Map<String, Any> {
+        val payment: PaymentOrder? = paymentsService.getPaymentByUUID(paymentUUID)
+        val userName = payment?.userId?.let { usersService.findUser(it) }?.name ?: "Unknown"
+
+        return mapOf(
+                "status" to (payment?.status ?: "No payment"),
+                "user_name" to userName,
+                "show_auth" to (payment?.isAuthenticated()?.not() ?: true)
+        )
+    }
+
+//    @GetMapping(SCA_ACTIONS_EXECUTE_PATH)
+//    fun executeAction(
+//            @RequestParam(ScaSdkConstants.KEY_ACTION_UUID) actionUUID: String?,
+//            response: HttpServletResponse
+//    ): ModelAndView {
+//        val action: AuthenticateAction = scaSdkService.getActionByUUID(actionUUID) ?: throw NotFound.ActionNotFound()
+//        val userId = action.userId?.toLongOrNull()
+//        return if (userId != null) {
+//            when (action.code) {
+//                SCA_ACTION_LOGIN -> {
+//                    clearActionCookie(COOKIE_AUTHENTICATION_ACTION, response)
+//                    UserDashboardController.redirectToDashboard(userId)
+//                }
+//                SCA_ACTION_PAYMENT -> {
+//                    clearActionCookie(COOKIE_PAYMENT_ACTION, response)
+//                    ModelAndView("redirect:$PAYMENTS_ORDER_FINISH_PATH")
+//                }
+//                else -> ModelAndView("redirect:$SIGN_IN_PATH")
+//            }
+//        } else {
+//            ModelAndView("redirect:$SIGN_IN_PATH")
+//        }
+//    }
 }

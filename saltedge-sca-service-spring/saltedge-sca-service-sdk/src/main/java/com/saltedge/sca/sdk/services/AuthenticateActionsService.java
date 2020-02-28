@@ -20,37 +20,34 @@
  */
 package com.saltedge.sca.sdk.services;
 
-import com.google.common.collect.ImmutableList;
 import com.saltedge.sca.sdk.errors.BadRequest;
 import com.saltedge.sca.sdk.errors.NotFound;
 import com.saltedge.sca.sdk.models.AuthenticateAction;
-import com.saltedge.sca.sdk.models.Authorization;
 import com.saltedge.sca.sdk.models.api.responces.ActionResponse;
-import com.saltedge.sca.sdk.models.converter.AuthorizationConverter;
 import com.saltedge.sca.sdk.models.persistent.AuthenticateActionEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthenticateActionsRepository;
-import com.saltedge.sca.sdk.models.persistent.AuthorizationsRepository;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
+import com.saltedge.sca.sdk.provider.ServiceProvider;
 import com.saltedge.sca.sdk.tools.CodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Service
 @Validated
-public class ActionsService {
-    private Logger log = LoggerFactory.getLogger(ActionsService.class);
-    @Autowired
-    private AuthorizationsRepository authorizationsRepository;
+public class AuthenticateActionsService {
+    private Logger log = LoggerFactory.getLogger(AuthenticateActionsService.class);
     @Autowired
     private AuthenticateActionsRepository actionsRepository;
     @Autowired
-    private ClientNotificationService clientNotificationService;
+    private ServiceProvider serviceProvider;
 
     public ActionResponse onNewAuthenticatedAction(@NotEmpty String actionUUID, @NotNull ClientConnectionEntity connection) throws NotFound.ActionNotFound {
         AuthenticateActionEntity action = actionsRepository.findFirstByUuid(actionUUID);
@@ -60,17 +57,25 @@ public class ActionsService {
         action.setUserId(connection.getUserId());
         actionsRepository.save(action);
 
-        if (action.getRequireSca()) {
-            Authorization authorization = AuthorizationConverter.createAndSaveAuthorization(connection.getUserId(), action.getTitle(), action.getDescription(), authorizationsRepository);
-            clientNotificationService.sendNotificationForConnections(ImmutableList.of(connection), authorization);
-            return new ActionResponse(true, String.valueOf(connection.getId()), String.valueOf(authorization.getId()));
+        Long authorizationId = serviceProvider.onAuthenticateAction(action);
+
+        if (authorizationId != null) {
+            return new ActionResponse(true, String.valueOf(connection.getId()), String.valueOf(authorizationId));
         } else {
             return new ActionResponse(true, null, null);
         }
     }
 
-    public AuthenticateAction createAction(@NotEmpty String code) {
-        AuthenticateActionEntity action = new AuthenticateActionEntity(code, CodeBuilder.generateRandomString());
+    public AuthenticateAction createAction(
+            @NotEmpty String actionCode,
+            String uuid,
+            LocalDateTime actionExpiresAt
+    ) {
+        AuthenticateActionEntity action = new AuthenticateActionEntity(
+                actionCode,
+                (StringUtils.isEmpty(uuid)) ? CodeBuilder.generateRandomString() : uuid,
+                actionExpiresAt
+        );
         return actionsRepository.save(action);
     }
 

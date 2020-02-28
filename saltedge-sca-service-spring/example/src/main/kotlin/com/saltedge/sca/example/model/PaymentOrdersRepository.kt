@@ -18,22 +18,11 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.sca.sdk.models;
+package com.saltedge.sca.example.model
 
-import java.time.LocalDateTime;
+import org.springframework.data.jpa.repository.JpaRepository
 
-/**
- * SCA Authorization field description
- *
- * @see com.saltedge.sca.sdk.models.persistent.AuthorizationEntity
- */
-public interface Authorization extends BaseEntityAbs {
-    LocalDateTime getExpiresAt();
-    String getTitle();
-    String getDescription();
-    String getExpiresAtUTC();
-    String getAuthorizationCode();
-    String getUserId();
-    Boolean getConfirmed();
-    AuthorizationStatus getStatus();//TODO rm
+interface PaymentOrdersRepository : JpaRepository<PaymentOrder, Long> {
+    fun findFirstById(id: Long?): PaymentOrder?
+    fun findFirstByUuid(uuid: String): PaymentOrder?
 }
