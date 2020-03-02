@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.NotEmpty;
 
 /**
- * REST Controller designated for serving SCA actions
+ * REST Controller designated for serving SCA Actions
  */
 @RestController
 @RequestMapping(ActionsController.ACTIONS_REQUEST_PATH)
@@ -43,6 +43,13 @@ public class ActionsController {
     @Autowired
     protected AuthenticateActionsService actionsService;
 
+    /**
+     * Receives request of authenticated action
+     *
+     * @param actionUUID unique action identifier
+     * @param request with Connection entity
+     * @return ActionResponse response
+     */
     @PostMapping("/{" + ScaSdkConstants.KEY_ACTION_UUID + "}")
     public ResponseEntity<ActionResponse> onSubmitAction(
             @PathVariable(ScaSdkConstants.KEY_ACTION_UUID) @NotEmpty String actionUUID,

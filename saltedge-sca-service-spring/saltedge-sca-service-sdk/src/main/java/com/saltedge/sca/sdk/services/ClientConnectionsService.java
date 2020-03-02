@@ -53,7 +53,7 @@ public class ClientConnectionsService {
     private ServiceProvider providerApi;
 
     public CreateConnectionResponse createConnection(@NotNull CreateConnectionRequest.Data data, String authorizationSessionSecret) {
-        String userId = StringUtils.isEmpty(authorizationSessionSecret) ? null : providerApi.findUserIdByAuthorizationSessionSecret(authorizationSessionSecret);
+        String userId = StringUtils.isEmpty(authorizationSessionSecret) ? null : providerApi.getUserIdByAuthenticationSessionSecret(authorizationSessionSecret);
         ClientConnectionEntity connection = createClientConnectionEntity(data, userId);
         String authenticationUrl = createConnectionResponseUrl(connection);
         return new CreateConnectionResponse(String.valueOf(connection.getId()), authenticationUrl);

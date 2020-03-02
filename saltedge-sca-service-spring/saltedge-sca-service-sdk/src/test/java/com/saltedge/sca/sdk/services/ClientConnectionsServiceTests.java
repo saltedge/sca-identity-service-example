@@ -73,7 +73,7 @@ public class ClientConnectionsServiceTests {
 		savedEntity.setPlatform(requestData.getPlatform());
 		savedEntity.setReturnUrl(requestData.getReturnUrl());
 
-		given(providerApi.findUserIdByAuthorizationSessionSecret("test")).willReturn(null);
+		given(providerApi.getUserIdByAuthenticationSessionSecret("test")).willReturn(null);
 		given(providerApi.getAuthorizationPageUrl(anyString())).willReturn("http://host.org/oauth");
 		given(connectionsRepository.save(any(ClientConnectionEntity.class))).willReturn(savedEntity);
 
@@ -108,7 +108,7 @@ public class ClientConnectionsServiceTests {
 		savedEntity.setReturnUrl(requestData.getReturnUrl());
 		savedEntity.setUserId("1");
 
-		given(providerApi.findUserIdByAuthorizationSessionSecret("test")).willReturn("1");
+		given(providerApi.getUserIdByAuthenticationSessionSecret("test")).willReturn("1");
 		given(providerApi.getAuthorizationPageUrl(anyString())).willReturn("http://host.org/oauth");
 		given(connectionsRepository.save(any(ClientConnectionEntity.class))).willReturn(savedEntity);
 

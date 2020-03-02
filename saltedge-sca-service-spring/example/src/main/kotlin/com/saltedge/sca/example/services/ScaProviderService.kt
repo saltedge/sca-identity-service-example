@@ -35,6 +35,9 @@ import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 import org.springframework.web.util.UriComponentsBuilder
 
+/**
+ * Provides required by SCA module information and receives Action and Authorization events.
+ */
 @Service
 class ScaProviderService : ServiceProvider {
     private val log: Logger = LoggerFactory.getLogger(ScaProviderService::class.java)
@@ -45,32 +48,67 @@ class ScaProviderService : ServiceProvider {
     @Autowired
     lateinit var paymentsService: PaymentsService
 
+    /**
+     * Provides human readable name of Service Provider
+     *
+     * @return name
+     */
     override fun getProviderName(): String {
         return "Spring Bank Example"
     }
 
+    /**
+     * Provides email of Service Provider for clients support
+     *
+     * @return email string
+     */
     override fun getProviderSupportEmail(): String {
         return "support@spring-demobank.com"
     }
 
+    /**
+     * Provides code name of Service Provider
+     *
+     * @return name
+     */
     override fun getProviderCode(): String {
         return "spring-bank"
     }
 
+    /**
+     * Provides logo image of Service Provider
+     *
+     * @return url string
+     */
     override fun getProviderLogoUrl(): String {
         return "https://s3-media1.fl.yelpcdn.com/bphoto/9J0LUrYkKYuwcICwQztkxw/ls.jpg"
     }
 
-    override fun findUserIdByAuthorizationSessionSecret(sessionSecret: String?): String? {
+    /**
+     * Find User entity by authentication session secret code.
+     * Authentication session secret code is created
+     * when user already authenticated and want to connect Authenticator app
+     *
+     * @param sessionSecret code.
+     * @return user id
+     */
+    override fun getUserIdByAuthenticationSessionSecret(sessionSecret: String?): String? {
         return usersService.findUserIdByAuthSessionCode(sessionSecret)
     }
 
-    override fun getAuthorizationPageUrl(sessionSecret: String?): String? {
+    /**
+     * Provides URL of authentication page of Service Provider
+     * for redirection in Authenticator app.
+     *
+     * @param enrollSessionSecret code related to Authenticator connection
+     * @return url string
+     */
+    override fun getAuthorizationPageUrl(enrollSessionSecret: String?): String? {
         return try {
             val urlString = getApplicationUrl(env)!!
             UriComponentsBuilder.fromUriString(urlString)
                     .path(SIGN_IN_SCA_PATH)
-                    .apply { if (!sessionSecret.isNullOrBlank()) queryParam(KEY_SECRET, sessionSecret) }
+                    .apply { if (!enrollSessionSecret.isNullOrBlank()) queryParam(KEY_SECRET, enrollSessionSecret) }
                     .build().toUriString()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -78,6 +116,13 @@ class ScaProviderService : ServiceProvider {
         }
     }
 
+    /**
+     * Notifies application about receiving new authenticated Action request.
+     * It can be Sign-in to portal action or Payment action which requires authentication.
+     *
+     * @param action entity with uuid and userId
+     * @return return authorization id if SCA confirmation is required or null.
+     */
     override fun onAuthenticateAction(action: AuthenticateAction): Long? {
         if (action.isExpired) return null
         when (action.code) {
@@ -92,6 +137,11 @@ class ScaProviderService : ServiceProvider {
         }
     }
 
+    /**
+     * Notifies application about confirmation or denying of SCA Authorization
+     *
+     * @param authorization entity with unique authorizationCode and isConfirmed fields
+     */
     override fun onAuthorizationConfirmed(authorization: Authorization) {
         paymentsService.onAuthorizePaymentOrder(
                 paymentUUID = authorization.authorizationCode ?: return,
