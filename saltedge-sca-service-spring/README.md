@@ -57,14 +57,38 @@ Consists of modules:
        
     }
     ```
-1. Create a service which will provide info required by SCA Service:
-    * Service should implement `ServiceProvider` interface and should have `@Service` annotation;
-    * `findUserIdByAuthorizationSessionSecret(...)` should return unique identifier of User (Customer) of application;
-    * `getAuthorizationPageUrl()` should return URL of authorization page for Authenticator enroll flow;
-    * `getProviderCode(...)` should return unique text code of Service Provider (Bank) (e.g. "example-bank");
-    * `getProviderName(...)` should return name of Service Provider (Bank) (e.g. "Example Bank");
-    * `getProviderLogoUrl(...)` should return logo image url of Service Provider (Bank);
-    * `getProviderSupportEmail(...)` should return e-mail of support service of Service Provider (Bank);
+1. Create a service which will provide info required by SCA SDK Module (Service should implement `ServiceProvider` interface and should have `@Service` annotation):  
+    ```java
+    public interface ServiceProvider {
+        // Provides URL of authentication page of Service Provider
+        // for redirection in Authenticator app.
+        String getAuthorizationPageUrl(String enrollSessionSecret);
+    
+        // Find User entity by authentication session secret code.
+        // Authentication session secret code is created
+        // when user already authenticated and want to connect Authenticator app
+        String getUserIdByAuthenticationSessionSecret(String sessionSecret);
+    
+        // Provides code name of Service Provider
+        String getProviderCode();
+    
+        // Provides human readable name of Service Provider
+        String getProviderName();
+    
+        // Provides logo image of Service Provider
+        String getProviderLogoUrl();
+    
+        // Provides email of Service Provider for clients support
+        String getProviderSupportEmail();
+    
+        // Notifies application about receiving new authenticated Action request.
+        // It can be Sign-in to portal action or Payment action which requires authentication.
+        Long onAuthenticateAction(AuthenticateAction action);
+    
+        // Notifies application about confirmation or denying of SCA Authorization
+        void onAuthorizationConfirmed(Authorization authorization);
+    }
+    ```
 1. Use for callback service `ScaSdkService`:  
     * `getClientConnections(userId)` returns all connections with authenticators for user;
     * `revokeConnection(connectionId)` should be invoked in case when Authenticator Connection should be revoked;
