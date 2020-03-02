@@ -222,6 +222,19 @@ module Sinatra
       )
     end
 
+    def create_action(status = Action::PENDING, require_sca = false)
+      Action.create!(
+        uuid:                 SecureRandom.uuid,
+        sca_confirm_required: require_sca,
+        status:               status,
+        expires_at:           Time.now.utc + 5 * 60
+      )
+    end
+
+    def create_new_authorization!(connecion_id, title, description)
+
+    end
+
     private
 
     def authorization_hash(connection_id, authorization)

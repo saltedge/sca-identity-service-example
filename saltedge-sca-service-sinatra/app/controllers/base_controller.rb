@@ -8,7 +8,7 @@ class BaseController < Sinatra::Base
     set :views, "app/views"
   end
 
-  error BadRequest, AuthorizationRequired,
+  error BadRequest, ActionNotFound, ActionNotValid, AuthorizationRequired,
     AuthorizationNotFound, ConnectionNotFound, UserNotFound,
     SignatureExpired, SignatureMissing, InvalidSignature, UserAlreadyExists, JSON::ParserError do
     name = env['sinatra.error'].class.name

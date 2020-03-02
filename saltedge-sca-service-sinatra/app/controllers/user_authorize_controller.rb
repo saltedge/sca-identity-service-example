@@ -2,12 +2,33 @@ class UserAuthorizeController < BaseController
   include Sinatra::ServiceHelper
 
   get '/' do
-    @action = Action.new()
+    @action = create_action()
+
+    # return_to_url = "https://#{request.host_with_port}/actions/result"
 
     @instant_action_deeplink = create_instant_action_deep_link(@action.uuid, "", "https://#{request.host_with_port}")
 
     @qr = Sinatra::QrHelper.create_qr_code(@instant_action_deeplink)
     erb :index
+  end
+
+  get '/actions' do
+    action_uuid = params[:uuid]
+
+    action = Action.find_by(uuid: action_uuid)
+
+    raise StandardError::ActionNotFound if action.nil?
+
+    response = {
+      "action_status" => action.status
+    }
+
+    if action.status == Action::CONFIRMED
+      response[:redirect] = "/admin/connections?user_id=#{action.user_id}"
+    end
+
+    content_type :json
+    response.to_json
   end
 
   post '/users/sign_in' do

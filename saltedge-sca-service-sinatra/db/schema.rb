@@ -13,10 +13,19 @@
 ActiveRecord::Schema.define(version: 2020_02_26_102512) do
 
   create_table "actions", force: :cascade do |t|
+    t.string "uuid"
+    t.string "user_id"
+    t.string "status"
+    t.boolean "sca_confirm_required", default: false, null: false
+    t.datetime "expires_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "authorizations", force: :cascade do |t|
     t.string "user_id"
+    t.string "connection_id"
+    t.string "action_id"
     t.datetime "expires_at"
     t.string "title", limit: 4096
     t.string "description", limit: 4096

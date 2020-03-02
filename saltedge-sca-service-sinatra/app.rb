@@ -29,4 +29,3 @@ helpers Sinatra::QrHelper
 helpers Sinatra::EnrollHelper
 
 APP_SETTINGS = OpenStruct.new(YAML.load_file('config/application.yml')[settings.environment.to_s])
-

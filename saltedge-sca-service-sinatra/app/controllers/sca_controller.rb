@@ -57,5 +57,36 @@ class SCAController < BaseController
     put "/authorizations/:authorization_id" do
       update_authorization!(params[:authorization_id])
     end
-end
+    
+    # SUBMIT ACTION
+    put "/actions/:uuid" do
+      access_token = request.env['HTTP_ACCESS_TOKEN']
+      raise StandardError::AuthorizationRequired if access_token.nil?
+
+      connection = Connection.find_by(access_token: access_token, revoked: false)
+
+      raise StandardError::ConnectionNotFound if connection.nil?
+
+      verify_signature
+
+      action_uuid = params['uuid']
+
+      action = Action.find_by(uuid: action_uuid)
+
+      raise StandardError::ActionNotFound if action.nil?
+      raise StandardError::ActionNotValid if action.status != Action::PENDING
+
+      # action.status = Action::CONFIRMED
+      # action.user_id = connection.user_id
+
+      action.update(status: Action::CONFIRMED, user_id: connection.user_id)
+
+      content_type :json
+      { "data" =>
+        {
+          "success" => true
+        }
+      }.to_json
+    end
+  end
 end
