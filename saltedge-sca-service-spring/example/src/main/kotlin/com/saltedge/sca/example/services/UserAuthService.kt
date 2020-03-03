@@ -84,9 +84,7 @@ class UserAuthService {
         return scaSdkService.createAction(
                 SCA_ACTION_LOGIN,
                 UUID.randomUUID().toString(),
-                null,
-                "Access to Spring Example Dashboard",
-                "Please confirm your that you authorize access to Spring Example Dashboard"
+                null
         );
     }
 }

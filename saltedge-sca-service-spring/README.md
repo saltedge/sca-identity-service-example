@@ -15,7 +15,7 @@ Consists of modules:
 1. Registration & API Keys. Contact the Salt Edge Authenticator team via the [following link](https://www.saltedge.com/pages/contact_support)   
 1. Authenticator Mobile clients supports only SSL connections.
 
-## Example Application Quick Setup
+## Example Application Quick Setup and Run
   
 1. Clone project
     ```bash
@@ -39,13 +39,17 @@ Consists of modules:
       ```yaml
       sca_service.url=http://123456789.ngrok.io
       ```
-    * Set params for Salt Edge Push service. Ask credentials from Salt Edge Service.
+    * Set params for Salt Edge Push service. Ask credentials from Salt Edge Service [**optional**].
       ```yaml
       sca_push_service.url=https://push.service.com/notification
       sca_push_service.app_id=xxxxxxxxx
       sca_push_service.app_secret=yyyyyyyyyyy
       ``` 
-
+1. Run the Example Application
+    ```bash
+    ./gradlew bootRun
+    ```  
+  
 ## SDK Integration
 
 1. Add SDK to target application as Module or as JAR library (`out/saltedge-sca-service-sdk-1.0.0-all.jar`);
