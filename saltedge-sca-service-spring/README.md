@@ -18,6 +18,9 @@ Consists of modules:
 ## Example Application Quick Setup
   
 1. Clone project
+    ```bash
+    git clone git@github.com:saltedge/sca-identity-service-example.git
+    ```
 1. Navigate to project's root folder
     ```bash
     cd sca-identity-service-example/saltedge-sca-service-spring
