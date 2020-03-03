@@ -88,7 +88,7 @@ class PaymentsService {
             this.payeeAddress = "40 King Street West, Suite 2100, Toronto, Ontario M5H3C2, Canada"
         }
         paymentsRepository.save(payment)
-        scaSdkService.createAction(SCA_ACTION_PAYMENT, payment.uuid, null,  null, null)
+        scaSdkService.createAction(SCA_ACTION_PAYMENT, payment.uuid, null)
         return payment
     }
 
