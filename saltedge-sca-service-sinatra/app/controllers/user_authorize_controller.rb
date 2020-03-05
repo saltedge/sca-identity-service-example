@@ -2,14 +2,17 @@ class UserAuthorizeController < BaseController
   include Sinatra::ServiceHelper
 
   get '/' do
-    @action = create_action()
+    erb :index
+  end
 
-    # return_to_url = "https://#{request.host_with_port}/actions/result"
+  get '/users/sign_in' do
+    @action = create_action()
 
     @instant_action_deeplink = create_instant_action_deep_link(@action.uuid, "", "https://#{request.host_with_port}")
 
     @qr = Sinatra::QrHelper.create_qr_code(@instant_action_deeplink)
-    erb :index
+
+    erb :sign_in
   end
 
   get '/actions' do
@@ -18,6 +21,10 @@ class UserAuthorizeController < BaseController
     action = Action.find_by(uuid: action_uuid)
 
     raise StandardError::ActionNotFound if action.nil?
+
+    user = User.find_by(id: action.user_id)
+
+    raise StandardError::UserNotFound if user.nil?
 
     response = {
       "action_status" => action.status
@@ -29,6 +36,37 @@ class UserAuthorizeController < BaseController
 
     content_type :json
     response.to_json
+  end
+
+  get '/payments/status' do
+    find_action_by_uuid
+
+    response = {
+      "action_status" => action.status,
+      "username"      => user.name
+    }
+
+    content_type :json
+    response.to_json
+  end
+
+  get '/payments/order' do
+    @action = create_action(true)
+
+    @instant_action_deeplink = create_instant_action_deep_link(@action.uuid, "", "https://#{request.host_with_port}")
+
+    @qr = Sinatra::QrHelper.create_qr_code(@instant_action_deeplink)
+
+    @payment = {
+      "uuid"       => @action.uuid,
+      "payee_name" => "Amazon US",
+      "amount"     => "256",
+      "currency"   => "USD",
+      "user_name"  => "UNKNOWN",
+      "status"     => "UNKNOWN"
+    }
+
+    erb :payment
   end
 
   post '/users/sign_in' do
@@ -61,5 +99,15 @@ class UserAuthorizeController < BaseController
     else
       redirect "admin/connections?user_id=#{user.id}"
     end
+  end
+
+  private
+
+  def find_action_by_uuid
+    action_uuid = params[:uuid]
+
+    action = Action.find_by(uuid: action_uuid)
+
+    raise StandardError::ActionNotFound if action.nil?
   end
 end

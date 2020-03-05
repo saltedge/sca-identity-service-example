@@ -1,6 +1,6 @@
 # action.rb
 class Action < ActiveRecord::Base
-    STATUSES = ["expired", "pending", "confirmed", "denied"].freeze 
+    STATUSES = ["expired", "waiting_confirmation", "pending", "confirmed", "denied"].freeze 
 
     STATUSES.each do |status|
         const_set(status.upcase, status)

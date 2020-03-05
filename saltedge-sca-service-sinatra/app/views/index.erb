@@ -1,159 +1,45 @@
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Salt Edge SCA Example (Demo)</title>
+
+    <style type="text/css">
+        body {font-family: Arial, Helvetica, sans-serif;}
+        a {
+            text-decoration: none;
+        }
+        .container {
+              max-width: 700px;
+              margin: 0 auto;
+              padding: 0 10px;
+            }
+        .top-header img {
+          display: inline;
+          width: auto;
+          height: 100px;
+          background: #AAA;
+        }
+        .top-header h1 {
+          display: inline;
+          left: 20px;
+        }
+        .link-header {
+            color:white;
+            background-color:#ae1200;
+            text-align:center;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-      <div class="wrapper">
-          <div class="form-wrapper">
-          <h3>Log in</h3>
-          <form method="post" action="/users/sign_in">
-              <div class="input-wrapper">
-              <label for="username">Username</label>
-              <input type="text" name="username" id="username" class="form-input">
-              </div>
+    <div class="container">
+        <div class="top-header">
+            <img src="http://i.imgur.com/XzYxlS8.png" alt="logo" />
+            <h1>Salt Edge SCA Example (Demo)</h1>
+        </div>
 
-              <div class="input-wrapper">
-              <label for="password">Password</label>
-              <input type="password" name="password" id="password" class="form-input">
-              </div>
+        <a href="/users/sign_in"><h2 class="link-header">Sign In/Connect Authenticator/Create Authorization</h2></a>
 
-              <div class="with-margin centered">
-                <input type="submit" value="Sign in">
-              </div>
-          </form>
+        <a href="/payments/order"><h2 class="link-header">Create Payment Order</h2></a>
 
-          <div>
-            <p>New user?</p>
-          </div>
-
-          <div>
-            <a href="/users/register">Sign up</a>
-          </div>
-          </div>
-
-          <div>
-          <h2>OR</h2>
-          </div>
-
-          <div class="centered">
-            <h3>Scan with Salt Edge Authenticator</h3>
-
-            <div class="qr-section">
-            <table align="center">
-            <% @qr.modules.each_index do |x| %>
-              <tr>
-                <% @qr.modules.each_index do |y| %>
-                  <% if @qr.dark?(x,y) %>
-                    <td class="black"/>
-                      <% else %>
-                        <td class="white"/>
-                      <% end %>
-                  <% end %>
-              </tr>
-              <% end %>
-              </table>
-
-            <a href="#" class="with-margin">Open in Authenticator</a>
-            </div>
-          </div>
+        <a href="/users/register"><h2 class="link-header">Register New User</h2></a>
     </div>
-
-    <script>
-      function refreshStatus() {
-        var action = <%= @action.to_json %>
-
-        $.ajax({
-        url: "https://" + window.location.host + "/actions?uuid=" + action.uuid,
-        method: "get",
-        dataType: "json",
-        success: function(data) {
-          var status = data["action_status"]
-          var redirect = data["redirect"]
-
-          switch(status) {
-            case "confirmed":
-              var link  = document.createElement('a')
-              link.href = redirect
-              document.body.appendChild(link)
-              link.click()
-              break
-            default:
-              polling()
-              break
-          }
-        },
-        fail: function(data) { console.log(data);  debugger; }
-      })
-    }
-
-    function polling() {
-      clearTimeout(poll)
-      var poll = setTimeout(refreshStatus, 3000)
-    }
-
-    polling()
-    </script>
 </body>
-
-<style>
-    * {
-      box-sizing: border-box;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 0 10px;
-    }
-    .input-wrapper, .wrapper {
-      width: 100%;
-      display: inline-flex;
-    }
-    .wrapper {
-      justify-content: space-between;
-      align-items: center;
-    }
-    .input-wrapper {
-      justify-content: space-around;
-      margin-top: 10px;
-    }
-    .with-margin {
-      margin-top: 10px;
-    }
-    .form-input {
-      margin-left: 10px;
-      position: relative;
-      clear: both;
-    }
-    .form-wrapper {
-      width: 200px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .qr-section {
-      width: 100%;
-      height: auto;
-    }
-    .centered {
-      text-align: center;
-    }
-    table {
-      border-width: 0;
-      border-style: none;
-      border-color: #0000ff;
-      border-collapse: collapse;
-    }
-    td {
-       border-width: 0;
-       border-style: none;
-       border-color: #0000ff;
-       border-collapse: collapse;
-       padding: 0;
-       margin: 0;
-       width: 4px;
-       height: 4px;
-    }
-    td.black { background-color: #000; }
-    td.white { background-color: #fff; }
-</style>

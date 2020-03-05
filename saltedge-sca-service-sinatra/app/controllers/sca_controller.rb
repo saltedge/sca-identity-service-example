@@ -76,17 +76,30 @@ class SCAController < BaseController
       raise StandardError::ActionNotFound if action.nil?
       raise StandardError::ActionNotValid if action.status != Action::PENDING
 
-      # action.status = Action::CONFIRMED
-      # action.user_id = connection.user_id
+      if action.sca_confirm_required
+        action.update(status: Action::WAITING_CONFIRMATION, user_id: connection.user_id)
 
-      action.update(status: Action::CONFIRMED, user_id: connection.user_id)
+        authorization = create_new_authorization!(connection.user_id, "Payment", "Pay 260 USD to Amazon US")
+        authorization.update(action_id: action.uuid)
 
-      content_type :json
-      { "data" =>
-        {
-          "success" => true
-        }
-      }.to_json
+        content_type :json
+		    { "data" =>
+			    {
+				    "success" => true,
+				    "authorization_id" => authorization.id,
+				    "connection_id" => connection.id
+			    }
+		    }.to_json
+      else
+        action.update(status: Action::CONFIRMED, user_id: connection.user_id)
+
+        content_type :json
+        { "data" =>
+          {
+            "success" => true
+          }
+        }.to_json
+      end
     end
   end
 end
