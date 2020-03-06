@@ -138,7 +138,7 @@ module Sinatra
       if connection.user_id.present?
         url = redirect_url(connection, connection.user_id, 'success')
       else
-        url = "https://#{request.host_with_port}/login?token=#{connection.connect_session_token}"
+        url = "https://#{request.host_with_port}/users/register?token=#{connection.connect_session_token}"
       end
 
       {
