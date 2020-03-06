@@ -15,16 +15,12 @@ class UserAuthorizeController < BaseController
     erb :sign_in
   end
 
-  get '/actions' do
+  get '/actions/status' do
     action_uuid = params[:uuid]
 
     action = Action.find_by(uuid: action_uuid)
 
     raise StandardError::ActionNotFound if action.nil?
-
-    user = User.find_by(id: action.user_id)
-
-    raise StandardError::UserNotFound if user.nil?
 
     response = {
       "action_status" => action.status
@@ -39,11 +35,19 @@ class UserAuthorizeController < BaseController
   end
 
   get '/payments/status' do
-    find_action_by_uuid
+    action = Action.find_by(uuid: params[:uuid])
+
+    raise StandardError::ActionNotFound if action.nil?
+
+    username = "UNKNOWN"
+
+    if user = User.find_by(id: action.user_id)
+      username = user.name
+    end
 
     response = {
       "action_status" => action.status,
-      "username"      => user.name
+      "username"      => username
     }
 
     content_type :json
@@ -51,7 +55,7 @@ class UserAuthorizeController < BaseController
   end
 
   get '/payments/order' do
-    @action = create_action(true)
+    @action = create_action(require_sca: true)
 
     @instant_action_deeplink = create_instant_action_deep_link(@action.uuid, "", "https://#{request.host_with_port}")
 
@@ -99,15 +103,5 @@ class UserAuthorizeController < BaseController
     else
       redirect "admin/connections?user_id=#{user.id}"
     end
-  end
-
-  private
-
-  def find_action_by_uuid
-    action_uuid = params[:uuid]
-
-    action = Action.find_by(uuid: action_uuid)
-
-    raise StandardError::ActionNotFound if action.nil?
   end
 end

@@ -73,7 +73,6 @@
     <h1 class="top-header">Payment Order Example</h1>
     <div class="container">
         <div>
-            <a href="/payments/order?create_new=true"><h3 style="display: inline;">[Create new]</h3></a>
             <a href="/"><h3 style="display: inline;">[Index]</h3></a>
             <a href="/users/sign_in"><h3 style="display: inline;">[Dashboard]</h3></a>
         </div>
@@ -110,6 +109,7 @@
 
     <script>
       function refreshStatus() { 
+        var payment = <%= @payment.to_json %>
         $.ajax({
         url: "https://" + window.location.host + "/payments/status?uuid=" + payment["uuid"],
         method: "get",

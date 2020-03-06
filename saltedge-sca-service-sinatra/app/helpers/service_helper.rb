@@ -202,11 +202,9 @@ module Sinatra
       if valid_code
         authorization.update(confirmed: request_data['confirm'])
 
-        action = Action.find_by(uuid: authorization.action_id)
-
-        raise StandardError::ActionNotFound if action.nil?
-
-        action.update(status: Action::CONFIRMED)
+        if action = Action.find_by(uuid: authorization.action_id)
+          action.update(status: Action::CONFIRMED)
+        end
         # NOTIFY BANK CORE ABOUT CONFIRM/DENY ACTION
       end
 
@@ -228,7 +226,7 @@ module Sinatra
       )
     end
 
-    def create_action(status = Action::PENDING, require_sca = false)
+    def create_action(status: Action::PENDING, require_sca: false)
       Action.create!(
         uuid:                 SecureRandom.uuid,
         status:               status,

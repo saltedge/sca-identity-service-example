@@ -68,7 +68,7 @@
         var action = <%= @action.to_json %>
 
         $.ajax({
-        url: "https://" + window.location.host + "/actions?uuid=" + action.uuid,
+        url: "https://" + window.location.host + "/actions/status?uuid=" + action.uuid,
         method: "get",
         dataType: "json",
         success: function(data) {

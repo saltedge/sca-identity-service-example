@@ -17,6 +17,8 @@
 # For the additional permissions granted for Salt Edge Authenticator
 # under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 
+require 'rest-client'
+
 module IdentityService
   class NotificationSender
     def initialize(params={})
