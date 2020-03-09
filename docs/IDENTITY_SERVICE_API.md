@@ -24,11 +24,11 @@
 The purpose of Identity Service is to process and store customer identities, roles, credentials, and add the necessary functionality in order to implement SCA. Hence, besides standard functionality, in Identity Service should be implemented additional functionalities and an API, as an extension to the existing Identity Service. The extension (additional functionality and API) processes received from Core banking information and appeals to the Authenticator app via Authentication Service in order to get either action confirmation or denial from the customer.
 
 There is a little effort from Service Provider in order to implement the extension of Identity Service with 6 API end-points: 
-* Connect to Service Provider; 
+* Create Connection between Client App and Service; 
 * Revoke Access Token; 
-* Show Authorizations List; 
-* Show Authorization; 
-* Confirm or Deny Authorization.  
+* Show Pending Authorizations List; 
+* Show Single Pending Authorization; 
+* Confirm or Deny Pending Authorization.  
 and add authentication/enrollment flow for `Obtaining Access Token`
   
 Salt Edge has developed the SCA solution with such an architecture, having Identity Service in infrastructure of Service Provider, in order not to have any access to the personal information/credentials of the customer. All related to the customer private data is isolated from any third party or application and is controlled exclusively by the Service Provider.
