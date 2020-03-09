@@ -33,7 +33,7 @@ public interface ServiceProvider {
      * Provides URL of authentication page of Service Provider
      * for redirection in Authenticator app.
      *
-     * @param enrollSessionSecret code related to Authenticator enrollment flow
+     * @param enrollSessionSecret code related to Authenticator enrollment flow (Created by SDK)
      * @return url string
      */
     String getAuthorizationPageUrl(String enrollSessionSecret);
@@ -43,7 +43,7 @@ public interface ServiceProvider {
      * Authentication session secret code is created
      * when user already authenticated and want to connect Authenticator app
      *
-     * @param sessionSecret code.
+     * @param sessionSecret code. (Created by Service Provider)
      * @return user id
      */
     String getUserIdByAuthenticationSessionSecret(String sessionSecret);

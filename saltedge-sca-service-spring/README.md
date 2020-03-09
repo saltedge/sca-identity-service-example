@@ -49,11 +49,18 @@ Consists of modules:
     ```bash
     ./gradlew bootRun
     ```  
+      
+## How to use example
+  
+  In example is implemented custom admin page for creating users, authorizing, creating connections, authorizations
+  `http://your_host:8080/`  
+  
   
 ## SDK Integration
 
 1. Add SDK to target application as Module or as JAR library (`out/saltedge-sca-service-sdk-1.0.0-all.jar`);
-1. Setup application as [described before](#example-application-quick-setup)
+1. Setup application as [described before](#example-application-quick-setup)  
+  (add configuration)
 1. Add SDK package (`com.saltedge.sca.sdk`) to component scan annotation in Application class.
     ```java
     @SpringBootApplication(scanBasePackages = {EXAMPLE_PACKAGE, SDK_PACKAGE})
@@ -65,27 +72,31 @@ Consists of modules:
     }
     ```
 1. Create a service which will provide info required by SCA SDK Module (Service should implement `ServiceProvider` interface and should have `@Service` annotation):  
+      In case of EMBEDDED AUTHENTICATION `getAuthorizationPageUrl()`
     ```java
     public interface ServiceProvider {
-        // Provides URL of authentication page of Service Provider
-        // for redirection in Authenticator app.
+        // Provides URL of authentication page of Service Provider for redirection in Authenticator app.
+        // enrollSessionSecret is created by SDK
         String getAuthorizationPageUrl(String enrollSessionSecret);
     
         // Find User entity by authentication session secret code.
-        // Authentication session secret code is created
-        // when user already authenticated and want to connect Authenticator app
+        // sessionSecret is created by Service Provider
+        // Should be created when user already authenticated and need to connect Authenticator App (SDK)
         String getUserIdByAuthenticationSessionSecret(String sessionSecret);
     
-        // Provides code name of Service Provider
+        // Provides code name of Service Provider (e.g demo-bank-code)
         String getProviderCode();
     
-        // Provides human readable name of Service Provider
+        // Provides human readable name of Service Provider (e.g. Demo Bank)
+        // Will be displayed for end customers
         String getProviderName();
     
         // Provides logo image of Service Provider
+        // Will be displayed for end customers
         String getProviderLogoUrl();
     
         // Provides email of Service Provider for clients support
+        // Will be displayed for end customers
         String getProviderSupportEmail();
     
         // Notifies application about receiving new authenticated Action request.
@@ -110,11 +121,6 @@ Consists of modules:
     * `getActionStatus(actionUUID)` returns Action's status by `actionUUID`;
     * `createActionAppLink(actionUUID)` return App-Link (Deep-Link) for initiating Action authentication flow in the Salt Edge Authenticator application;
     
-
-## How to use example
-
-In example is implemented custom admin page for creating users, authorizing, creating connections, authorizations
-`http://your_host:8080/`  
   
 ----
 Copyright © 2019 Salt Edge. https://www.saltedge.com  

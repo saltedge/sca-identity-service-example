@@ -37,6 +37,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static com.saltedge.sca.sdk.ScaSdkConstants.*;
 import static com.saltedge.sca.sdk.controllers.ConnectionsController.CONNECTIONS_REQUEST_PATH;
 import static com.saltedge.sca.sdk.tools.UrlTools.DEFAULT_AUTHENTICATOR_RETURN_TO;
+import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -51,7 +52,7 @@ public class ConnectionsControllerIntegrationTests extends MockMvcTestAbs {
 	public void givenValidRequest_whenMakeCreateConnectionRequest_thenReturnOKAndRedirectToEnrollPage() throws Exception {
 		//given
 		given(connectionsService.createConnection(any(CreateConnectionRequest.Data.class), isNull()))
-				.willReturn(new CreateConnectionResponse("2", "https://localhost/admin/enroll?secret=auth_token"));
+				.willReturn(CreateConnectionResponse.createResponseWithAuthorizeUrl("2", "https://localhost/admin/enroll?secret=auth_token"));
 
 		CreateConnectionRequest requestData = new CreateConnectionRequest(new CreateConnectionRequest.Data(
 				publicKey,
@@ -78,7 +79,7 @@ public class ConnectionsControllerIntegrationTests extends MockMvcTestAbs {
 	public void givenValidRequestWithConnectQueryParam_whenMakeCreateConnectionRequest_thenReturnOKAndReturnTo() throws Exception {
 		//given
 		given(connectionsService.createConnection(any(CreateConnectionRequest.Data.class), eq("connectQuery")))
-				.willReturn(new CreateConnectionResponse("1", DEFAULT_AUTHENTICATOR_RETURN_TO));
+				.willReturn(CreateConnectionResponse.createResponseWithAccessToken("1", "access_token"));
 		CreateConnectionRequest requestData = new CreateConnectionRequest(new CreateConnectionRequest.Data(
 				publicKey,
 				"authenticator//connect",
@@ -94,7 +95,8 @@ public class ConnectionsControllerIntegrationTests extends MockMvcTestAbs {
 			.content(json))
 			//then
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.data.connect_url", Matchers.startsWith(DEFAULT_AUTHENTICATOR_RETURN_TO)))
+			.andExpect(jsonPath("$.data.connect_url").doesNotExist())
+			.andExpect(jsonPath("$.data.access_token", Matchers.is("access_token")))
 			.andExpect(jsonPath("$.data.id", Matchers.is("1")));
 	}
 
