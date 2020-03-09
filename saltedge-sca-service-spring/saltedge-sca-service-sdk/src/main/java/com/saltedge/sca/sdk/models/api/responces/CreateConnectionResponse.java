@@ -20,16 +20,16 @@
  */
 package com.saltedge.sca.sdk.models.api.responces;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.saltedge.sca.sdk.ScaSdkConstants;
 
-import static com.saltedge.sca.sdk.ScaSdkConstants.KEY_CONNECT_URL;
-import static com.saltedge.sca.sdk.ScaSdkConstants.KEY_ID;
+import static com.saltedge.sca.sdk.ScaSdkConstants.*;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateConnectionResponse {
     @JsonProperty(ScaSdkConstants.KEY_DATA)
-    public
-    Data data;
+    public Data data;
 
     public CreateConnectionResponse() {
     }
@@ -38,23 +38,36 @@ public class CreateConnectionResponse {
         this.data = data;
     }
 
-    public CreateConnectionResponse(String connectionId, String authorizeUrl) {
-        this.data = new Data(connectionId, authorizeUrl);
+    public CreateConnectionResponse(String connectionId, String authorizeRedirectUrl, String accessToken) {
+        this.data = new Data(connectionId, authorizeRedirectUrl, accessToken);
     }
 
+    public static CreateConnectionResponse createResponseWithAuthorizeUrl(String connectionId, String authorizeRedirectUrl) {
+        return new CreateConnectionResponse(new Data(connectionId, authorizeRedirectUrl, null));
+    }
+
+    public static CreateConnectionResponse createResponseWithAccessToken(String connectionId, String accessToken) {
+        return new CreateConnectionResponse(new Data(connectionId, null, accessToken));
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Data {
         @JsonProperty(KEY_ID)
         public String connectionId;
 
         @JsonProperty(KEY_CONNECT_URL)
-        public String authorizeUrl;
+        public String authorizeRedirectUrl;
+
+        @JsonProperty(KEY_ACCESS_TOKEN)
+        public String accessToken;
 
         public Data() {
         }
 
-        public Data(String connectionId, String authorizeUrl) {
+        public Data(String connectionId, String authorizeRedirectUrl, String accessToken) {
             this.connectionId = connectionId;
-            this.authorizeUrl = authorizeUrl;
+            this.authorizeRedirectUrl = authorizeRedirectUrl;
+            this.accessToken = accessToken;
         }
     }
 }
