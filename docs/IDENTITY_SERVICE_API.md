@@ -1,4 +1,4 @@
-# Identity Service
+# SCA Service (Identity Service)
 
 * [What is Identity Service?](#what-is-identity-service)
 * [Identity Service Models](#identity-service-models)
