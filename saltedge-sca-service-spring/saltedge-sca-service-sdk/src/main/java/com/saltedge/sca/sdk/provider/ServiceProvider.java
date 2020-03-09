@@ -20,19 +20,75 @@
  */
 package com.saltedge.sca.sdk.provider;
 
-import com.saltedge.sca.sdk.models.ActionProcessResult;
-
-import javax.validation.constraints.NotNull;
+import com.saltedge.sca.sdk.models.AuthenticateAction;
+import com.saltedge.sca.sdk.models.Authorization;
 
 /**
- * Interface for communication between SCA Service and Service Provider application.
+ * Interface for communication between SCA Module and Service Provider application.
+ * Provides required by SCA module information and receives Action and Authorization events.
  * Service Provider application should implement `@Service` which `implements ProviderApi`
  */
 public interface ServiceProvider {
-    String findUserIdByAuthorizationSessionSecret(String sessionSecret);
-    String getAuthorizationPageUrl(String sessionSecret);
+    /**
+     * Provides URL of authentication page of Service Provider
+     * for redirection in Authenticator app.
+     *
+     * @param enrollSessionSecret code related to Authenticator enrollment flow (Created by SDK)
+     * @return url string
+     */
+    String getAuthorizationPageUrl(String enrollSessionSecret);
+
+    /**
+     * Find User entity by authentication session secret code.
+     * Authentication session secret code is created
+     * when user already authenticated and want to connect Authenticator app
+     *
+     * @param sessionSecret code. (Created by Service Provider)
+     * @return user id
+     */
+    String getUserIdByAuthenticationSessionSecret(String sessionSecret);
+
+    /**
+     * Provides code name of Service Provider
+     *
+     * @return code
+     */
     String getProviderCode();
+
+    /**
+     * Provides human readable name of Service Provider
+     *
+     * @return name
+     */
     String getProviderName();
+
+    /**
+     * Provides logo image of Service Provider
+     *
+     * @return url string
+     */
     String getProviderLogoUrl();
+
+    /**
+     * Provides email of Service Provider for clients support
+     *
+     * @return email string
+     */
     String getProviderSupportEmail();
+
+    /**
+     * Notifies application about receiving new authenticated Action request.
+     * It can be Sign-in to portal action or Payment action which requires authentication.
+     *
+     * @param action entity with uuid and userId
+     * @return return authorization id if SCA confirmation is required or null.
+     */
+    Long onAuthenticateAction(AuthenticateAction action);
+
+    /**
+     * Notifies application about confirmation or denying of SCA Authorization
+     *
+     * @param authorization entity with unique authorizationCode and isConfirmed fields
+     */
+    void onAuthorizationConfirmed(Authorization authorization);
 }

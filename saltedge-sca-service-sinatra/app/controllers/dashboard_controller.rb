@@ -18,8 +18,6 @@
 # under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 
 class DashboardController < BaseController
-  include Sinatra::ServiceHelper
-
   ######################### EXAMPLE OF ADMIN (or HELPER) SERVICE ROUTES (FOR TEST PURPOUSE)
   namespace '/admin' do
     # REVOKE CONNECTION (FOR TEST PURPOUSE)

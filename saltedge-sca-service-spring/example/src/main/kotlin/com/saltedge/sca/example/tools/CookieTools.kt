@@ -23,29 +23,17 @@ package com.saltedge.sca.example.tools
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
 
-//const val COOKIE_AUTHENTICATED_USER = "COOKIE_AUTHENTICATED_USER"
 const val COOKIE_AUTHENTICATION_ACTION = "KEY_AUTHENTICATION_ACTION"
+const val COOKIE_PAYMENT_ACTION = "COOKIE_PAYMENT_ACTION"
 
-//fun saveAuthenticatedUserSessionCookie(userId: String, response: HttpServletResponse) {
-//    val cookie = Cookie(COOKIE_AUTHENTICATED_USER, userId);
-//    cookie.maxAge = 8 * 60 * 60
-//    response.addCookie(cookie);
-//}
-//
-//fun clearAuthenticatedUserSessionCookie(response: HttpServletResponse) {
-//    val cookie = Cookie(COOKIE_AUTHENTICATED_USER, "");
-//    cookie.maxAge = 0
-//    response.addCookie(cookie);
-//}
-
-fun saveAuthenticationActionCookie(actionUUID: String, response: HttpServletResponse) {
-    val cookie = Cookie(COOKIE_AUTHENTICATION_ACTION, actionUUID);
-    cookie.maxAge = 5 * 60
+fun clearActionCookie(key: String, response: HttpServletResponse) {
+    val cookie = Cookie(key, "");
+    cookie.maxAge = 0
     response.addCookie(cookie);
 }
 
-fun clearAuthenticationActionCookie(response: HttpServletResponse) {
-    val cookie = Cookie(COOKIE_AUTHENTICATION_ACTION, "");
-    cookie.maxAge = 0
+fun saveActionCookie(key: String, data: String, response: HttpServletResponse) {
+    val cookie = Cookie(key, data);
+    cookie.maxAge = 5 * 60
     response.addCookie(cookie);
 }

@@ -28,7 +28,6 @@ import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionsRepository;
 import com.saltedge.sca.sdk.provider.ServiceProvider;
 import com.saltedge.sca.sdk.tools.CodeBuilder;
-import com.saltedge.sca.sdk.tools.UrlTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +51,24 @@ public class ClientConnectionsService {
     @Autowired
     private ServiceProvider providerApi;
 
-    public CreateConnectionResponse createConnection(@NotNull CreateConnectionRequest.Data data, String authorizationSessionSecret) {
-        String userId = StringUtils.isEmpty(authorizationSessionSecret) ? null : providerApi.findUserIdByAuthorizationSessionSecret(authorizationSessionSecret);
+    public CreateConnectionResponse createConnection(
+            @NotNull CreateConnectionRequest.Data data,
+            String authorizationSessionSecret
+    ) {
+        String userId = null;
+        if (!StringUtils.isEmpty(authorizationSessionSecret)) {
+            userId = providerApi.getUserIdByAuthenticationSessionSecret(authorizationSessionSecret);
+        }
         ClientConnectionEntity connection = createClientConnectionEntity(data, userId);
-        String authenticationUrl = createConnectionResponseUrl(connection);
-        return new CreateConnectionResponse(String.valueOf(connection.getId()), authenticationUrl);
+        String connectionId = String.valueOf(connection.getId());
+        if (connection.isAuthenticated()) {
+            return CreateConnectionResponse.createResponseWithAccessToken(connectionId, connection.getAccessToken());
+        } else {
+            return CreateConnectionResponse.createResponseWithAuthorizeUrl(
+                    connectionId,
+                    providerApi.getAuthorizationPageUrl(connection.getAuthSessionSecret())
+            );
+        }
     }
 
     public List<ClientConnection> getConnections(@NotEmpty String userId) {
@@ -90,18 +102,6 @@ public class ClientConnectionsService {
         entity.setPlatform(requestData.getPlatform());
         entity.setReturnUrl(requestData.getReturnUrl());
         return (userId == null) ? createAuthenticationToken(entity) : authenticateClientConnection(entity, userId);
-    }
-
-    private String createConnectionResponseUrl(@NotNull ClientConnectionEntity connection) {
-        if (connection.isAuthenticated()) {
-            return UrlTools.createUserAuthSuccessUrl(
-                    connection.getReturnUrl(),
-                    String.valueOf(connection.getId()),
-                    connection.getAccessToken()
-            );
-        } else {
-            return providerApi.getAuthorizationPageUrl(connection.getAuthSessionSecret());
-        }
     }
 
     private ClientConnectionEntity authenticateClientConnection(ClientConnectionEntity entity, String userId) {

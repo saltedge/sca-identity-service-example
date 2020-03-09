@@ -47,10 +47,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(AuthorizationsController.class)
 public class AuthorizationsControllerIntegrationTests extends MockMvcTestAbs {
 	@Test
-	public void getAuthorizationsTest_returnSuccess() throws Exception {
-		ArgumentCaptor<String> userCaptor = ArgumentCaptor.forClass(String.class);
+	public void whenGetActiveAuthorizations_returnSuccess() throws Exception {
 		given(connectionsRepository.findByAccessTokenAndRevokedFalse("accessToken")).willReturn(testAuthorizedConnection);
-		given(authorizationsRepository.findByUserIdAndExpiresAtGreaterThanAndConfirmedIsNull(userCaptor.capture(), any(LocalDateTime.class))).willReturn(new ArrayList<>());
+		given(authorizationsService.getActiveAuthorizations(any(ClientConnectionEntity.class))).willReturn(new ArrayList<>());
 		String expiresAt = String.valueOf((DateTools.nowUtcSeconds() + 60));
 		String signature = TestTools.createSignature(
 				"get",
@@ -70,7 +69,7 @@ public class AuthorizationsControllerIntegrationTests extends MockMvcTestAbs {
 	}
 
 	@Test
-	public void getAuthorizationsTest_returnError_whenNoConnection() throws Exception {
+	public void whenGetAuthorizationsTest_returnError_whenNoConnection() throws Exception {
 		ArgumentCaptor<String> userCaptor = ArgumentCaptor.forClass(String.class);
 		given(connectionsRepository.findByAccessTokenAndRevokedFalse("accessToken")).willReturn(null);
 		String expiresAt = String.valueOf((DateTools.nowUtcSeconds() + 60));
@@ -94,11 +93,10 @@ public class AuthorizationsControllerIntegrationTests extends MockMvcTestAbs {
 
 	@Test
 	public void getAuthorizationsTest_returnError_whenNoPublicKeyInConnection() throws Exception {
-		ArgumentCaptor<String> userCaptor = ArgumentCaptor.forClass(String.class);
 		ClientConnectionEntity connection = new ClientConnectionEntity();
 		connection.setUserId("5");
 		given(connectionsRepository.findByAccessTokenAndRevokedFalse("accessToken")).willReturn(connection);
-		given(authorizationsRepository.findByUserIdAndExpiresAtGreaterThanAndConfirmedIsNull(userCaptor.capture(), any(LocalDateTime.class))).willReturn(new ArrayList<>());
+		given(authorizationsService.getActiveAuthorizations(any(ClientConnectionEntity.class))).willReturn(new ArrayList<>());
 		String expiresAt = String.valueOf((DateTools.nowUtcSeconds() + 60));
 		String signature = TestTools.createSignature(
 				"get",
@@ -122,9 +120,8 @@ public class AuthorizationsControllerIntegrationTests extends MockMvcTestAbs {
 
 	@Test
 	public void getAuthorizationsTest_returnError_whenNoUserInConnection() throws Exception {
-		ArgumentCaptor<String> userCaptor = ArgumentCaptor.forClass(String.class);
 		given(connectionsRepository.findByAccessTokenAndRevokedFalse("accessToken")).willReturn(testConnection);
-		given(authorizationsRepository.findByUserIdAndExpiresAtGreaterThanAndConfirmedIsNull(userCaptor.capture(), any(LocalDateTime.class))).willReturn(new ArrayList<>());
+		given(authorizationsService.getActiveAuthorizations(any(ClientConnectionEntity.class))).willReturn(new ArrayList<>());
 		String expiresAt = String.valueOf((DateTools.nowUtcSeconds() + 60));
 		String signature = TestTools.createSignature(
 				"get",

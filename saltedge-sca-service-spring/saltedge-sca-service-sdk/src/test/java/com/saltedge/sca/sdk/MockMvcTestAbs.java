@@ -24,7 +24,8 @@ import com.saltedge.sca.sdk.models.persistent.AuthorizationsRepository;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionsRepository;
 import com.saltedge.sca.sdk.provider.ServiceProvider;
-import com.saltedge.sca.sdk.services.ActionsService;
+import com.saltedge.sca.sdk.services.AuthenticateActionsService;
+import com.saltedge.sca.sdk.services.AuthorizationsService;
 import com.saltedge.sca.sdk.services.ClientConnectionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -40,11 +41,11 @@ abstract public class MockMvcTestAbs {
     @MockBean
     protected ClientConnectionsRepository connectionsRepository;
     @MockBean
-    protected AuthorizationsRepository authorizationsRepository;
-    @MockBean
     protected ClientConnectionsService connectionsService;
     @MockBean
-    protected ActionsService actionsService;
+    protected AuthorizationsService authorizationsService;
+    @MockBean
+    protected AuthenticateActionsService actionsService;
 
     protected String publicKey;
     protected ClientConnectionEntity testAuthorizedConnection;

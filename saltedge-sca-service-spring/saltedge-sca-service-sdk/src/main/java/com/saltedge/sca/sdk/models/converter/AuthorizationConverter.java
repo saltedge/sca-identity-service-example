@@ -23,17 +23,12 @@ package com.saltedge.sca.sdk.models.converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.saltedge.sca.sdk.ScaSdkConstants;
-import com.saltedge.sca.sdk.models.Authorization;
 import com.saltedge.sca.sdk.models.api.EncryptedAuthorization;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationEntity;
-import com.saltedge.sca.sdk.models.persistent.AuthorizationsRepository;
-import com.saltedge.sca.sdk.tools.CodeBuilder;
 import com.saltedge.sca.sdk.tools.CryptTools;
 
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -76,28 +71,5 @@ public class AuthorizationConverter {
                 Base64.getEncoder().encodeToString(CryptTools.encryptRsa(iv, publicKey)),
                 Base64.getEncoder().encodeToString(CryptTools.encryptAes(data, key, iv))
         );
-    }
-
-    public static Authorization createAndSaveAuthorization(String userId,
-                                                           String title,
-                                                           String description,
-                                                           AuthorizationsRepository authorizationsRepository) {
-        String titleValue = (title == null) ? "Authorization Request" : title;
-        String descriptionValue = (description == null) ? "Confirm your identity" : description;
-        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(ScaSdkConstants.AUTHORIZATION_DEFAULT_LIFETIME_MINUTES);
-        String authorizationCode = CodeBuilder.generateAuthorizationCode(
-                userId,
-                titleValue,
-                descriptionValue,
-                expiresAt.toEpochSecond(ZoneOffset.UTC)
-        );
-        AuthorizationEntity model = new AuthorizationEntity(
-                titleValue,
-                descriptionValue,
-                expiresAt,
-                authorizationCode,
-                userId
-        );
-        return authorizationsRepository.save(model);
     }
 }

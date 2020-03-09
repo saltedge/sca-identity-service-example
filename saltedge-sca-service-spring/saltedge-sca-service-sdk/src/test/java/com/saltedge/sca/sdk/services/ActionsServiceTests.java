@@ -48,7 +48,7 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest
 public class ActionsServiceTests {
 	@Autowired
-	private ActionsService testService;
+	private AuthenticateActionsService testService;
 	@MockBean
 	private AuthorizationsRepository authorizationsRepository;
 	@MockBean
@@ -56,7 +56,7 @@ public class ActionsServiceTests {
 	@MockBean
 	private ClientNotificationService clientNotificationService;
 	@MockBean
-	private ServiceProvider providerApi;
+	private ServiceProvider serviceProvider;
 
 	@Test
 	public void givenInvalidParams_whenOnNewAuthenticatedAction_thenThrowConstraintViolationException() {
@@ -95,10 +95,11 @@ public class ActionsServiceTests {
 		//given
 		ClientConnectionEntity connection = new ClientConnectionEntity();
 		connection.setUserId("user1");
+
 		AuthenticateActionEntity action = new AuthenticateActionEntity();
 		action.setExpiresAt(LocalDateTime.now().plusMinutes(5));
-		action.setRequireSca(false);
 		given(actionsRepository.findFirstByUuid("action1")).willReturn(action);
+		given(serviceProvider.onAuthenticateAction(any(AuthenticateAction.class))).willReturn(null);
 
 		assertThat(action.getUserId()).isNull();
 
@@ -113,7 +114,7 @@ public class ActionsServiceTests {
 	}
 
 	@Test
-	public void givenValidAction_whenOnNewAuthenticatedAction_thenReturnSuccessAndCreateDefaultAuthorization() {
+	public void givenValidAction_whenOnNewAuthenticatedAction_thenReturnWithoutScaIds() {
 		//given
 		ClientConnectionEntity connection = new ClientConnectionEntity();
 		connection.setId(1L);
@@ -125,8 +126,8 @@ public class ActionsServiceTests {
 
 		AuthenticateActionEntity savedAction = new AuthenticateActionEntity();
 		savedAction.setExpiresAt(LocalDateTime.now().plusMinutes(5));
-		savedAction.setRequireSca(true);
 		given(actionsRepository.findFirstByUuid("action1")).willReturn(savedAction);
+		given(serviceProvider.onAuthenticateAction(any(AuthenticateAction.class))).willReturn(10L);
 
 		assertThat(savedAction.getUserId()).isNull();
 
@@ -137,22 +138,12 @@ public class ActionsServiceTests {
 		ArgumentCaptor<AuthenticateActionEntity> actionCaptor = ArgumentCaptor.forClass(AuthenticateActionEntity.class);
 		verify(actionsRepository).save(actionCaptor.capture());
 		assertThat(actionCaptor.getValue().getUserId()).isEqualTo("user1");
-
-		ArgumentCaptor<AuthorizationEntity> authorizationCaptor = ArgumentCaptor.forClass(AuthorizationEntity.class);
-		verify(authorizationsRepository).save(authorizationCaptor.capture());
-		AuthorizationEntity newAuthorization = authorizationCaptor.getValue();
-		assertThat(newAuthorization.getUserId()).isEqualTo("user1");
-		assertThat(newAuthorization.getTitle()).isEqualTo("Authorization Request");
-		assertThat(newAuthorization.getDescription()).isEqualTo("Confirm your identity");
-		assertThat(newAuthorization.getExpiresAt()).isAfter(LocalDateTime.now());
-
-		verify(clientNotificationService).sendNotificationForConnections(ImmutableList.of(connection), savedAuthorization);
-		assertThat(result).isEqualTo(new ActionResponse(true, "1", "2"));
+		assertThat(result).isEqualTo(new ActionResponse(true, "1", "10"));
 	}
 
 	@Test
-	public void givenInvalidActionCode_whenOnCreateAction_thenThrowConstraintViolationException() {
-		assertThrows(ConstraintViolationException.class, () -> testService.createAction(""));
+	public void givenInvalidActionCode_whenCreateAction_thenThrowConstraintViolationException() {
+		assertThrows(ConstraintViolationException.class, () -> testService.createAction("", "", null));
 	}
 
 	@Test

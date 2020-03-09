@@ -21,5 +21,5 @@
 package com.saltedge.sca.sdk.models;
 
 public enum  ActionStatus {
-    WAITING_CONFIRMATION, EXPIRED, AUTHENTICATED
+    WAITING_AUTHENTICATION, EXPIRED, AUTHENTICATED
 }

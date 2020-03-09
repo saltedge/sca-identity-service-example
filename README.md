@@ -35,9 +35,9 @@ We found that our clients are looking for SCA solution alongside with [PSD2](htt
 
 ## Project content
 
-Repository contains simple examples of Authenticator Identity Service 
-* [on Sinatra framework](saltedge-sca-service-sinatra/README.md); 
-* [on Spring Boot framework](saltedge-sca-service-spring/README.md). 
+Repository contains next examples of Authenticator Identity Service: 
+* [**Ruby Example (with Sinatra DSL)**](saltedge-sca-service-sinatra/README.md); 
+* [**Java Example & SDK (Spring Boot framework)**](saltedge-sca-service-spring/README.md). 
 
 It will help you to implement our solution in your system. 
 
@@ -56,10 +56,10 @@ You can download mobile application:
   
 ## How it works
 
-#### Read [Authenticator Identity Service WIKI (Technical Overview)](https://github.com/saltedge/sca-identity-service-example/wiki)
-#### Read [Authenticator Identity Service API reference](docs/IDENTITY_SERVICE_API.md) 
-#### How to use [Sinatra Example](saltedge-sca-service-sinatra/README.md)
-#### How to use [Spring-Boot Example & SDK](saltedge-sca-service-spring/README.md)
+### Read [SCA Service WIKI (Technical Overview)](https://github.com/saltedge/sca-identity-service-example/wiki)
+### Read [SCA Service API reference](docs/IDENTITY_SERVICE_API.md) 
+### How to use [Ruby Example](saltedge-sca-service-sinatra/README.md)
+### How to use [Java Example & SDK](saltedge-sca-service-spring/README.md)
   
 ----  
 ## Contribute

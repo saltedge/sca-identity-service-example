@@ -70,7 +70,7 @@ GEM
       builder (>= 2.0.0)
       rack (>= 1.0.0)
     rainbow (3.0.0)
-    rake (12.3.2)
+    rake (12.3.3)
     regexp_parser (1.6.0)
     rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)

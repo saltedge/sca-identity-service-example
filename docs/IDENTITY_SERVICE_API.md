@@ -1,8 +1,8 @@
-# Identity Service
+# SCA Service (Identity Service)
 
 * [What is Identity Service?](#what-is-identity-service)
 * [Identity Service Models](#identity-service-models)
-* [Deep Link](#deep-link)
+* [Service Configuration](#service-configuration)
 * [API Security](#api-security)
 * [API Errors](#api-errors)
 * [Public API](#identity-service-api)
@@ -24,11 +24,11 @@
 The purpose of Identity Service is to process and store customer identities, roles, credentials, and add the necessary functionality in order to implement SCA. Hence, besides standard functionality, in Identity Service should be implemented additional functionalities and an API, as an extension to the existing Identity Service. The extension (additional functionality and API) processes received from Core banking information and appeals to the Authenticator app via Authentication Service in order to get either action confirmation or denial from the customer.
 
 There is a little effort from Service Provider in order to implement the extension of Identity Service with 6 API end-points: 
-* Connect to Service Provider; 
+* Create Connection between Client App and Service; 
 * Revoke Access Token; 
-* Show Authorizations List; 
-* Show Authorization; 
-* Confirm or Deny Authorization.  
+* Show Pending Authorizations List; 
+* Show Single Pending Authorization; 
+* Confirm or Deny Pending Authorization.  
 and add authentication/enrollment flow for `Obtaining Access Token`
   
 Salt Edge has developed the SCA solution with such an architecture, having Identity Service in infrastructure of Service Provider, in order not to have any access to the personal information/credentials of the customer. All related to the customer private data is isolated from any third party or application and is controlled exclusively by the Service Provider.
@@ -86,21 +86,26 @@ Besides public API, may be implemented next useful end-points for internal usage
 
 ***Optional***, if Push Service is implemented inside Identity Service.
 
-## Deep Link
+## Service Configuration
 
-For initiating connect flow, service should generate deep-link for initiating connection in mobile application. Deep-link can be encoded as QR code. 
-Deep-link should contain link to configuration endpoint (`configuration` param):  
+Authenticator application can has hardcoded service configuration (e.g. service url) or support dynamic configuration.  
+
+For dynamic confoguration we propose to use application links (deep-links) or encoded in QR code image application links.
+For initiating connect flow, service should generate application link for initiating connection in mobile application. 
+Example of application link:  
 ``` 
   authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration
 ```  
 
-Deep-link can contain extra authentication data (`connect_query` param). This connect flow is named "Instant Enrollment".  
-Additional authentication parameter should be sent while [connecting to provider](#connect-to-service-provider):  
+Application link can contains extra authentication data (`connect_query` param). This connect flow is named "Instant Enrollment".  
+Additional authentication parameter should be sent to service while [connecting to provider](#connect-to-service-provider).  
+Example of application link with exta data:  
 ``` 
   authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration&connect_query=A12345678
 ```  
-More information on "Instant Enrollment" can be found [here](https://github.com/saltedge/sca-identity-service-example/wiki/Value-added-features#instant-enrollment).
 
+More information on "Instant Enrollment" can be found [here](https://github.com/saltedge/sca-identity-service-example/wiki/Value-added-features#instant-enrollment).
+  
 ---
 
 ## API Security

@@ -18,6 +18,7 @@
 # under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 
 class BaseController < Sinatra::Base
+  include Sinatra::ServiceHelper
   register Sinatra::Namespace
 
   set :raise_errors, false

@@ -73,7 +73,7 @@ public class ClientConnectionsServiceTests {
 		savedEntity.setPlatform(requestData.getPlatform());
 		savedEntity.setReturnUrl(requestData.getReturnUrl());
 
-		given(providerApi.findUserIdByAuthorizationSessionSecret("test")).willReturn(null);
+		given(providerApi.getUserIdByAuthenticationSessionSecret("test")).willReturn(null);
 		given(providerApi.getAuthorizationPageUrl(anyString())).willReturn("http://host.org/oauth");
 		given(connectionsRepository.save(any(ClientConnectionEntity.class))).willReturn(savedEntity);
 
@@ -93,7 +93,7 @@ public class ClientConnectionsServiceTests {
 		assertThat(entityCaptor.getValue().getUserId()).isNull();
 
 		assertThat(result.data.connectionId).isEqualTo("1");
-		assertThat(result.data.authorizeUrl).isEqualTo("http://host.org/oauth");
+		assertThat(result.data.authorizeRedirectUrl).isEqualTo("http://host.org/oauth");
 	}
 
 	@Test
@@ -106,9 +106,10 @@ public class ClientConnectionsServiceTests {
 		savedEntity.setPushToken(requestData.getPushToken());
 		savedEntity.setPlatform(requestData.getPlatform());
 		savedEntity.setReturnUrl(requestData.getReturnUrl());
+		savedEntity.setAccessToken("access_token");
 		savedEntity.setUserId("1");
 
-		given(providerApi.findUserIdByAuthorizationSessionSecret("test")).willReturn("1");
+		given(providerApi.getUserIdByAuthenticationSessionSecret("test")).willReturn("1");
 		given(providerApi.getAuthorizationPageUrl(anyString())).willReturn("http://host.org/oauth");
 		given(connectionsRepository.save(any(ClientConnectionEntity.class))).willReturn(savedEntity);
 
@@ -128,7 +129,8 @@ public class ClientConnectionsServiceTests {
 		assertThat(entityCaptor.getValue().isAuthenticated()).isTrue();
 
 		assertThat(result.data.connectionId).isEqualTo("1");
-		assertThat(result.data.authorizeUrl).isEqualTo(DEFAULT_AUTHENTICATOR_RETURN_TO);
+		assertThat(result.data.authorizeRedirectUrl).isNull();
+		assertThat(result.data.accessToken).isEqualTo("access_token");
 	}
 
 	@Test

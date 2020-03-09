@@ -20,11 +20,15 @@
  */
 package com.saltedge.sca.example.services
 
+import com.saltedge.sca.example.controller.SCA_ACTION_LOGIN
 import com.saltedge.sca.example.model.User
 import com.saltedge.sca.example.model.UsersRepository
+import com.saltedge.sca.sdk.models.AuthenticateAction
 import com.saltedge.sca.sdk.services.ScaSdkService
+import com.saltedge.sca.sdk.tools.CodeBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class UserAuthService {
@@ -33,15 +37,15 @@ class UserAuthService {
     @Autowired
     private lateinit var scaSdkService: ScaSdkService
 
-    fun getOrCreateAuthenticateAction(savedActionUUID: String): String {
-        var action = scaSdkService.getActionByUUID(savedActionUUID)
+    fun getOrCreateAuthSession(savedSessionCode: String): String {
+        var action = scaSdkService.getActionByUUID(savedSessionCode)
         if (action == null || action.isExpired || action.isAuthenticated) {
-            action = scaSdkService.createAction("authenticate_user")
+            action = createAuthenticateAction()
         }
         return action.uuid
     }
 
-    fun createActionAppLink(actionUUID: String): String = scaSdkService.createActionAppLink(actionUUID)
+    fun createActionAppLink(actionUUID: String): String = scaSdkService.createAuthenticateActionAppLink(actionUUID)
 
     fun hasUsers(): Boolean = usersRepository.count() > 0
 
@@ -74,5 +78,13 @@ class UserAuthService {
         } else {
             scaSdkService.onUserAuthenticationFail(secret, "Invalid Credentials")
         }
+    }
+
+    private fun createAuthenticateAction(): AuthenticateAction? {
+        return scaSdkService.createAction(
+                SCA_ACTION_LOGIN,
+                UUID.randomUUID().toString(),
+                null
+        );
     }
 }

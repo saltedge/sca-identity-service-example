@@ -18,8 +18,6 @@
 # under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 
 class UserAuthorizeController < BaseController
-  include Sinatra::ServiceHelper
-
   get '/' do
     erb :index
   end

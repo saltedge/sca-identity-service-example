@@ -18,7 +18,6 @@
 # under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 
 class SCAController < BaseController
-  include Sinatra::ServiceHelper
 
   ######################### EXAMPLE OF IDENTITY SERVICE API
   namespace '/api/authenticator/v1' do
