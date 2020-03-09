@@ -2,7 +2,7 @@
 
 * [What is Identity Service?](#what-is-identity-service)
 * [Identity Service Models](#identity-service-models)
-* [Deep Link](#deep-link)
+* [Service Configuration](#service-configuration)
 * [API Security](#api-security)
 * [API Errors](#api-errors)
 * [Public API](#identity-service-api)
@@ -86,21 +86,26 @@ Besides public API, may be implemented next useful end-points for internal usage
 
 ***Optional***, if Push Service is implemented inside Identity Service.
 
-## Deep Link
+## Service Configuration
 
-For initiating connect flow, service should generate deep-link for initiating connection in mobile application. Deep-link can be encoded as QR code. 
-Deep-link should contain link to configuration endpoint (`configuration` param):  
+Authenticator application can has hardcoded service configuration (e.g. service url) or support dynamic configuration.  
+
+For dynamic confoguration we propose to use application links (deep-links) or encoded in QR code image application links.
+For initiating connect flow, service should generate application link for initiating connection in mobile application. 
+Example of application link:  
 ``` 
   authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration
 ```  
 
-Deep-link can contain extra authentication data (`connect_query` param). This connect flow is named "Instant Enrollment".  
-Additional authentication parameter should be sent while [connecting to provider](#connect-to-service-provider):  
+Application link can contains extra authentication data (`connect_query` param). This connect flow is named "Instant Enrollment".  
+Additional authentication parameter should be sent to service while [connecting to provider](#connect-to-service-provider).  
+Example of application link with exta data:  
 ``` 
   authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration&connect_query=A12345678
 ```  
-More information on "Instant Enrollment" can be found [here](https://github.com/saltedge/sca-identity-service-example/wiki/Value-added-features#instant-enrollment).
 
+More information on "Instant Enrollment" can be found [here](https://github.com/saltedge/sca-identity-service-example/wiki/Value-added-features#instant-enrollment).
+  
 ---
 
 ## API Security
