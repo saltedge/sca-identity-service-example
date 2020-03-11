@@ -104,8 +104,8 @@ class SCAController < BaseController
 		    { "data" =>
 			    {
 				    "success" => true,
-				    "authorization_id" => authorization.id,
-				    "connection_id" => connection.id
+				    "authorization_id" => authorization.id.to_s,
+				    "connection_id" => connection.id.to_s
 			    }
 		    }.to_json
       else
