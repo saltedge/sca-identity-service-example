@@ -36,9 +36,11 @@
                             <#if item.revoked>
                                 <b>R</b>
                             <#else>
-                                <form method="post" action="/connections/remove">
-                                <input type="hidden" name="id" value="${item.id}">
-                                <input class='btn btn-primary' type='submit' value='X'>
+                                <form method="post" action="/users/dashboard">
+                                    <input type="hidden" name="action" value="revoke_connection">
+                                    <input type="hidden" name="user_id" value="${user.id}">
+                                    <input type="hidden" name="connection_id" value="${item.id}">
+                                    <input class='btn btn-primary' type='submit' value='X'>
                                 </form>
                             </#if>
                         </td>
@@ -94,7 +96,7 @@
                     </tr>
                 <#items as item>
                     <tr>
-                        <td>${item.id}</td>
+                        <td><a href="/authorizations/${item.id}">${item.id}</a></td>
                         <td>${item.title}</td>
                         <td>${item.getExpiresAtUTC()}</td>
                         <td>${item.getStatus()}</td>

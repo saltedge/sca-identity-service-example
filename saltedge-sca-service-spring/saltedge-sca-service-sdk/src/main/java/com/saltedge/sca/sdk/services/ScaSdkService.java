@@ -122,13 +122,23 @@ public class ScaSdkService {
     }
 
     /**
-     * Returns list of Authorization actions related to user.
+     * Return list of Authorization actions related to user.
      *
      * @param userId unique identifier of user of Service Provider
      * @return list of Authorizations
      */
     public List<Authorization> getAllAuthorizations(@NotEmpty String userId) {
         return authorizationsService.getAllAuthorizations(userId);
+    }
+
+    /**
+     * Return single pending Authorization.
+     *
+     * @param authorizationId unique identifier of pending authorization
+     * @return Authorizations object or null
+     */
+    public Authorization getAuthorizationById(@NotNull Long authorizationId) {
+        return authorizationsService.getAuthorization(authorizationId);
     }
 
     /**
