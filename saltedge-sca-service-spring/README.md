@@ -100,7 +100,7 @@ Consists of modules:
     * `getAllAuthorizations(userId)` - returns all Authorizations for user;  
     * `getAuthorizationById(authorizationId)` - returns Authorization by ID;    
     
-    Instant Actions management (**Ignore if Instant Action flow is not supported**):  
+    Instant Actions management (**ignore if Instant Action flow is not supported**):  
     * `createAction(code)` - creates an Action entity with required code;  
     * `createActionAppLink(actionUUID)` - return App-Link (deep-link) for initiating Instant Action authentication flow in the Salt Edge Authenticator application;  
     * `getActionByUUID(actionUUID)` - returns Action by `actionUUID`;  
