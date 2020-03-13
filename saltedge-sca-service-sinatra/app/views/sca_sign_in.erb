@@ -18,18 +18,32 @@
 # under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md %>
 
 <style>
-h1 {
-  text-align:center;
-  background: red;
-  color: #fff;
-  width: 100%;  
+h1 {text-align:center;}
+form {text-align:center;}
+button {
+ font-family: Arial,Helvetica,sans-serif;
+ font-size: 24px;
 }
-p {text-align:center;}
 </style>
 
-<html>
-  <body>
-    <div>
-      <h1>Invalid credentials</h1>
-  </body>
-</html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+	<h1>Sign In</h1>
+
+	<form class="form" method="post" action="/users/confirm">
+	  <div class="form-group">
+	    <label for="length">User name:</label>
+	    <input id="name" name="username" class="form-control" type="text">
+	  </div>
+	  <br>
+	  <div class="form-group">
+	    <label for="width">Password:</label>
+	    <input id="password" name="password" class="form-control" type="password">
+    </div>
+    <br>
+    <input type="hidden" name="token" value="<%= @session_token %>">
+	  <button type="submit" class="btn" name="sign_in">Sign In</button>
+	</form>
+</body>

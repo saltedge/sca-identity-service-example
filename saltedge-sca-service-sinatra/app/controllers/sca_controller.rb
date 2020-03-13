@@ -30,7 +30,6 @@ class SCAController < BaseController
 
     # GET SERVICE PROVIDER CONFIGURATION
     get "/configuration" do
-      binding.pry
       create_configuration("https://#{request.host_with_port}")
     end
 

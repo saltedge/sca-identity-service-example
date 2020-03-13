@@ -92,15 +92,6 @@ module Sinatra
       end
     end
 
-    def create_fast_authorization_deeplin(service_url)
-      configuration_url = "#{service_url}/api/authenticator/v1/configuration"
-      url_encoded_string = URI::encode(configuration_url)
-      default_deeplink = "authenticator://saltedge.com/connect?configuration=#{url_encoded_string}"
-
-      auth_session_token = SecureRandom.hex
-      "#{default_deeplink}&connect_query=#{auth_session_token}"
-    end
-
     def create_instant_action_deep_link(action_uuid, return_to = "", connect_url)
       "#{DEEPLINK_URL}/action?action_uuid=#{action_uuid}&return_to=#{URI::encode(return_to)}&connect_url=#{URI::encode(connect_url)}"
     end
@@ -142,6 +133,10 @@ module Sinatra
       )
     end
 
+    def create_redirect_url(connection)
+      redirect_url(connection, connection.user_id, 'success')
+    end
+
     # Creates response with connect_url by new Connection
     def get_user_authentication_url(connection)
       if connection.user_id.present?
@@ -153,7 +148,6 @@ module Sinatra
       {
         data: {
           connect_url:  url,
-          access_token: connection.connect_session_token,
           id:           connection.id.to_s
         }
       }.to_json

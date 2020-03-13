@@ -20,10 +20,6 @@
 class DashboardController < BaseController
   ######################### EXAMPLE OF ADMIN (or HELPER) SERVICE ROUTES (FOR TEST PURPOUSE)
   namespace '/admin' do
-    # REVOKE CONNECTION (FOR TEST PURPOUSE)
-    # Bank Core queries Identity Server to revoke connection by id
-    #
-    # curl -w "\n" -d "id=1" -X PUT http://localhost:4567/admin/connections/revoke
     get '/connections' do
       @user_id = params[:user_id]
 

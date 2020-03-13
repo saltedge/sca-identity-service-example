@@ -103,13 +103,27 @@ class UserAuthorizeController < BaseController
     end
   end
 
+  post '/users/confirm' do
+    @user_name    = params[:username]
+    user_password = params[:password]
+
+    if user = User.find_by(name: @user_name, password: user_password)
+      connection = Connection.find_by(connect_session_token: params['token'])
+      connection.update(user_id: user.id)
+
+      redirect create_redirect_url(connection)
+    else
+      erb :login_error
+    end
+  end
+
   get '/users/register' do
-    session['token'] = params['token']
-    erb :login_sign_up
+    @session_token = params['token']
+    erb :sca_sign_in
   end
 
   get '/users/connect_sca' do
-    @configuration_deeplink = create_fast_authorization_deeplin(APP_SETTINGS.service_url)
+    @configuration_deeplink = create_deep_link(APP_SETTINGS.service_url, nil)
 
     @qr = Sinatra::QrHelper.create_qr_code(@configuration_deeplink)
 
