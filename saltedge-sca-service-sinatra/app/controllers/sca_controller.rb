@@ -18,7 +18,6 @@
 # under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 
 class SCAController < BaseController
-
   ######################### EXAMPLE OF IDENTITY SERVICE API
   namespace '/api/authenticator/v1' do
     # Verifies identity and signature
@@ -31,6 +30,7 @@ class SCAController < BaseController
 
     # GET SERVICE PROVIDER CONFIGURATION
     get "/configuration" do
+      binding.pry
       create_configuration("https://#{request.host_with_port}")
     end
 

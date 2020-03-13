@@ -129,6 +129,7 @@
     <script>
       function refreshStatus() { 
         var payment = <%= @payment.to_json %>
+
         $.ajax({
         url: "https://" + window.location.host + "/payments/status?uuid=" + payment["uuid"],
         method: "get",
@@ -140,7 +141,7 @@
           var userLabel = document.getElementById("payment-user")
 
           switch(status) {
-            case "confirmed":
+            case "confirmed": case "denied":
               statusLabel.innerText = status
               userLabel.innerText = data["username"]
               break

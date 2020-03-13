@@ -108,6 +108,14 @@ class UserAuthorizeController < BaseController
     erb :login_sign_up
   end
 
+  get '/users/connect_sca' do
+    @configuration_deeplink = create_fast_authorization_deeplin(APP_SETTINGS.service_url)
+
+    @qr = Sinatra::QrHelper.create_qr_code(@configuration_deeplink)
+
+    erb :connect_sca
+  end
+
   post '/users/register' do
     raise StandardError::BadRequest unless params.values_at(:username, :password).none?(&:blank?)
 
