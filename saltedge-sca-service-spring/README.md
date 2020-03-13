@@ -53,8 +53,7 @@ Consists of modules:
       
 ## How to use example
   
-  In example is implemented custom admin page for creating users, authorizing, creating connections, authorizations
-  `http://your_host:8080/`  
+  Example Application implements custom admin page for creating users, authorizing, creating connections, creating authorizations. Open in browser: `http://your_host:8080/`.  
   
   
 ## SDK Integration
@@ -73,55 +72,41 @@ Consists of modules:
     }
     ```
 1. Create a service which will provide info required by SCA SDK Module (Service should implement `ServiceProvider` interface and should have `@Service` annotation):  
-      In case of EMBEDDED AUTHENTICATION `getAuthorizationPageUrl()`
-    ```java
-    public interface ServiceProvider {
-        // Provides URL of authentication page of Service Provider for redirection in Authenticator app.
-        // enrollSessionSecret is created by SDK
-        String getAuthorizationPageUrl(String enrollSessionSecret);
+    * `getAuthorizationPageUrl(String enrollSessionSecret)` - Provides URL of authentication page of Service Provider for redirection in Authenticator app. `enrollSessionSecret` is created by SDK;  
+    (**Ignore if REDIRECT authentication is not supported**)  
+    * `getUserIdByAuthenticationSessionSecret(String sessionSecret)` - Find User entity by authentication session secret code. `sessionSecret` is created by Service Provider and should be created when user already authenticated and need to connect Authenticator App (SDK);  
+    * `getProviderCode()` - Provides code name of Service Provider (e.g demo-bank-code);  
+    * `getProviderName()` - Provides human readable name of Service Provider (e.g. Demo Bank). Will be displayed for end customers;  
+    * `getProviderLogoUrl()` - Provides logo image of Service Provider. Will be displayed for end customers;  
+    * `getProviderSupportEmail()` - Provides email of Service Provider for clients support. Will be displayed for end customers;  
+    * `onAuthorizationConfirmed(Authorization authorization)` - Notifies application about confirmation or denying of SCA Authorization;  
+    * `onAuthenticateAction(AuthenticateAction action)` - Notifies application about receiving new authenticated Action request. It can be Sign-in to portal action or Payment action which requires authentication;  
+    (**Ignore if Instant Action flow is not supported**)   
     
-        // Find User entity by authentication session secret code.
-        // sessionSecret is created by Service Provider
-        // Should be created when user already authenticated and need to connect Authenticator App (SDK)
-        String getUserIdByAuthenticationSessionSecret(String sessionSecret);
+1. Use service `ScaSdkService` for backward communication between Application and SCA SDK Module. Using of service functions is not mandatory and depends on implemented features (Enrollment, Instant Enrollment, Authorization and Instant Action)
     
-        // Provides code name of Service Provider (e.g demo-bank-code)
-        String getProviderCode();
+    Connections management:   
+    * `createConnectAppLink()` - returns App-Link (deep-link) for initiating Enrollment flow in the Authenticator application.    
+    (**Ignore if mobile client not supports enrollment initiated by App-Link**);  
+    * `createConnectAppLink(authSessionSecret)` - returns App-Link (deep-link) with `authSessionSecret` for initiating Instant Enrollment flow in the Salt Edge Authenticator application;  
+    (**Ignore if mobile client not supports enrollment initiated by App-Link**);  
+    * `getClientConnections(userId)` - returns all Connections to Authenticators for User. Can be used for further Connections management by Service Provider (e.g. revoking);  
+    * `revokeConnection(connectionId)` - invoke for revoking of Authenticator Connection. After that Authenticator will not receive pending Authorizations;  
+    * `onUserAuthenticationSuccess(enrollSessionSecret, userId)` - should be invoked when REDIRECT authentication flow ends successfully and user should be redirected back to Authenticator app. Returns `ReturnTo Url` with `accessToken`. Where  `enrollSessionSecret` is unique code of enrollment session provided by `ServiceProvider.getAuthorizationPageUrl()`;  
+    * `onUserAuthenticationFail(enrollSessionSecret, errorMessage)` - should be invoked when REDIRECT authentication failed and user should be redirected back to Authenticator app. Return `ReturnTo Url` with error;  
     
-        // Provides human readable name of Service Provider (e.g. Demo Bank)
-        // Will be displayed for end customers
-        String getProviderName();
+    Authorizations management:  
+    * `createAuthorization(userId, confirmationCode, title, description)` - create new Authorization for user with required title, description and confirmationCode, and send push notification about new pending Authorization;  
+    * `getAllAuthorizations(userId)` - returns all Authorizations for user;  
+    * `getAuthorizationById(authorizationId)` - returns Authorization by ID;    
     
-        // Provides logo image of Service Provider
-        // Will be displayed for end customers
-        String getProviderLogoUrl();
+    Instant Actions management (**Ignore if Instant Action flow is not supported**):  
+    * `createAction(code)` - creates an Action entity with required code;  
+    * `createActionAppLink(actionUUID)` - return App-Link (deep-link) for initiating Instant Action authentication flow in the Salt Edge Authenticator application;  
+    * `getActionByUUID(actionUUID)` - returns Action by `actionUUID`;  
+    * `getActionStatus(actionUUID)` - returns Action's status by `actionUUID`;  
     
-        // Provides email of Service Provider for clients support
-        // Will be displayed for end customers
-        String getProviderSupportEmail();
-    
-        // Notifies application about receiving new authenticated Action request.
-        // It can be Sign-in to portal action or Payment action which requires authentication.
-        Long onAuthenticateAction(AuthenticateAction action);
-    
-        // Notifies application about confirmation or denying of SCA Authorization
-        void onAuthorizationConfirmed(Authorization authorization);
-    }
-    ```
-1. Use for callback service `ScaSdkService`:  
-    * `getClientConnections(userId)` returns all connections with authenticators for user;
-    * `revokeConnection(connectionId)` should be invoked in case when Authenticator Connection should be revoked;
-    * `createConnectAppLink()` returns App-Link (Deep-Link) for initiating enrollment flow in the Salt Edge Authenticator application;
-    * `createConnectAppLink(authSessionSecret)` returns App-Link (Deep-Link) with `authSessionSecret` for initiating enrollment flow in the Salt Edge Authenticator application;
-    * `createAuthorization(userId, title, description)` returns new Authorization for user with required title and description, and send notification about new authorization;
-    * `getAuthorizations(userId)` returns all Authorizations for user;
-    * `onUserAuthenticationSuccess(authSessionSecret, userId)` should be invoked when oAuth authentication flow ends successfully and user should be redirected back to app. Return ReturnTo Url with new accessToken; 
-    * `onUserAuthenticationFail(authSessionSecret, errorMessage)` should be invoked when oAuth authentication failed and user should be redirected back to app. Return ReturnTo Url with error;
-    * `createAction(code)` creates an Action entity with required code and returns it;
-    * `getActionByUUID(actionUUID)` returns Action by `actionUUID`;
-    * `getActionStatus(actionUUID)` returns Action's status by `actionUUID`;
-    * `createActionAppLink(actionUUID)` return App-Link (Deep-Link) for initiating Action authentication flow in the Salt Edge Authenticator application;
-    
+ 
   
 ----
 Copyright © 2019 Salt Edge. https://www.saltedge.com  
