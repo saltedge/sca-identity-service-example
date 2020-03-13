@@ -14,6 +14,7 @@
   * [Show Authorizations List](#show-authorizations-list)
   * [Show Authorization](#show-authorization)
   * [Confirm or Deny Authorization](#confirm-or-deny-authorization)
+  * [Instant Action](#instant-action)
 * [Authorization code builder example](#authorization-code-builder-example)
 
 
@@ -565,9 +566,8 @@ curl \
 **Note:**  
 **[See Response Errors](#api-errors)**
   
-----
-
 ---
+
 ### Instant Action
 
 `Action` is an entity, with the purpose of fast and password free customer authentication.
