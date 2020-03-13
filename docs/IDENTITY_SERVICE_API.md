@@ -575,6 +575,8 @@ Initialization of the `Instant Action` procedure starts with generating a QR cod
 Deep link contains unique ID of the newly generated `Action` entity, base url of the Identity Service by which application finds the related `Connection` for future request signing and `return_to` url for redirecting back from Salt Edge Authenticator to Action initiator application (`return_to` is optional).
 After what `Action` is sent to Identity Service, service provider should perform related `Action` procedure (e.g. sign-in).
 
+For more information please read [Instant Action WIKI](https://github.com/saltedge/sca-identity-service-example/wiki/Value-added-features#instant-action)
+
 #### Action Deep Link Example:
 
 `authenticator://saltedge.com/action?action_uuid=123456&connect_url=http://someurl.com&return_to=http://return.com`
