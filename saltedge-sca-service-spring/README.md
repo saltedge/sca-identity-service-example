@@ -4,9 +4,10 @@
 This codebase was created to demonstrate a full-stack application built on Spring Boot, 
 designated to demonstrate SCA flow and communication between Service Provider and Salt Edge Authenticator Application. 
 Current application implements Salt Edge Authenticator v1 API.  
+
 Consists of modules:
-* **Example Application**
 * **SCA Service SDK v1**
+* **Example Application**
 
 ## Application Requirements
 
