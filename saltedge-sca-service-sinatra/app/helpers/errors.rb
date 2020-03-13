@@ -21,6 +21,10 @@ class BadRequest < StandardError; end
 
 class AuthorizationRequired < StandardError; end
 
+class ActionNotFound < StandardError; end
+
+class ActionNotValid < StandardError; end
+
 class ConnectionNotFound < StandardError; end
 
 class UserNotFound < StandardError; end

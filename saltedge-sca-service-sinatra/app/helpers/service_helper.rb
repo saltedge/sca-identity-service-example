@@ -133,18 +133,22 @@ module Sinatra
       )
     end
 
+    def create_redirect_url(connection)
+      redirect_url(connection, connection.user_id, 'success')
+    end
+
     # Creates response with connect_url by new Connection
     def get_user_authentication_url(connection)
       if connection.user_id.present?
         url = redirect_url(connection, connection.user_id, 'success')
       else
-        url = "https://#{request.host_with_port}/login?token=#{connection.connect_session_token}"
+        url = "https://#{request.host_with_port}/users/register?token=#{connection.connect_session_token}"
       end
 
       {
         data: {
-          connect_url: url,
-          id:          connection.id.to_s
+          connect_url:  url,
+          id:           connection.id.to_s
         }
       }.to_json
     end
@@ -201,6 +205,10 @@ module Sinatra
       valid_code = request_data['authorization_code'] == authorization.authorization_code
       if valid_code
         authorization.update(confirmed: request_data['confirm'])
+
+        if action = Action.find_by(uuid: authorization.action_id)
+          action.update(status: request_data['confirm'] ? Action::CONFIRMED : Action::DENIED)
+        end
         # NOTIFY BANK CORE ABOUT CONFIRM/DENY ACTION
       end
 
@@ -219,6 +227,15 @@ module Sinatra
         title:              title,
         description:        description,
         authorization_code: authorization_code,
+      )
+    end
+
+    def create_action(status: Action::PENDING, require_sca: false)
+      Action.create!(
+        uuid:                 SecureRandom.uuid,
+        status:               status,
+        sca_confirm_required: require_sca,
+        expires_at:           Time.now.utc + 5 * 60
       )
     end
 

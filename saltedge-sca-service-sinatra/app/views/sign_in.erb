@@ -1,0 +1,187 @@
+<%# This file is part of the Salt Edge Authenticator distribution
+# (https://github.com/saltedge/sca-identity-service-example)
+# Copyright (c) 2020 Salt Edge Inc.
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3 or later.
+
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+# For the additional permissions granted for Salt Edge Authenticator
+# under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md %>
+
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="container">
+      <div class="wrapper">
+          <div class="form-wrapper">
+          <h3>Log in</h3>
+          <form method="post" action="/users/sign_in">
+              <div class="input-wrapper">
+              <label for="username">Username</label>
+              <input type="text" name="username" id="username" class="form-input">
+              </div>
+
+              <div class="input-wrapper">
+              <label for="password">Password</label>
+              <input type="password" name="password" id="password" class="form-input">
+              </div>
+
+              <div class="with-margin centered">
+                <input type="submit" value="Sign in">
+              </div>
+          </form>
+
+          <div>
+            <p>New user?</p>
+          </div>
+
+          <div>
+            <a href="/users/register">Sign up</a>
+          </div>
+
+          <div>
+          <a href="/">Back</a>
+          </div>
+          </div>
+
+          <div>
+          <h2>OR</h2>
+          </div>
+
+          <div class="centered">
+            <h3>Scan with Salt Edge Authenticator</h3>
+
+            <div class="qr-section">
+            <table align="center">
+            <% @qr.modules.each_index do |x| %>
+              <tr>
+                <% @qr.modules.each_index do |y| %>
+                  <% if @qr.dark?(x,y) %>
+                    <td class="black"/>
+                      <% else %>
+                        <td class="white"/>
+                      <% end %>
+                  <% end %>
+              </tr>
+              <% end %>
+              </table>
+
+            <a href=<%= @instant_action_deeplink %> class="with-margin">Open in Authenticator</a>
+
+            <div class="bottom-box">
+              <p>New Authenticator?</p>
+              <a href="/users/connect_sca"><h3>Connect</h3></a>
+            </div>
+            </div>
+          </div>
+    </div>
+
+    <script>
+      function refreshStatus() {
+        var action = <%= @action.to_json %>
+
+        $.ajax({
+        url: "https://" + window.location.host + "/actions/status?uuid=" + action.uuid,
+        method: "get",
+        dataType: "json",
+        success: function(data) {
+          var status = data["action_status"]
+          var redirect = data["redirect"]
+
+          switch(status) {
+            case "confirmed":
+              var link  = document.createElement('a')
+              link.href = redirect
+              document.body.appendChild(link)
+              link.click()
+              break
+            default:
+              polling()
+              break
+          }
+        },
+        fail: function(data) { console.log(data);  debugger; }
+      })
+    }
+
+    function polling() {
+      clearTimeout(poll)
+      var poll = setTimeout(refreshStatus, 3000)
+    }
+
+    polling()
+    </script>
+</body>
+
+<style>
+    * {
+      box-sizing: border-box;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0 10px;
+    }
+    .input-wrapper, .wrapper {
+      width: 100%;
+      display: inline-flex;
+    }
+    .wrapper {
+      justify-content: space-between;
+      align-items: center;
+    }
+    .input-wrapper {
+      justify-content: space-around;
+      margin-top: 10px;
+    }
+    .with-margin {
+      margin-top: 10px;
+    }
+    .form-input {
+      margin-left: 10px;
+      position: relative;
+      clear: both;
+    }
+    .form-wrapper {
+      width: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .qr-section {
+      width: 100%;
+      height: auto;
+    }
+    .centered {
+      text-align: center;
+    }
+    table {
+      border-width: 0;
+      border-style: none;
+      border-color: #0000ff;
+      border-collapse: collapse;
+    }
+    td {
+       border-width: 0;
+       border-style: none;
+       border-color: #0000ff;
+       border-collapse: collapse;
+       padding: 0;
+       margin: 0;
+       width: 4px;
+       height: 4px;
+    }
+    td.black { background-color: #000; }
+    td.white { background-color: #fff; }
+</style>

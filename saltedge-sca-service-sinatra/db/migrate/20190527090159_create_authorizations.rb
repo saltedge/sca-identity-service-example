@@ -21,6 +21,8 @@ class CreateAuthorizations < ActiveRecord::Migration[5.2]
   def change
     create_table :authorizations do |t|
       t.string   :user_id
+      t.string   :connection_id
+      t.string   :action_id
       t.datetime :expires_at
       t.string   :title, limit: 4096
       t.string   :description, limit: 4096

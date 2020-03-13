@@ -1,33 +1,33 @@
-# action.rb
-class Action
-    attr_accessor :id, :uuid, :type, :status, :created_at, :expires_at
+# This file is part of the Salt Edge Authenticator distribution
+# (https://github.com/saltedge/sca-identity-service-example)
+# Copyright (c) 2020 Salt Edge Inc.
 
-    STATUSES = ["waiting_confirmation", "pending", "confirmed", "denied"].freeze
-    TYPES    = ["sca", "normal"].freeze
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3 or later.
+
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+# For the additional permissions granted for Salt Edge Authenticator
+# under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
+
+class Action < ActiveRecord::Base
+    STATUSES = ["expired", "waiting_confirmation", "pending", "confirmed", "denied"].freeze 
 
     STATUSES.each do |status|
         const_set(status.upcase, status)
     end
 
-    TYPES.each do |type|
-        const_set(type.upcase, type)
-    end
-
-	def initialize(type = NORMAL, status = PENDING)
-		self.created_at = Time.now.getutc
-        self.id = (self.created_at.to_f * 1000).to_i.to_s
-        self.uuid = self.id
-		self.expires_at = self.created_at + 5 * 60
-
-		self.type = type
-		self.status = status
-    end
-
     def to_json
         {
-            "type" => type,
             "status" => status,
-            "id" => id
+            "uuid" => uuid
         }.to_json
     end
 end

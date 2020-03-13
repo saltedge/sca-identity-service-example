@@ -1,0 +1,169 @@
+<%# This file is part of the Salt Edge Authenticator distribution
+# (https://github.com/saltedge/sca-identity-service-example)
+# Copyright (c) 2020 Salt Edge Inc.
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3 or later.
+
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+# For the additional permissions granted for Salt Edge Authenticator
+# under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md %>
+
+<style type="text/css">
+    body {font-family: Arial, Helvetica, sans-serif;}
+
+    * {
+      box-sizing: border-box;
+    }
+    .top-header {
+        color:white;
+        background-color:#ae1200;
+        text-align:center;
+    }
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 0 10px;
+    }
+    .input-wrapper, .wrapper {
+      width: 100%;
+      display: inline-flex;
+    }
+    .wrapper {
+      justify-content: space-between;
+      align-items: center;
+    }
+    .input-wrapper {
+      justify-content: space-around;
+      margin-top: 10px;
+    }
+    .with-margin {
+      margin-top: 10px;
+    }
+    .qr-section {
+      width: 100%;
+      height: auto;
+    }
+    .centered {
+      text-align: center;
+    }
+    table {
+      border-width: 0;
+      border-style: none;
+      border-color: #0000ff;
+      border-collapse: collapse;
+    }
+    td {
+       border-width: 0;
+       border-style: none;
+       border-color: #0000ff;
+       border-collapse: collapse;
+       padding: 0;
+       margin: 0;
+       width: 4px;
+       height: 4px;
+    }
+    td.black { background-color: #000; }
+    td.white { background-color: #fff; }
+    .bottom-box {
+        width: 250px;
+        padding: 10px;
+        text-align: center;
+        border:1px solid gray;
+        border-radius: 8px;
+    }
+</style>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Salt Edge SCA Service Example</title>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <h1 class="top-header">Payment Order Example</h1>
+    <div class="container">
+        <div>
+            <a href="/"><h3 style="display: inline;">[Index]</h3></a>
+            <a href="/users/sign_in"><h3 style="display: inline;">[Dashboard]</h3></a>
+        </div>
+        <div style="border:1px solid gray;padding: 10px;">
+            <p>Payee: <%= @payment["payee_name"] %>
+            <p>Amount: <%= @payment["amount"] %> <%= @payment["currency"] %>
+            <p>User: <span id="payment-user"><%= @payment["user_name"] %></span>
+            <p>Status: <span id="payment-status"><%= @payment["status"] %></span>
+        </div>
+        
+            <div id="sca_options" class="centered">
+                <div id="login_action">
+                    <h3>Authorize with Authenticator</h3>
+
+                    <div class="qr-section">
+                    <table align="center">
+                      <% @qr.modules.each_index do |x| %>
+                        <tr>
+                          <% @qr.modules.each_index do |y| %>
+                            <% if @qr.dark?(x,y) %>
+                              <td class="black"/>
+                            <% else %>
+                              <td class="white"/>
+                            <% end %>
+                          <% end %>
+                        </tr>
+                      <% end %>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+      function refreshStatus() { 
+        var payment = <%= @payment.to_json %>
+
+        $.ajax({
+        url: "https://" + window.location.host + "/payments/status?uuid=" + payment["uuid"],
+        method: "get",
+        dataType: "json",
+        success: function(data) {
+          var status = data["action_status"]
+
+          var statusLabel = document.getElementById("payment-status")
+          var userLabel = document.getElementById("payment-user")
+
+          switch(status) {
+            case "confirmed": case "denied":
+              statusLabel.innerText = status
+              userLabel.innerText = data["username"]
+              break
+            case "waiting_confirmation":
+              statusLabel.innerText = status
+              userLabel.innerText = data["username"]
+              polling()
+              break
+            default:
+              polling()
+              break
+          }
+        },
+        fail: function(data) { console.log(data);  debugger; }
+      })
+    }
+
+    function polling() {
+      clearTimeout(poll)
+      var poll = setTimeout(refreshStatus, 3000)
+    }
+
+    polling()
+    </script>
+</body>

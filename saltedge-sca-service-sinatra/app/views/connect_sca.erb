@@ -1,0 +1,105 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add SCA</title>
+</head>
+<body>
+    <h1 class="top-header">Add Salt Edge Authenticator</h1>
+    <div class="container">
+        <div class="centered">
+        <h3 style="text-align:center;">Scan QR with Authenticator App</h3>
+
+         <div class="qr-section">
+          <table align="center">
+            <% @qr.modules.each_index do |x| %>
+              <tr>
+                <% @qr.modules.each_index do |y| %>
+                  <% if @qr.dark?(x,y) %>
+                    <td class="black"/>
+                      <% else %>
+                        <td class="white"/>
+                      <% end %>
+                  <% end %>
+              </tr>
+            <% end %>
+          </table>
+
+            <a href=<%= @configuration_deeplink %> <h3 style="text-align:center;">or OPEN with Authenticator App</h3></a>
+
+            <div>
+                <a href='https://play.google.com/store/apps/details?id=com.saltedge.authenticator'>
+                    <img src='https://cdn.worldvectorlogo.com/logos/google-play-badge.svg' alt='Get it on Google Play' height="44px"/>
+                </a>
+                <a href='https://apps.apple.com/md/app/priora-authenticator/id1277625653'>
+                    <img src='https://cdn.worldvectorlogo.com/logos/download-on-the-app-store-apple.svg' alt='Get it on App Store' height="44px"/>
+                </a>
+            </div>
+        </div>
+
+        <div>
+            <a href="/users/sign_in"><h3>Back to Sign In</h3></a>
+        </div>
+    </div>
+</body>
+</html>
+
+<style>
+    * {
+      box-sizing: border-box;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0 10px;
+    }
+    .input-wrapper, .wrapper {
+      width: 100%;
+      display: inline-flex;
+    }
+    .wrapper {
+      justify-content: space-between;
+      align-items: center;
+    }
+    .input-wrapper {
+      justify-content: space-around;
+      margin-top: 10px;
+    }
+    .with-margin {
+      margin-top: 10px;
+    }
+    .form-input {
+      margin-left: 10px;
+      position: relative;
+      clear: both;
+    }
+    .form-wrapper {
+      width: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .qr-section {
+      width: 100%;
+      height: auto;
+    }
+    .centered {
+      text-align: center;
+    }
+    table {
+      border-width: 0;
+      border-style: none;
+      border-color: #0000ff;
+      border-collapse: collapse;
+    }
+    td {
+       border-width: 0;
+       border-style: none;
+       border-color: #0000ff;
+       border-collapse: collapse;
+       padding: 0;
+       margin: 0;
+       width: 4px;
+       height: 4px;
+    }
+    td.black { background-color: #000; }
+    td.white { background-color: #fff; }
+</style>
