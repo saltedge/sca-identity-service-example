@@ -47,6 +47,7 @@ public class ConfigurationController {
     @GetMapping
     public ResponseEntity<ConfigurationResponse> getConfiguration() {
         String identityServiceUrl = EnvironmentTools.getScaServiceUrl(env);
+        System.out.println("CONFIGURATION_REQUEST: Service url:"+identityServiceUrl);
         String providerCode = providerApi.getProviderCode();
         String providerName = providerApi.getProviderName();
         String providerLogoUrl = providerApi.getProviderLogoUrl();
