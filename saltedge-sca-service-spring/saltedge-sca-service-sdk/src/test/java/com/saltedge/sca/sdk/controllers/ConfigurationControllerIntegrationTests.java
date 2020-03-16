@@ -27,7 +27,6 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import static com.saltedge.sca.sdk.controllers.ConfigurationController.CONFIGURATION_REQUEST_PATH;
 import static org.mockito.BDDMockito.given;
@@ -45,7 +44,6 @@ public class ConfigurationControllerIntegrationTests extends MockMvcTestAbs {
 		given(providerApi.getProviderSupportEmail()).willReturn("support@spring-demobank.com");
 
 		mvc.perform(MockMvcRequestBuilders.get(CONFIGURATION_REQUEST_PATH))
-				.andDo(MockMvcResultHandlers.print())
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.data").exists())
 				.andExpect(jsonPath("$.data.code", Matchers.is("spring-demobank")))

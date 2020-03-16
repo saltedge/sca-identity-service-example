@@ -17,3 +17,6 @@ before_script:
   - ./gradlew clean
 script:
   - ./gradlew check
+after_failure:
+  - "cat home/travis/build/saltedge/sca-identity-service-example/saltedge-sca-service-spring/saltedge-sca-service-sdk/build/reports/tests/test/index.html" 
+  - ./travis-tool.sh dump_logs
