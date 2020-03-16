@@ -1,10 +1,18 @@
-language: ruby
+language: java
+dist: trusty
+jdk:
+  - oraclejdk8
 before_install:
-  - cd saltedge-sca-service-sinatra
-install: bundle install
+  - cd saltedge-sca-service-spring
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.m2
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
 before_script:
-  - cp config/travis.database.yml config/database.yml
-  - bundle exec rake db:create
-  - bundle exec rake db:migrate
+  - cp example/src/main/resources/application.example.properties example/src/main/resources/application.properties
 script:
-  - bundle exec rspec
+  - ./gradlew check
