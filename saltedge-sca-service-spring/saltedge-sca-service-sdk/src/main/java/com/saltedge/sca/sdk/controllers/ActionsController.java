@@ -27,7 +27,7 @@ import com.saltedge.sca.sdk.services.AuthenticateActionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -50,7 +50,7 @@ public class ActionsController {
      * @param request with Connection entity
      * @return ActionResponse response
      */
-    @PostMapping("/{" + ScaSdkConstants.KEY_ACTION_UUID + "}")
+    @PutMapping("/{" + ScaSdkConstants.KEY_ACTION_UUID + "}")
     public ResponseEntity<ActionResponse> onSubmitAction(
             @PathVariable(ScaSdkConstants.KEY_ACTION_UUID) @NotEmpty String actionUUID,
             EmptyAuthenticatedRequest request
