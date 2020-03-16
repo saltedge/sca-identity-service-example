@@ -589,7 +589,7 @@ For more information please read [Instant Action WIKI](https://github.com/salted
 
 #### Perform Action:
 
-`POST` `/api/authenticator/v1/action/:uuid`
+`PUT` `/api/authenticator/v1/action/:uuid`
 
 ```bash
 curl \
