@@ -14,5 +14,6 @@ cache:
     - $HOME/.gradle/wrapper/
 before_script:
   - cp example/src/main/resources/application.example.properties example/src/main/resources/application.properties
+  - ./gradlew clean
 script:
   - ./gradlew check

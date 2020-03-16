@@ -24,7 +24,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,9 +32,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DateToolsTests {
 	@Test
 	public void convertDateToIso8601Test() {
-		LocalDateTime ldt = LocalDateTime.of(2000, 1, 1, 9, 0).atOffset(ZoneOffset.ofHours(2)).toLocalDateTime();
+		LocalDateTime dateTimeInLocalZone = LocalDateTime.of(2000, 1, 1, 7, 0)
+				.atZone(ZoneId.of("UTC"))
+				.withZoneSameInstant(ZoneId.systemDefault())
+				.toLocalDateTime();
 
-		assertThat(DateTools.convertDateToIso8601(ldt)).isEqualTo("2000-01-01T07:00Z");
+		assertThat(DateTools.convertDateToIso8601(dateTimeInLocalZone)).isEqualTo("2000-01-01T07:00Z");
 	}
 
 	@Test
