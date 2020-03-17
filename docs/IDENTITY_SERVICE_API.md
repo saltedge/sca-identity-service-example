@@ -597,8 +597,8 @@ curl \
   -H 'Access-Token: replace_with_your_token' \
   -H 'Expires-at: expires_at_time' \
   -H 'Signature: generated_signature' \
-  -X POST \
-  https://connector.service_host.com/api/authenticator/v1/action/123456
+  -X PUT \
+  https://connector.service_host.com/api/authenticator/v1/actions/uuid123456
 ```
 
 #### Request Path Parameters:
