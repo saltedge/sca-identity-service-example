@@ -144,34 +144,44 @@ As we know, sometimes in Web App Controller is received already parsed object. Y
   
 ---
 
+### User-Agent Header
+Requests information from the client application when initializing the app.
+
+Example:
+```
+Application name; version name/code; installer name; phone manufacturer; model; SDK version
+```
+
+---
+
 ## API Errors
 During any request on Salt Edge SCA Service side, a number of errors may appear. In order to standardize errors while still giving some degree of freedom in explaining an error callback, parameters should include both `error_class` and `error_message`. Error message serves the purpose of communicating the issue to the Client, whereas error class should be used by client application in order to be able to handle various scenarios.
 
 Contents of the `error_message` are entirely up to the Salt Edge SCA Service, they may even be localized. However, values sent within `error_class` parameter should be from the standardized list. This list may and will be extended over time.
-  
-### Bad Request errors (code: 400):  
+
+### Bad Request errors (code: 400):
 * `WrongRequestFormat` - some of request params are not valid;
 * `AccessTokenMissing` - `access_token` header is missing;
 * `SignatureMissing` - `signature` header is missing;
 * `SignatureExpired` - `expires_at` header is missing or `expires_at` is before now;
 * `InvalidSignature` - `signature` param is invalid;
 * `ActionExpired` - Action entity is expired.
-  
-### Unauthorized errors (code: 401):  
-* `ConnectionNotFound` - connection associated with by `access_token` header not found or it is invalid;  
-* `UserNotFound` - connection associated with Connection not found.  
-  
-### Not Found errors (code: 404):  
-* `AuthorizationNotFound` - authorization queried by `authorization_id` param not found;  
+
+### Unauthorized errors (code: 401):
+* `ConnectionNotFound` - connection associated with by `access_token` header not found or it is invalid;
+* `UserNotFound` - connection associated with Connection not found.
+
+### Not Found errors (code: 404):
+* `AuthorizationNotFound` - authorization queried by `authorization_id` param not found;
 * `ActionNotFound` - action queried by `action_id` param not found.
-  
+
 ---
 ## Identity Service API
 
 ### API data types
 The following section describes the different data types used for request and response data.
 
-[JSON format](https://restfulapi.net/json-data-types/) is used for request/response data formatting. Since all data is eventually represented as UTF-8 strings, these types mostly define what characters are considered valid for data of a specific type. Additional validation rules may apply for specific parameters.  
+[JSON format](https://restfulapi.net/json-data-types/) is used for request/response data formatting. Since all data is eventually represented as UTF-8 strings, these types mostly define what characters are considered valid for data of a specific type. Additional validation rules may apply for specific parameters.
 Several primitive types:
 **Boolean** - A case insensitive Boolean value, represented as either `true` or `false`.
 
@@ -192,12 +202,13 @@ There are several common points about the request we send:
 - There is a `Signature` header that identifies the request was signed;
 - There is a `Expires-at` header that identifies expiration time of the request;
 - The JSON object sent will always have a  `data` field;
-  
+- There is a `User-Agent` header that identifies device info, where the app was launched;
+
 ---
-### Get Service provider configuration   
+### Get Service provider configuration
 Public resource (not authenticated) for fetching of initial data of Service Provider.
 Included in [deep-link](#qr-code). Endpoint can be arbitrary and not in Authenticator API namespace (`/api/authenticator/v1/`)
-  
+
 `GET` `configuration url from deep-link`
 
 ```bash
@@ -216,7 +227,7 @@ curl \
 - `version`       **[string, required]** - required Authenticator API version
 
 #### Example response
-```json  
+```json
 {
   "data": {
     "connect_url": "https://connector.service_host.com",
@@ -227,16 +238,16 @@ curl \
     "version": "1"
   }
 }
-```  
+```
 
-**Note:**  
+**Note:**
 **[See Response Errors](#api-errors)**
-  
+
 ---
 ### Connect to Service Provider
 Create the new Mobile Client's model (i.e. Service Connection) and return Connect URL for future user authentication.
 
-`POST` `/api/authenticator/v1/connections`  
+`POST` `/api/authenticator/v1/connections`
 
 ```bash
 curl \
@@ -245,18 +256,18 @@ curl \
   -d '{ "data": { "public_key": "-----BEGIN PUBLIC KEY-----\nMIGfMAGCSqGSIAB\n-----END PUBLIC KEY-----\n", "return_url": "authenticator://oauth/redirect", "platform": "android", "push_token": "e886d1a84cfa3cd5343b70a3f9971758e" } }' \
   https://connector.service_host.com/api/authenticator/v1/connections
 ```
-  
-#### Request Headers 
-- `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`; 
-  
+
+#### Request Headers
+- `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`;
+
 #### Request Parameters
-- `public_key` **[string, required]** - a unique Asymmetric Public Key linked to the new Mobile Client (Connection) in PEM format 
+- `public_key` **[string, required]** - a unique Asymmetric Public Key linked to the new Mobile Client (Connection) in PEM format
 - `return_url` **[string, required]** - a URL the Mobile Application will be redirected to at the end of the authentication process
 - `platform` **[string, required]** - mobile platform's name (e.g.  `android` or `ios`)
 - `push_token` **[string, optional]** - a token which uniquely identifies Mobile Application for the Push Notification system (e.g. Firebase Cloud Messaging, Apple Push Notifications) (i.e. unique address of current Mobile Application instance). Sometimes is not available for current application.
 - `provider_code` **[string, optional]** - code of the Service Provider
-- `connect_query` **[string, optional]** - a token which uniquely identifies the user which require creation of new connection. It is Base64-encoded string that is embedded as query parameter in [Deep Link](#deep-link). Can be used for skipping of redundant authentication step in mobile client if user has passed it once before.  
-  
+- `connect_query` **[string, optional]** - a token which uniquely identifies the user which require creation of new connection. It is Base64-encoded string that is embedded as query parameter in [Deep Link](#deep-link). Can be used for skipping of redundant authentication step in mobile client if user has passed it once before.
+
 #### Request Example
 ```json
 {
@@ -295,12 +306,12 @@ if `connect_query` is valid (exist and not expired), then return the successful 
 }
 ```
 
-**Note:**  
+**Note:**
 **[See Response Errors](#api-errors)**
-  
+
 ---
 ### Obtain access token
-Client (WebView on Mobile Application) should open `connect_url` and user should pass authentication procedure.  
+Client (WebView on Mobile Application) should open `connect_url` and user should pass authentication procedure.
 When authentication flow is finished, client will be redirected to URL which should start with `return_url` ([passed on Connect](#connect-to-service-provider)) and extra params. Once client has captured the redirect URL, it has to deserialize the JSON-encoded URL path following the custom scheme and the host.
 
 #### Redirect Parameters of successful authentication
@@ -320,36 +331,38 @@ When authentication flow is finished, client will be redirected to URL which sho
 #### Example of failed authentication
 ```
   authenticator://oauth/redirect?error_class=WRONG_CREDENTIALS&error_message=Wrong login or password
-``` 
+```
 *The URL will be URLEncoded (percent-encoded), the URL above is not URLEncoded to preserve its readability.*
 
 ---
 ### Revoke Access token
-Invalidates a Mobile Client by `Access-Token` (in header).  
-  
-`DELETE` `/api/authenticator/v1/connections`  
-  
+Invalidates a Mobile Client by `Access-Token` (in header).
+
+`DELETE` `/api/authenticator/v1/connections`
+
 ```bash
 curl \
   -H 'Content-Type: application/json' \
   -H 'Access-Token: replace_with_your_token' \
   -H 'Expires-at: expires_at_time' \
   -H 'Signature: generated_signature' \
+  -H 'User-Agent: device_info' \
   -X DELETE \
   https://connector.service_host.com/api/authenticator/v1/connections
 ```
-  
-#### Request Headers 
-- `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`; 
-- `Access-Token` **[string, required]** - access token, required to access resources which require authentication. 
-- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature.
-- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature.
+
+#### Request Headers
+- `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`;
+- `Access-Token` **[string, required]** - access token, required to access resources which require authentication;
+- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
+- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature;
+- `User-Agent` **[string, required]** - request information from the client application.
 
 #### Response Parameters
 - `success` **[boolean]** - result of deletion
 - `access_token` **[string]** - revoked access token
 
-#### Response Example 
+#### Response Example
 ```json
 {
   "data": {
@@ -359,31 +372,33 @@ curl \
 }
 ```
 
-**Note:**  
+**Note:**
 **[See Response Errors](#api-errors)**
-  
+
 ---
 ### Show Authorizations List
-Return list of all current Authorizations which require end-user confirmation for Service Provider by `Access-Token` from headers.  
-Each Authorization's `data` (authorization data) is encrypted with algorithm mentioned in `algorithm` param. Necessary data for decryption (`key` and `iv`) are encrypted by asymmetric `public_key` sent on (creating new connection)[#connect-to-service-provider] earlier.  
+Return list of all current Authorizations which require end-user confirmation for Service Provider by `Access-Token` from headers.
+Each Authorization's `data` (authorization data) is encrypted with algorithm mentioned in `algorithm` param. Necessary data for decryption (`key` and `iv`) are encrypted by asymmetric `public_key` sent on (creating new connection)[#connect-to-service-provider] earlier.
 
-`GET` `/api/authenticator/v1/authorizations`  
-  
+`GET` `/api/authenticator/v1/authorizations`
+
 ```bash
 curl \
   -H 'Content-Type: application/json' \
   -H 'Access-Token: replace_with_your_token' \
   -H 'Expires-at: expires_at_time' \
   -H 'Signature: generated_signature' \
+  -H 'User-Agent: device_info' \
   -X GET \
   https://connector.service_host.com/api/authenticator/v1/authorizations
 ```
-  
-#### Request Headers 
-- `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`; 
-- `Access-Token` **[string, required]** - access token, required to access resources which require authentication. 
-- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature.
-- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature. 
+
+#### Request Headers
+- `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`;
+- `Access-Token` **[string, required]** - access token, required to access resources which require authentication;
+- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
+- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature;
+- `User-Agent` **[string, required]** - request information from the client application.
 
 #### Response Body Parameters
 - `id` **[string]** - a unique ID of authorization model
@@ -409,7 +424,7 @@ curl \
 }
 ```
 
-#### Authorization Payload Parameters (Decrypted payload)  
+#### Authorization Payload Parameters (Decrypted payload)
 - `id` **[string]** - a unique ID of authorization model
 - `connection_id` **[string]** - a unique ID of Mobile Client (Service Connection). Used to decrypt models in the Mobile Application
 - `title` **[string]** - a human-readable title of authorization action
@@ -418,7 +433,7 @@ curl \
 - `created_at` **[datetime]** - time when the authorization was created
 - `expires_at` **[datetime]** - time when the authorization should expire
 
-#### Authorization Payload Example (Decrypted payload)  
+#### Authorization Payload Example (Decrypted payload)
 ```json
 {
   "id": "444",
@@ -431,37 +446,39 @@ curl \
 }
 ```
 
-**Note:**  
+**Note:**
 **[See Response Errors](#api-errors)**
-  
+
 ---
 ### Show Authorization
 Return the one authorization which requireы end-user confirmation for Service Provider by `Access-Token` from headers and by `id` parameter.
 Each Authorization's `confirmation_data` is encrypted with algorithm mentioned in `algorithm` param. Necessary data for decryption (`key` and `iv`) are encrypted by asymmetric `public_key' sent on (creating new connection)[#connect-to-service-provider] earlier.
 
-`GET` `/api/authenticator/v1/authorizations/:authorization_id` 
-  
+`GET` `/api/authenticator/v1/authorizations/:authorization_id`
+
 ```bash
 curl \
   -H 'Content-Type: application/json' \
   -H 'Access-Token: replace_with_your_token' \
   -H 'Expires-at: expires_at_time' \
   -H 'Signature: generated_signature' \
+  -H 'User-Agent: device_info' \
   -X GET \
   https://connector.service_host.com/api/authenticator/v1/authorizations/444
 ```
-  
-#### Request Path Parameters
-- `authorization_id` **[string, required]** - a unique code of authorization model 
 
-#### Request Headers 
-- `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`; 
-- `Access-Token` **[string, required]** - access token, required to access resources which require authentication. 
-- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature.
-- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature.  
+#### Request Path Parameters
+- `authorization_id` **[string, required]** - a unique code of authorization model
+
+#### Request Headers
+- `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`;
+- `Access-Token` **[string, required]** - access token, required to access resources which require authentication;
+- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
+- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature;
+- `User-Agent` **[string, required]** - request information from the client application.
 
 #### Response Parameters
-- `id` **[string]** - a unique code of authorization model  
+- `id` **[string]** - a unique code of authorization model
 - `connection_id` **[string]** - a unique ID of Mobile Client (Service Connection). Used to decrypt models in the Mobile Application
 - `iv` **[string]** - an initialization vector of encryption algorithm, this string is encrypted with public key linked to Mobile Client
 - `key` **[string]** - a secure key of encryption algorithm, this string is encrypted with public key linked to Mobile Client
@@ -482,7 +499,7 @@ curl \
 }
 ```
 
-#### Authorization Payload Parameters (Decrypted payload)  
+#### Authorization Payload Parameters (Decrypted payload)
 - `id` **[string]** - a unique ID of authorization model
 - `connection_id` **[string]** - a unique ID of Mobile Client (Service Connection). Used to decrypt models in the Mobile Application
 - `title` **[string]** - a human-readable title of authorization action
@@ -491,7 +508,7 @@ curl \
 - `created_at` **[datetime]** - time when the authorization was created
 - `expires_at` **[datetime]** - time when the authorization should expire
 
-#### Authorization Payload Example (Decrypted payload)  
+#### Authorization Payload Example (Decrypted payload)
 ```json
 {
   "id": "444",
@@ -504,36 +521,38 @@ curl \
 }
 ```
 
-**Note:**  
+**Note:**
 **[See Response Errors](#api-errors)**
-  
+
 ---
 ### Confirm or Deny Authorization
-Confirms/Denies authorization model (e.g. payment, operation, etc) from Service Provider.  
+Confirms/Denies authorization model (e.g. payment, operation, etc) from Service Provider.
 Requests for Confirm and Deny are practicaly equal. The only difference in the value of `confirm` field.
-For `Confirm`, field `confirm` should be `true`. For `Deny`, field `confirm` should be `false`.  
+For `Confirm`, field `confirm` should be `true`. For `Deny`, field `confirm` should be `false`.
 
-`PUT` `/api/authenticator/v1/authorizations/:authorization_id`  
-  
+`PUT` `/api/authenticator/v1/authorizations/:authorization_id`
+
 ```bash
 curl \
   -H 'Content-Type: application/json' \
   -H 'Access-Token: replace_with_your_token' \
   -H 'Expires-at: expires_at_time' \
   -H 'Signature: generated_signature' \
+  -H 'User-Agent: device_info' \
   -X PUT \
   -d '{ "data": { "confirm": true, "authorization_code": "123456789" } }' \
   https://connector.service_host.com/api/authenticator/v1/authorizations/444
 ```
-  
-#### Request Path Parameters
-- `authorization_id` **[string, required]** - a unique code of authorization model  
 
-#### Request Headers 
-- `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`; 
-- `Access-Token` **[string, required]** - access token, required to access resources which require authentication. 
-- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature.
-- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature.  
+#### Request Path Parameters
+- `authorization_id` **[string, required]** - a unique code of authorization model
+
+#### Request Headers
+- `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`;
+- `Access-Token` **[string, required]** - access token, required to access resources which require authentication;
+- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
+- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature;
+- `User-Agent` **[string, required]** - request information from the client application.
 
 #### Request Body Parameters
 - `confirm` **[boolean, required]** - Confirm (`true`) or Deny (`false`) authorization
@@ -547,13 +566,13 @@ curl \
     "authorization_code": "123456789"
   }
 }
-```  
+```
 
 #### Response Parameters
-- `success` **[boolean]** - result of confirm/deny operation. 
+- `success` **[boolean]** - result of confirm/deny operation.
 - `id` **[string]** - a unique ID of authorization model
 
-#### Response Example 
+#### Response Example
 ```json
 {
   "data": {
@@ -561,11 +580,11 @@ curl \
     "id": "444"
   }
 }
-```  
+```
 
-**Note:**  
+**Note:**
 **[See Response Errors](#api-errors)**
-  
+
 ---
 
 ### Instant Action
@@ -597,6 +616,7 @@ curl \
   -H 'Access-Token: replace_with_your_token' \
   -H 'Expires-at: expires_at_time' \
   -H 'Signature: generated_signature' \
+  -H 'User-Agent: device_info' \
   -X PUT \
   https://connector.service_host.com/api/authenticator/v1/actions/uuid123456
 ```
@@ -607,9 +627,10 @@ curl \
 
 #### Request Headers:
 - `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default en.
-- `Access-Token` **[string, required]** - access token, required to access resources which require authentication.
-- `Expires-at` **[datetime, required]** - expires at datetime stamp, required to access resources which verify request signature.
-- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature.
+- `Access-Token` **[string, required]** - access token, required to access resources which require authentication;
+- `Expires-at` **[datetime, required]** - expires at datetime stamp, required to access resources which verify request signature;
+- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature;
+- `User-Agent` **[string, required]** - request information from the client application.
 
 #### Response Body Parameters:
 
