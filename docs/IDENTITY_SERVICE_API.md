@@ -196,7 +196,7 @@ There are several common points about the request we send:
 ---
 
 ### User-Agent Header
-Requests information from the client application when initializing the app.
+The User-Agent request header is a characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent.
 
 Example:
 ```
@@ -351,11 +351,11 @@ curl \
 ```
   
 #### Request Headers 
-- `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`; 
+- `Accept-Language` **[string, optional]** - preferred by client application locale variant. By default `en`;
 - `Access-Token` **[string, required]** - access token, required to access resources which require authentication;
-- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
+- `Expires-at` **[datetime, required]** - expiration time of request as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
 - `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature;
-- `User-Agent` **[string, required]** - request information from the client application.
+- `User-Agent` **[string, required]** - request header is a characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent.
 
 #### Response Parameters
 - `success` **[boolean]** - result of deletion
@@ -393,11 +393,11 @@ curl \
 ```
   
 #### Request Headers 
-- `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`; 
+- `Accept-Language` **[string, optional]** - preferred by client application locale variant. By default `en`;
 - `Access-Token` **[string, required]** - access token, required to access resources which require authentication;
-- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
+- `Expires-at` **[datetime, required]** - expiration time of request as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
 - `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature;
-- `User-Agent` **[string, required]** - request information from the client application.
+- `User-Agent` **[string, required]** - request header is a characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent.
 
 #### Response Body Parameters
 - `id` **[string]** - a unique ID of authorization model
@@ -470,11 +470,11 @@ curl \
 - `authorization_id` **[string, required]** - a unique code of authorization model 
 
 #### Request Headers 
-- `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`; 
+- `Accept-Language` **[string, optional]** - preferred by client application locale variant. By default `en`;
 - `Access-Token` **[string, required]** - access token, required to access resources which require authentication;
-- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
+- `Expires-at` **[datetime, required]** - expiration time of request as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
 - `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature;
-- `User-Agent` **[string, required]** - request information from the client application.
+- `User-Agent` **[string, required]** - request header is a characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent.
 
 #### Response Parameters
 - `id` **[string]** - a unique code of authorization model  
@@ -546,12 +546,12 @@ curl \
 #### Request Path Parameters
 - `authorization_id` **[string, required]** - a unique code of authorization model  
 
-#### Request Headers 
-- `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`; 
+#### Request Headers
+- `Accept-Language` **[string, optional]** - preferred by client application locale variant. By default `en`;
 - `Access-Token` **[string, required]** - access token, required to access resources which require authentication;
-- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
+- `Expires-at` **[datetime, required]** - expiration time of request as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
 - `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature;
-- `User-Agent` **[string, required]** - request information from the client application.
+- `User-Agent` **[string, required]** - request header is a characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent.
 
 #### Request Body Parameters
 - `confirm` **[boolean, required]** - Confirm (`true`) or Deny (`false`) authorization
@@ -625,11 +625,11 @@ curl \
 `uuid` - The uuid of the action, received from the `deeplink`
 
 #### Request Headers:
-- `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default en;
+- `Accept-Language` **[string, optional]** - preferred by client application locale variant. By default en;
 - `Access-Token` **[string, required]** - access token, required to access resources which require authentication;
-- `Expires-at` **[datetime, required]** - expires at datetime stamp, required to access resources which verify request signature;
+- `Expires-at` **[datetime, required]** - expiration time of request as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
 - `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature;
-- `User-Agent` **[string, required]** - request information from the client application.
+- `User-Agent` **[string, required]** - request header is a characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent.
 
 #### Response Body Parameters:
 
