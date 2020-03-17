@@ -39,7 +39,7 @@ import javax.validation.constraints.NotEmpty;
 @RestController
 @RequestMapping(ActionsController.ACTIONS_REQUEST_PATH)
 public class ActionsController {
-    public final static String ACTIONS_REQUEST_PATH = ScaSdkConstants.AUTHENTICATOR_API_BASE_PATH + "/action";
+    public final static String ACTIONS_REQUEST_PATH = ScaSdkConstants.AUTHENTICATOR_API_BASE_PATH + "/actions";
     @Autowired
     protected AuthenticateActionsService actionsService;
 

@@ -42,8 +42,3 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
-
-test {
-    testLogging.showStandardStreams = true
-    testLogging.exceptionFormat = 'full'
-}
