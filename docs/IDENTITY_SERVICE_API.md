@@ -192,7 +192,17 @@ There are several common points about the request we send:
 - There is a `Signature` header that identifies the request was signed;
 - There is a `Expires-at` header that identifies expiration time of the request;
 - The JSON object sent will always have a  `data` field;
-  
+
+---
+
+### User-Agent Header
+Requests information from the client application when initializing the app.
+
+Example:
+```
+Application name; version name/code; installer name; phone manufacturer; model; SDK version
+```
+
 ---
 ### Get Service provider configuration   
 Public resource (not authenticated) for fetching of initial data of Service Provider.
@@ -335,15 +345,17 @@ curl \
   -H 'Access-Token: replace_with_your_token' \
   -H 'Expires-at: expires_at_time' \
   -H 'Signature: generated_signature' \
+  -H 'User-Agent: device_info' \
   -X DELETE \
   https://connector.service_host.com/api/authenticator/v1/connections
 ```
   
 #### Request Headers 
 - `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`; 
-- `Access-Token` **[string, required]** - access token, required to access resources which require authentication. 
-- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature.
-- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature.
+- `Access-Token` **[string, required]** - access token, required to access resources which require authentication;
+- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
+- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature;
+- `User-Agent` **[string, required]** - request information from the client application.
 
 #### Response Parameters
 - `success` **[boolean]** - result of deletion
@@ -375,15 +387,17 @@ curl \
   -H 'Access-Token: replace_with_your_token' \
   -H 'Expires-at: expires_at_time' \
   -H 'Signature: generated_signature' \
+  -H 'User-Agent: device_info' \
   -X GET \
   https://connector.service_host.com/api/authenticator/v1/authorizations
 ```
   
 #### Request Headers 
 - `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`; 
-- `Access-Token` **[string, required]** - access token, required to access resources which require authentication. 
-- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature.
-- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature. 
+- `Access-Token` **[string, required]** - access token, required to access resources which require authentication;
+- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
+- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature;
+- `User-Agent` **[string, required]** - request information from the client application.
 
 #### Response Body Parameters
 - `id` **[string]** - a unique ID of authorization model
@@ -447,6 +461,7 @@ curl \
   -H 'Access-Token: replace_with_your_token' \
   -H 'Expires-at: expires_at_time' \
   -H 'Signature: generated_signature' \
+  -H 'User-Agent: device_info' \
   -X GET \
   https://connector.service_host.com/api/authenticator/v1/authorizations/444
 ```
@@ -456,9 +471,10 @@ curl \
 
 #### Request Headers 
 - `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`; 
-- `Access-Token` **[string, required]** - access token, required to access resources which require authentication. 
-- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature.
-- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature.  
+- `Access-Token` **[string, required]** - access token, required to access resources which require authentication;
+- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
+- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature;
+- `User-Agent` **[string, required]** - request information from the client application.
 
 #### Response Parameters
 - `id` **[string]** - a unique code of authorization model  
@@ -521,6 +537,7 @@ curl \
   -H 'Access-Token: replace_with_your_token' \
   -H 'Expires-at: expires_at_time' \
   -H 'Signature: generated_signature' \
+  -H 'User-Agent: device_info' \
   -X PUT \
   -d '{ "data": { "confirm": true, "authorization_code": "123456789" } }' \
   https://connector.service_host.com/api/authenticator/v1/authorizations/444
@@ -531,9 +548,10 @@ curl \
 
 #### Request Headers 
 - `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default `en`; 
-- `Access-Token` **[string, required]** - access token, required to access resources which require authentication. 
-- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature.
-- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature.  
+- `Access-Token` **[string, required]** - access token, required to access resources which require authentication;
+- `Expires-at` **[datetime, required]** - request expiration time as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
+- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature;
+- `User-Agent` **[string, required]** - request information from the client application.
 
 #### Request Body Parameters
 - `confirm` **[boolean, required]** - Confirm (`true`) or Deny (`false`) authorization
@@ -597,6 +615,7 @@ curl \
   -H 'Access-Token: replace_with_your_token' \
   -H 'Expires-at: expires_at_time' \
   -H 'Signature: generated_signature' \
+  -H 'User-Agent: device_info' \
   -X PUT \
   https://connector.service_host.com/api/authenticator/v1/actions/uuid123456
 ```
@@ -606,10 +625,11 @@ curl \
 `uuid` - The uuid of the action, received from the `deeplink`
 
 #### Request Headers:
-- `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default en.
-- `Access-Token` **[string, required]** - access token, required to access resources which require authentication.
-- `Expires-at` **[datetime, required]** - expires at datetime stamp, required to access resources which verify request signature.
-- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature.
+- `Accept-Language` **[string, optional]** - advertises which locale variant is preferred by client. By default en;
+- `Access-Token` **[string, required]** - access token, required to access resources which require authentication;
+- `Expires-at` **[datetime, required]** - expires at datetime stamp, required to access resources which verify request signature;
+- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature;
+- `User-Agent` **[string, required]** - request information from the client application.
 
 #### Response Body Parameters:
 
