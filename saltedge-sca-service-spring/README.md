@@ -58,7 +58,7 @@ Consists of modules:
   
 ## SDK Integration
 
-1. Add SDK to target application as Module or as JAR library (`out/saltedge-sca-service-sdk-1.0.0-all.jar`);
+1. Add SDK to target application as Module or as JAR library (`out/saltedge-sca-service-sdk-1.0.1-all.jar`);
 1. Setup application as [described before](#example-application-quick-setup)  
   (add configuration)
 1. Add SDK package (`com.saltedge.sca.sdk`) to component scan annotation in Application class.
