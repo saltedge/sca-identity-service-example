@@ -35,7 +35,7 @@ public class DateTools {
      */
     public static String convertDateToIso8601(LocalDateTime date) {
         LocalDateTime utc = date.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
-        return utc.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm'Z'"));
+        return utc.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
     }
 
     /**

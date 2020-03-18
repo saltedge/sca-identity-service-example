@@ -37,7 +37,7 @@ public class DateToolsTests {
 				.withZoneSameInstant(ZoneId.systemDefault())
 				.toLocalDateTime();
 
-		assertThat(DateTools.convertDateToIso8601(dateTimeInLocalZone)).isEqualTo("2000-01-01T07:00Z");
+		assertThat(DateTools.convertDateToIso8601(dateTimeInLocalZone)).isEqualTo("2000-01-01T07:00:00.000Z");
 	}
 
 	@Test
