@@ -25,6 +25,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Wrapper for data which identify the User (Customer)
@@ -66,5 +67,20 @@ public class UserIdentity {
 
     public LocalDateTime getAccessTokenExpiresAt() {
         return accessTokenExpiresAt;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserIdentity that = (UserIdentity) o;
+        return Objects.equals(userId, that.userId) &&
+                Objects.equals(accessToken, that.accessToken) &&
+                Objects.equals(accessTokenExpiresAt, that.accessTokenExpiresAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, accessToken, accessTokenExpiresAt);
     }
 }

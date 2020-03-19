@@ -32,6 +32,5 @@ public class SdkConstantsTests {
 		assertThat(ScaSdkConstants.APP_LINK_PREFIX_ACTION).isEqualTo("authenticator://saltedge.com/action");
 		assertThat(ScaSdkConstants.AUTHORIZATION_DEFAULT_LIFETIME_MINUTES).isEqualTo(5);
 		assertThat(ScaSdkConstants.CONNECTION_DEFAULT_AUTH_SESSION_MINUTES).isEqualTo(5);
-		assertThat(ScaSdkConstants.CONNECTION_DEFAULT_ACCESS_TOKEN_MINUTES).isEqualTo(24 * 60);
 	}
 }

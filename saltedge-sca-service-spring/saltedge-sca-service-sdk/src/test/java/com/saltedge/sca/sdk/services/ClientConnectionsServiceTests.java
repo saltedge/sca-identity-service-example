@@ -21,6 +21,7 @@
 package com.saltedge.sca.sdk.services;
 
 import com.saltedge.sca.sdk.models.ClientConnection;
+import com.saltedge.sca.sdk.models.UserIdentity;
 import com.saltedge.sca.sdk.models.api.requests.CreateConnectionRequest;
 import com.saltedge.sca.sdk.models.api.responces.CreateConnectionResponse;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
@@ -99,6 +100,7 @@ public class ClientConnectionsServiceTests {
 	@Test
 	public void givenUnknownAuthorizationSecret_whenCreateConnection_thenReturnRedirectToReturnPage() {
 		//given
+		UserIdentity identity = new UserIdentity("1");
 		CreateConnectionRequest.Data requestData = new CreateConnectionRequest.Data(keyValue, DEFAULT_AUTHENTICATOR_RETURN_TO, "android", "token", null);
 		ClientConnectionEntity savedEntity = new ClientConnectionEntity();
 		savedEntity.setId(1L);
@@ -109,7 +111,7 @@ public class ClientConnectionsServiceTests {
 		savedEntity.setAccessToken("access_token");
 		savedEntity.setUserId("1");
 
-		given(serviceProvider.getUserIdByAuthenticationSessionSecret("test")).willReturn("1");
+		given(serviceProvider.getUserIdByAuthenticationSessionSecret("test")).willReturn(identity);
 		given(serviceProvider.getAuthorizationPageUrl(anyString())).willReturn("http://host.org/oauth");
 		given(connectionsRepository.save(any(ClientConnectionEntity.class))).willReturn(savedEntity);
 
@@ -190,9 +192,9 @@ public class ClientConnectionsServiceTests {
 	@Test
 	public void givenInvalidParams_whenAuthenticateConnection_thenThrowConstraintViolationException() {
 		assertThrows(ConstraintViolationException.class, () -> testService.authenticateConnection(null, null));
-		assertThrows(ConstraintViolationException.class, () -> testService.authenticateConnection(null, ""));
+		assertThrows(ConstraintViolationException.class, () -> testService.authenticateConnection(null, new UserIdentity("")));
 		assertThrows(ConstraintViolationException.class, () -> testService.authenticateConnection("", null));
-		assertThrows(ConstraintViolationException.class, () -> testService.authenticateConnection("", ""));
+		assertThrows(ConstraintViolationException.class, () -> testService.authenticateConnection("", new UserIdentity("")));
 	}
 
 	@Test
@@ -201,7 +203,7 @@ public class ClientConnectionsServiceTests {
 		given(connectionsRepository.findByAuthSessionSecret("secret")).willReturn(null);
 
 		//when
-		ClientConnectionEntity result = testService.authenticateConnection("secret", "userId");
+		ClientConnectionEntity result = testService.authenticateConnection("secret", new UserIdentity("userId"));
 
 		//then
 		assertThat(result).isNull();
@@ -215,7 +217,7 @@ public class ClientConnectionsServiceTests {
 		given(connectionsRepository.findByAuthSessionSecret("secret")).willReturn(initialConnection);
 
 		//when
-		ClientConnectionEntity result = testService.authenticateConnection("secret", "userId");
+		ClientConnectionEntity result = testService.authenticateConnection("secret", new UserIdentity("userId"));
 
 		//then
 		assertThat(result.isAuthenticated()).isFalse();
@@ -233,13 +235,17 @@ public class ClientConnectionsServiceTests {
 		given(connectionsRepository.save(any(ClientConnectionEntity.class))).willReturn(savedConnection);
 
 		//when
-		ClientConnectionEntity result = testService.authenticateConnection("secret", "2");
+		ClientConnectionEntity result = testService.authenticateConnection(
+				"secret",
+				new UserIdentity("2", "accessToken", null)
+		);
 
 		//then
 		ArgumentCaptor<ClientConnectionEntity> entityCaptor = ArgumentCaptor.forClass(ClientConnectionEntity.class);
 		verify(connectionsRepository).save(entityCaptor.capture());
 		assertThat(entityCaptor.getValue().getRevoked()).isFalse();
 		assertThat(entityCaptor.getValue().getUserId()).isEqualTo("2");
+		assertThat(entityCaptor.getValue().getAccessToken()).isEqualTo("accessToken");
 		assertThat(entityCaptor.getValue().isAuthenticated()).isTrue();
 		assertThat(result.isAuthenticated()).isTrue();
 	}
