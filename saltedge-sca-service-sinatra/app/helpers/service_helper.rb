@@ -248,8 +248,8 @@ module Sinatra
         "title"              => authorization.title,
         "description"        => authorization.description,
         "authorization_code" => authorization.authorization_code,
-        "created_at"         => authorization.created_at.round(10).iso8601(3),
-        "expires_at"         => authorization.expires_at.round(10).iso8601(3)
+        "created_at"         => authorization.created_at.round(10).iso8601,
+        "expires_at"         => authorization.expires_at.round(10).iso8601
       }
     end
 
