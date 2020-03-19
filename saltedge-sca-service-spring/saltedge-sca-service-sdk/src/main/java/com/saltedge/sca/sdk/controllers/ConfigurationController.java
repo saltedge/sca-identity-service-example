@@ -42,15 +42,15 @@ public class ConfigurationController {
     @Autowired
     Environment env;
     @Autowired
-    ServiceProvider providerApi;
+    ServiceProvider serviceProvider;
 
     @GetMapping
     public ResponseEntity<ConfigurationResponse> getConfiguration() {
         String identityServiceUrl = EnvironmentTools.getScaServiceUrl(env);
-        String providerCode = providerApi.getProviderCode();
-        String providerName = providerApi.getProviderName();
-        String providerLogoUrl = providerApi.getProviderLogoUrl();
-        String providerSupportEmail = providerApi.getProviderSupportEmail();
+        String providerCode = serviceProvider.getProviderCode();
+        String providerName = serviceProvider.getProviderName();
+        String providerLogoUrl = serviceProvider.getProviderLogoUrl();
+        String providerSupportEmail = serviceProvider.getProviderSupportEmail();
         return ResponseEntity.ok(new ConfigurationResponse(new ConfigurationData(
                 identityServiceUrl, providerCode, providerName, providerLogoUrl, providerSupportEmail
         )));

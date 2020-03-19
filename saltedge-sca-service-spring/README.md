@@ -58,7 +58,7 @@ Consists of modules:
   
 ## SDK Integration
 
-1. Add SDK to target application as Module or as JAR library (`out/saltedge-sca-service-sdk-1.0.1-all.jar`);
+1. Add SDK to target application as Module or as JAR library (`out/saltedge-sca-service-sdk-1.1.0-all.jar`);
 1. Setup application as [described before](#example-application-quick-setup)  
   (add configuration)
 1. Add SDK package (`com.saltedge.sca.sdk`) to component scan annotation in Application class.
@@ -74,7 +74,10 @@ Consists of modules:
 1. Create a service which will provide info required by SCA SDK Module (Service should implement `ServiceProvider` interface and should have `@Service` annotation):  
     * `getAuthorizationPageUrl(String enrollSessionSecret)` - Provides URL of authentication page of Service Provider for redirection in Authenticator app. `enrollSessionSecret` is created by SDK;  
     (**Ignore if REDIRECT authentication is not supported**)  
-    * `getUserIdByAuthenticationSessionSecret(String sessionSecret)` - Find User entity by authentication session secret code. `sessionSecret` is created by Service Provider and should be created when user already authenticated and need to connect Authenticator App (SDK);  
+    * `getUserIdByAuthenticationSessionSecret(String sessionSecret)` - Find User entity by authentication session secret code. 
+      Param `sessionSecret` is created by Service Provider and should be created when user already authenticated and need to connect Authenticator App (SDK);
+      Return UserIdentity with userId, accessToken and accessTokenExpiresAt. 
+      All values are optional.  
     * `getProviderCode()` - Provides code name of Service Provider (e.g demo-bank-code);  
     * `getProviderName()` - Provides human readable name of Service Provider (e.g. Demo Bank). Will be displayed for end customers;  
     * `getProviderLogoUrl()` - Provides logo image of Service Provider. Will be displayed for end customers;  
@@ -92,7 +95,11 @@ Consists of modules:
     (**Ignore if mobile client not supports enrollment initiated by App-Link**);  
     * `getClientConnections(userId)` - returns all Connections to Authenticators for User. Can be used for further Connections management by Service Provider (e.g. revoking);  
     * `revokeConnection(connectionId)` - invoke for revoking of Authenticator Connection. After that Authenticator will not receive pending Authorizations;  
-    * `onUserAuthenticationSuccess(enrollSessionSecret, userId)` - should be invoked when REDIRECT authentication flow ends successfully and user should be redirected back to Authenticator app. Returns `ReturnTo Url` with `accessToken`. Where  `enrollSessionSecret` is unique code of enrollment session provided by `ServiceProvider.getAuthorizationPageUrl()`;  
+    * `onUserAuthenticationSuccess(enrollSessionSecret, userId, accessToken, accessTokenExpiresAt)` - should be invoked when REDIRECT authentication flow ends successfully and user should be redirected back to Authenticator app. 
+      Returns `ReturnTo Url` with `accessToken` for Authenticator app. 
+      Where  `enrollSessionSecret` is unique code of enrollment session provided by `ServiceProvider.getAuthorizationPageUrl()`.
+      If accessToken is NULL then SDK will generate random string.
+      If accessTokenExpiresAt is NULL then accessToken never expires.
     * `onUserAuthenticationFail(enrollSessionSecret, errorMessage)` - should be invoked when REDIRECT authentication failed and user should be redirected back to Authenticator app. Return `ReturnTo Url` with error;  
     
     Authorizations management:  

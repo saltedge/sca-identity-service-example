@@ -38,7 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @EnableJpaAuditing
 public class AuthorizationsRepositoryTests {
     @MockBean
-    private ServiceProvider providerApi;
+    private ServiceProvider serviceProvider;
     @Autowired
     private AuthorizationsRepository repository;
 

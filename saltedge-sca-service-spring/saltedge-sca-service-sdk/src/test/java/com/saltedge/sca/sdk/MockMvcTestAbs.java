@@ -36,7 +36,7 @@ abstract public class MockMvcTestAbs {
     @Autowired
     protected MockMvc mvc;
     @MockBean
-    protected ServiceProvider providerApi;
+    protected ServiceProvider serviceProvider;
     @MockBean
     protected ClientConnectionsRepository connectionsRepository;
     @MockBean

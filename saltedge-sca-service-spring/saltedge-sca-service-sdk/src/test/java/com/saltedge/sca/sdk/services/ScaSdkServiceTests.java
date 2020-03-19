@@ -20,6 +20,7 @@
  */
 package com.saltedge.sca.sdk.services;
 
+import com.saltedge.sca.sdk.models.UserIdentity;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
 import com.saltedge.sca.sdk.provider.ServiceProvider;
 import org.junit.Test;
@@ -50,7 +51,7 @@ public class ScaSdkServiceTests {
 	@Autowired
 	private ScaSdkService testService;
 	@MockBean
-	private ServiceProvider providerApi;
+	private ServiceProvider serviceProvider;
 	@MockBean
 	private AuthorizationsService authorizationsService;
 	@MockBean
@@ -138,45 +139,48 @@ public class ScaSdkServiceTests {
 	@Test
 	public void givenNoConnectionBySecret_whenOnUserAuthenticationSuccess_thenReturnError() {
 		//given
-		given(connectionsService.authenticateConnection("secret", "1")).willReturn(null);
+		UserIdentity identity = new UserIdentity("1");
+		given(connectionsService.authenticateConnection("secret", identity)).willReturn(null);
 
 		//when
-		String result = testService.onUserAuthenticationSuccess("secret", "1");
+		String result = testService.onUserAuthenticationSuccess("secret", "1", "accessToken", null);
 
 		//then
-		assertThat(result).isEqualTo("authenticator://oauth/redirect?error_class=SESSION_STOPPED&error_message=Authentication%20session%20stopped.");
+		assertThat(result).isEqualTo("authenticator://oauth/redirect?error_class=AUTH_SESSION_MISSING&error_message=Authentication%20session%20is%20missing.");
 	}
 
 	@Test
 	public void givenConnectionWithExpiredAuthSession_whenOnUserAuthenticationSuccess_thenReturnError() {
 		//given
+		UserIdentity identity = new UserIdentity("1");
 		ClientConnectionEntity initialConnection = new ClientConnectionEntity();
 		initialConnection.setAuthTokenExpiresAt(LocalDateTime.MIN);
 		initialConnection.setReturnUrl("my-app://return");
-		given(connectionsService.authenticateConnection("secret", "1")).willReturn(initialConnection);
+		given(connectionsService.authenticateConnection("secret", identity)).willReturn(initialConnection);
 
 		//when
-		String result = testService.onUserAuthenticationSuccess("secret", "1");
+		String result = testService.onUserAuthenticationSuccess("secret", "1", null, null);
 
 		//then
-		assertThat(result).isEqualTo("my-app://return?error_class=SESSION_EXPIRED&error_message=Authentication%20Session%20Expired.");
+		assertThat(result).isEqualTo("my-app://return?error_class=AUTH_SESSION_EXPIRED&error_message=Authentication%20Session%20is%20expired.");
 	}
 
 	@Test
 	public void givenAuthenticatedConnection_whenOnUserAuthenticationSuccess_thenReturnSuccessReturnToUrl() {
 		//given
+		UserIdentity identity = new UserIdentity("1");
 		ClientConnectionEntity initialConnection = new ClientConnectionEntity();
 		initialConnection.setAuthTokenExpiresAt(LocalDateTime.MAX);
 		initialConnection.setId(1L);
 		initialConnection.setReturnUrl("my-app://return");
-		initialConnection.setAccessToken("access_token");
-		given(connectionsService.authenticateConnection("secret", "1")).willReturn(initialConnection);
+		initialConnection.setAccessToken("accessToken");
+		given(connectionsService.authenticateConnection("secret", identity)).willReturn(initialConnection);
 
 		//when
-		String result = testService.onUserAuthenticationSuccess("secret", "1");
+		String result = testService.onUserAuthenticationSuccess("secret", "1", null, null);
 
 		//then
-		assertThat(result).isEqualTo("my-app://return?id=1&access_token=access_token");
+		assertThat(result).isEqualTo("my-app://return?id=1&access_token=accessToken");
 	}
 
 	@Test

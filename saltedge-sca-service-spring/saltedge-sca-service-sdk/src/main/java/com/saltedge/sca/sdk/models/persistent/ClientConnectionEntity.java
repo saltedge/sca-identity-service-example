@@ -161,7 +161,7 @@ public class ClientConnectionEntity extends BaseEntity implements ClientConnecti
         return key;
     }
 
-    public boolean isAuthSessionExpired() {
+    public boolean hasAuthSessionExpired() {
         return DateTools.dateIsExpired(this.authSessionSecretExpiresAt);
     }
 

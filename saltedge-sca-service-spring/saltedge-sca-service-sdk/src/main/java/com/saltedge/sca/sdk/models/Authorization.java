@@ -23,7 +23,7 @@ package com.saltedge.sca.sdk.models;
 import java.time.LocalDateTime;
 
 /**
- * SCA Authorization field description
+ * SCA Authorization fields description
  *
  * @see com.saltedge.sca.sdk.models.persistent.AuthorizationEntity
  */
@@ -35,5 +35,4 @@ public interface Authorization extends BaseEntityAbs {
     String getAuthorizationCode();
     String getUserId();
     Boolean getConfirmed();
-    AuthorizationStatus getStatus();//TODO rm
 }
