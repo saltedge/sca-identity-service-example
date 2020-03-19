@@ -99,7 +99,7 @@ class ScaController {
 
             mapOf(
                     "status" to action.status.toString().toLowerCase(),
-                    "redirect" to UserDashboardController.createRedirectToDashboard(userId)
+                    "redirect" to UserDashboardController.createDashboardLink(userId)
             )
         } else {
             mapOf("status" to action.status.toString().toLowerCase())
@@ -121,28 +121,4 @@ class ScaController {
                 "show_auth" to (payment?.isAuthenticated()?.not() ?: true)
         )
     }
-
-//    @GetMapping(SCA_ACTIONS_EXECUTE_PATH)
-//    fun executeAction(
-//            @RequestParam(ScaSdkConstants.KEY_ACTION_UUID) actionUUID: String?,
-//            response: HttpServletResponse
-//    ): ModelAndView {
-//        val action: AuthenticateAction = scaSdkService.getActionByUUID(actionUUID) ?: throw NotFound.ActionNotFound()
-//        val userId = action.userId?.toLongOrNull()
-//        return if (userId != null) {
-//            when (action.code) {
-//                SCA_ACTION_LOGIN -> {
-//                    clearActionCookie(COOKIE_AUTHENTICATION_ACTION, response)
-//                    UserDashboardController.redirectToDashboard(userId)
-//                }
-//                SCA_ACTION_PAYMENT -> {
-//                    clearActionCookie(COOKIE_PAYMENT_ACTION, response)
-//                    ModelAndView("redirect:$PAYMENTS_ORDER_FINISH_PATH")
-//                }
-//                else -> ModelAndView("redirect:$SIGN_IN_PATH")
-//            }
-//        } else {
-//            ModelAndView("redirect:$SIGN_IN_PATH")
-//        }
-//    }
 }

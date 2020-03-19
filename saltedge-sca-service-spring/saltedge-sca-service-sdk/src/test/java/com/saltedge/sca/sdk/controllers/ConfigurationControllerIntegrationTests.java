@@ -45,9 +45,10 @@ public class ConfigurationControllerIntegrationTests extends MockMvcTestAbs {
 
 		mvc.perform(MockMvcRequestBuilders.get(CONFIGURATION_REQUEST_PATH))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.data.connect_url", Matchers.is("https://your_host.org")))
+				.andExpect(jsonPath("$.data").exists())
 				.andExpect(jsonPath("$.data.code", Matchers.is("spring-demobank")))
 				.andExpect(jsonPath("$.data.name", Matchers.is("Spring Demobank")))
+				.andExpect(jsonPath("$.data.connect_url", Matchers.is("https://your_host.org")))
 				.andExpect(jsonPath("$.data.logo_url", Matchers.is("")))
 				.andExpect(jsonPath("$.data.support_email", Matchers.is("support@spring-demobank.com")))
 				.andExpect(jsonPath("$.data.version", Matchers.is("1")));

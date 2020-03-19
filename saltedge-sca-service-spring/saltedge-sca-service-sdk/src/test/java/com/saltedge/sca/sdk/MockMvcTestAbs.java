@@ -20,7 +20,6 @@
  */
 package com.saltedge.sca.sdk;
 
-import com.saltedge.sca.sdk.models.persistent.AuthorizationsRepository;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionsRepository;
 import com.saltedge.sca.sdk.provider.ServiceProvider;

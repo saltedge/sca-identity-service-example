@@ -43,20 +43,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ActionsController.class)
 public class ActionsControllerIntegrationTests extends MockMvcTestAbs {
 	@Test
-	public void postActionTest_returnSuccess() throws Exception {
+	public void putActionTest_returnSuccess() throws Exception {
 		ArgumentCaptor<String> userCaptor = ArgumentCaptor.forClass(String.class);
 		given(connectionsRepository.findByAccessTokenAndRevokedFalse("accessToken")).willReturn(testAuthorizedConnection);
 		given(actionsService.onNewAuthenticatedAction("123", testAuthorizedConnection)).willReturn(new ActionResponse(true, null, null));
 		String expiresAt = String.valueOf((DateTools.nowUtcSeconds() + 60));
 		String signature = TestTools.createSignature(
-				"post",
+				"put",
 				"http://localhost" + ACTIONS_REQUEST_PATH + "/123",
 				expiresAt,
 				"",
 				TestTools.getRsaPrivateKey()
 		);
 
-		mvc.perform(MockMvcRequestBuilders.post(ACTIONS_REQUEST_PATH + "/123").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+		mvc.perform(MockMvcRequestBuilders.put(ACTIONS_REQUEST_PATH + "/123").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
 				.header(HEADER_KEY_ACCESS_TOKEN, "accessToken")
 				.header(HEADER_KEY_EXPIRES_AT, expiresAt)
 				.header(HEADER_KEY_SIGNATURE, signature))
