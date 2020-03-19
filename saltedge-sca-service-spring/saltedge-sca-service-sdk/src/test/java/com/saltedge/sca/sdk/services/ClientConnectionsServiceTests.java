@@ -55,7 +55,7 @@ public class ClientConnectionsServiceTests {
 	@MockBean
 	private ClientConnectionsRepository connectionsRepository;
 	@MockBean
-	private ServiceProvider providerApi;
+	private ServiceProvider serviceProvider;
 
 	@Test
 	public void givenInvalidParams_whenCreateConnection_thenThrowConstraintViolationException() {
@@ -73,8 +73,8 @@ public class ClientConnectionsServiceTests {
 		savedEntity.setPlatform(requestData.getPlatform());
 		savedEntity.setReturnUrl(requestData.getReturnUrl());
 
-		given(providerApi.getUserIdByAuthenticationSessionSecret("test")).willReturn(null);
-		given(providerApi.getAuthorizationPageUrl(anyString())).willReturn("http://host.org/oauth");
+		given(serviceProvider.getUserIdByAuthenticationSessionSecret("test")).willReturn(null);
+		given(serviceProvider.getAuthorizationPageUrl(anyString())).willReturn("http://host.org/oauth");
 		given(connectionsRepository.save(any(ClientConnectionEntity.class))).willReturn(savedEntity);
 
 		//when
@@ -88,7 +88,7 @@ public class ClientConnectionsServiceTests {
 		assertThat(entityCaptor.getValue().getPushToken()).isEqualTo("token");
 		assertThat(entityCaptor.getValue().getPlatform()).isEqualTo("android");
 		assertThat(entityCaptor.getValue().getAuthSessionSecret()).isNotEmpty();
-		assertThat(entityCaptor.getValue().isAuthSessionExpired()).isFalse();
+		assertThat(entityCaptor.getValue().hasAuthSessionExpired()).isFalse();
 		assertThat(entityCaptor.getValue().getAccessToken()).isEmpty();
 		assertThat(entityCaptor.getValue().getUserId()).isNull();
 
@@ -109,8 +109,8 @@ public class ClientConnectionsServiceTests {
 		savedEntity.setAccessToken("access_token");
 		savedEntity.setUserId("1");
 
-		given(providerApi.getUserIdByAuthenticationSessionSecret("test")).willReturn("1");
-		given(providerApi.getAuthorizationPageUrl(anyString())).willReturn("http://host.org/oauth");
+		given(serviceProvider.getUserIdByAuthenticationSessionSecret("test")).willReturn("1");
+		given(serviceProvider.getAuthorizationPageUrl(anyString())).willReturn("http://host.org/oauth");
 		given(connectionsRepository.save(any(ClientConnectionEntity.class))).willReturn(savedEntity);
 
 		//when

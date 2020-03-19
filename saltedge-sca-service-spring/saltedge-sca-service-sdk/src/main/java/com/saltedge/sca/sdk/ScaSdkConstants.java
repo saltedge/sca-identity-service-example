@@ -51,5 +51,4 @@ public class ScaSdkConstants {
 
     public final static int AUTHORIZATION_DEFAULT_LIFETIME_MINUTES = 5;
     public final static int CONNECTION_DEFAULT_AUTH_SESSION_MINUTES = 5;
-    public final static int CONNECTION_DEFAULT_ACCESS_TOKEN_MINUTES = 60 * 24;
 }

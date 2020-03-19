@@ -64,7 +64,7 @@ public class AuthorizationErrorsIntegrationTests {
 	@LocalServerPort
 	Integer randomServerPort = 0;
 	@MockBean
-	private ServiceProvider providerApi;
+	private ServiceProvider serviceProvider;
 	@MockBean
 	private ClientConnectionsRepository connectionsRepository;
 	@MockBean

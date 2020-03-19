@@ -38,10 +38,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ConfigurationControllerIntegrationTests extends MockMvcTestAbs {
 	@Test
 	public void getConfigurationTest() throws Exception {
-		given(providerApi.getProviderCode()).willReturn("spring-demobank");
-		given(providerApi.getProviderName()).willReturn("Spring Demobank");
-		given(providerApi.getProviderLogoUrl()).willReturn("");
-		given(providerApi.getProviderSupportEmail()).willReturn("support@spring-demobank.com");
+		given(serviceProvider.getProviderCode()).willReturn("spring-demobank");
+		given(serviceProvider.getProviderName()).willReturn("Spring Demobank");
+		given(serviceProvider.getProviderLogoUrl()).willReturn("");
+		given(serviceProvider.getProviderSupportEmail()).willReturn("support@spring-demobank.com");
 
 		mvc.perform(MockMvcRequestBuilders.get(CONFIGURATION_REQUEST_PATH))
 				.andExpect(status().isOk())

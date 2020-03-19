@@ -51,7 +51,7 @@ public class ClientNotificationService {
     @Autowired
     ClientConnectionsRepository connectionsRepository;
     @Autowired
-    private ServiceProvider providerApi;
+    private ServiceProvider serviceProvider;
     @Autowired
     private RestTemplate restTemplate;
 
@@ -62,7 +62,7 @@ public class ClientNotificationService {
     }
 
     public void sendNotificationForConnections(List<ClientConnection> connections, Authorization authorization) {
-        String providerName = providerApi.getProviderName();
+        String providerName = serviceProvider.getProviderName();
         String pushServiceUrl = EnvironmentTools.getPushServiceUrl(env);
         String pushServiceAppId = EnvironmentTools.getPushAppId(env);
         String pushServiceAppSecret = EnvironmentTools.getPushAppSecret(env);

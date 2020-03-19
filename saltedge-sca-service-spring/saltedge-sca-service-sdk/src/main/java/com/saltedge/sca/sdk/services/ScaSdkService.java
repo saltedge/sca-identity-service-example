@@ -24,6 +24,7 @@ import com.saltedge.sca.sdk.controllers.ConfigurationController;
 import com.saltedge.sca.sdk.models.AuthenticateAction;
 import com.saltedge.sca.sdk.models.Authorization;
 import com.saltedge.sca.sdk.models.ClientConnection;
+import com.saltedge.sca.sdk.models.UserIdentity;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
 import com.saltedge.sca.sdk.tools.EnvironmentTools;
 import org.slf4j.Logger;
@@ -147,18 +148,23 @@ public class ScaSdkService {
      * @param enrollSessionSecret unique code of enrollment session.
      *                          Provided by SCA Module in `ServiceProvider.getAuthorizationPageUrl()`
      * @param userId unique identifier of user of Service Provider
+     * @param accessToken is an unique string that identifies a user. If NULL then SDK will generate random string.
+     * @param accessTokenExpiresAt expiration time of accessToken. If NULL then accessToken never expires.
      * @return final redirect url string for Salt Edge Authenticator app
      * @see com.saltedge.sca.sdk.provider.ServiceProvider#getAuthorizationPageUrl(String)
      */
     public String onUserAuthenticationSuccess(
             @NotNull String enrollSessionSecret,
-            @NotEmpty String userId)
-    {
-        ClientConnectionEntity connection = connectionsService.authenticateConnection(enrollSessionSecret, userId);
+            @NotEmpty String userId,
+            String accessToken,
+            LocalDateTime accessTokenExpiresAt
+    ) {
+        UserIdentity userIdentity = new UserIdentity(userId, accessToken, accessTokenExpiresAt);
+        ClientConnectionEntity connection = connectionsService.authenticateConnection(enrollSessionSecret, userIdentity);
         if (connection == null) {
-            return createUserAuthErrorUrl(null, "SESSION_STOPPED", "Authentication session stopped.");
-        } else if (connection.isAuthSessionExpired()) {
-            return createUserAuthErrorUrl(connection.getReturnUrl(), "SESSION_EXPIRED", "Authentication Session Expired.");
+            return createUserAuthErrorUrl(null, "AUTH_SESSION_MISSING", "Authentication session is missing.");
+        } else if (connection.hasAuthSessionExpired()) {
+            return createUserAuthErrorUrl(connection.getReturnUrl(), "AUTH_SESSION_EXPIRED", "Authentication Session is expired.");
         } else {
             return createUserAuthSuccessUrl(connection.getReturnUrl(), String.valueOf(connection.getId()), connection.getAccessToken());
         }

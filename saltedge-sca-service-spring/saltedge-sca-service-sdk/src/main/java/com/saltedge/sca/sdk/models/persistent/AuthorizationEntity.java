@@ -74,7 +74,6 @@ public class AuthorizationEntity extends BaseEntity implements Authorization {
         return DateTools.convertDateToIso8601(expiresAt);
     }
 
-    @Override
     public AuthorizationStatus getStatus() {
         if (confirmed != null) return confirmed ? AuthorizationStatus.CONFIRMED : AuthorizationStatus.DENIED;
         if (this.isExpired()) return AuthorizationStatus.EXPIRED;

@@ -27,13 +27,16 @@ import com.saltedge.sca.example.tools.getApplicationUrl
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_SECRET
 import com.saltedge.sca.sdk.models.AuthenticateAction
 import com.saltedge.sca.sdk.models.Authorization
+import com.saltedge.sca.sdk.models.UserIdentity
 import com.saltedge.sca.sdk.provider.ServiceProvider
+import com.saltedge.sca.sdk.tools.CodeBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.LocalDateTime
 
 /**
  * Provides required by SCA module information and receives Action and Authorization events.
@@ -90,10 +93,18 @@ class ScaProviderService : ServiceProvider {
      * when user already authenticated and want to connect Authenticator app
      *
      * @param sessionSecret code.
-     * @return user id
+     * @return UserIdentity
      */
-    override fun getUserIdByAuthenticationSessionSecret(sessionSecret: String?): String? {
-        return usersService.findUserIdByAuthSessionCode(sessionSecret)
+    override fun getUserIdByAuthenticationSessionSecret(sessionSecret: String?): UserIdentity? {
+        val userId: String? = usersService.findUserIdByAuthSessionCode(sessionSecret)
+        return if (userId.isNullOrBlank()) null;
+        else {
+            UserIdentity(
+                    userId,
+                    CodeBuilder.generateRandomString(),
+                    LocalDateTime.now().plusMonths(1)
+            )
+        }
     }
 
     /**

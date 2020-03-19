@@ -50,7 +50,7 @@ public class ScaSdkServiceTests {
 	@Autowired
 	private ScaSdkService testService;
 	@MockBean
-	private ServiceProvider providerApi;
+	private ServiceProvider serviceProvider;
 	@MockBean
 	private AuthorizationsService authorizationsService;
 	@MockBean

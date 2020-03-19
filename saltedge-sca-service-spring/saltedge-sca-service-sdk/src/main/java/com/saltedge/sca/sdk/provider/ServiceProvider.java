@@ -22,11 +22,12 @@ package com.saltedge.sca.sdk.provider;
 
 import com.saltedge.sca.sdk.models.AuthenticateAction;
 import com.saltedge.sca.sdk.models.Authorization;
+import com.saltedge.sca.sdk.models.UserIdentity;
 
 /**
  * Interface for communication between SCA Module and Service Provider application.
  * Provides required by SCA module information and receives Action and Authorization events.
- * Service Provider application should implement `@Service` which `implements ProviderApi`
+ * Service Provider application should implement `@Service` which implements `ServiceProvider` interface
  */
 public interface ServiceProvider {
     /**
@@ -39,14 +40,14 @@ public interface ServiceProvider {
     String getAuthorizationPageUrl(String enrollSessionSecret);
 
     /**
-     * Find User entity by authentication session secret code.
-     * Authentication session secret code is created
-     * when user already authenticated and want to connect Authenticator app
+     * Find User (Customer) entity by authentication session secret code.
+     * Authentication session secret code is created when user already authenticated and want to connect Authenticator app.
+     * Authentication session secret code should be created by Authentication Service.
      *
      * @param sessionSecret code. (Created by Service Provider)
-     * @return user id
+     * @return UserIdentity object with userId (optional) and accessToken (optional) value.
      */
-    String getUserIdByAuthenticationSessionSecret(String sessionSecret);
+    UserIdentity getUserIdByAuthenticationSessionSecret(String sessionSecret);
 
     /**
      * Provides code name of Service Provider

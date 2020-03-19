@@ -53,7 +53,7 @@ public class AuthorizationsServiceTests {
 	@MockBean
 	private ClientNotificationService notificationService;
 	@MockBean
-	private ServiceProvider providerApi;
+	private ServiceProvider serviceProvider;
 
 	@Test
 	public void givenInvalidParams_whenCreateAuthorization_thenThrowConstraintViolationException() {

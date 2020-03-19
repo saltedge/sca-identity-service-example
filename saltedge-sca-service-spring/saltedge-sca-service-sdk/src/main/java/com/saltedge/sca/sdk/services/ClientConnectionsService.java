@@ -22,6 +22,7 @@ package com.saltedge.sca.sdk.services;
 
 import com.saltedge.sca.sdk.ScaSdkConstants;
 import com.saltedge.sca.sdk.models.ClientConnection;
+import com.saltedge.sca.sdk.models.UserIdentity;
 import com.saltedge.sca.sdk.models.api.requests.CreateConnectionRequest;
 import com.saltedge.sca.sdk.models.api.responces.CreateConnectionResponse;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
@@ -49,24 +50,25 @@ public class ClientConnectionsService {
     @Autowired
     private ClientConnectionsRepository connectionsRepository;
     @Autowired
-    private ServiceProvider providerApi;
+    private ServiceProvider serviceProvider;
 
     public CreateConnectionResponse createConnection(
             @NotNull CreateConnectionRequest.Data data,
             String authorizationSessionSecret
     ) {
-        String userId = null;
+        UserIdentity userIdentity = null;
         if (!StringUtils.isEmpty(authorizationSessionSecret)) {
-            userId = providerApi.getUserIdByAuthenticationSessionSecret(authorizationSessionSecret);
+            userIdentity = serviceProvider.getUserIdByAuthenticationSessionSecret(authorizationSessionSecret);
         }
-        ClientConnectionEntity connection = createClientConnectionEntity(data, userId);
+        ClientConnectionEntity connection = createNewClientConnectionEntity(data, userIdentity);
+
         String connectionId = String.valueOf(connection.getId());
         if (connection.isAuthenticated()) {
             return CreateConnectionResponse.createResponseWithAccessToken(connectionId, connection.getAccessToken());
         } else {
             return CreateConnectionResponse.createResponseWithAuthorizeUrl(
                     connectionId,
-                    providerApi.getAuthorizationPageUrl(connection.getAuthSessionSecret())
+                    serviceProvider.getAuthorizationPageUrl(connection.getAuthSessionSecret())
             );
         }
     }
@@ -90,30 +92,51 @@ public class ClientConnectionsService {
         connectionsRepository.save(connection);
     }
 
-    public ClientConnectionEntity authenticateConnection(@NotEmpty String authSessionSecret, @NotEmpty String userId) {
+    public ClientConnectionEntity authenticateConnection(@NotEmpty String authSessionSecret,
+                                                         @NotNull UserIdentity userIdentity) {
         ClientConnectionEntity entity = connectionsRepository.findByAuthSessionSecret(authSessionSecret);
-        return (entity == null || entity.isAuthSessionExpired()) ? entity : authenticateClientConnection(entity, userId);
+        if (entity == null || entity.hasAuthSessionExpired()) {
+            return entity;
+        } else {
+            addUserIdentityToConnection(entity, userIdentity);
+            return connectionsRepository.save(entity);
+        }
     }
 
-    private ClientConnectionEntity createClientConnectionEntity(CreateConnectionRequest.Data requestData, String userId) {
+    private ClientConnectionEntity createNewClientConnectionEntity(
+            CreateConnectionRequest.Data requestData,
+            UserIdentity userIdentity
+    ) {
         ClientConnectionEntity entity = new ClientConnectionEntity();
         entity.setPublicKey(requestData.getPublicKey());
         entity.setPushToken(requestData.getPushToken());
         entity.setPlatform(requestData.getPlatform());
         entity.setReturnUrl(requestData.getReturnUrl());
-        return (userId == null) ? createAuthenticationToken(entity) : authenticateClientConnection(entity, userId);
-    }
-
-    private ClientConnectionEntity authenticateClientConnection(ClientConnectionEntity entity, String userId) {
-        entity.setAccessToken(CodeBuilder.generateRandomString());
-        entity.setAccessTokenExpiresAt(LocalDateTime.now().plusMinutes(ScaSdkConstants.CONNECTION_DEFAULT_ACCESS_TOKEN_MINUTES));
-        entity.setUserId(userId);
+        if (userIdentity != null && userIdentity.isAuthenticated()) {
+            addUserIdentityToConnection(entity, userIdentity);
+        } else {
+            addAuthenticationTokenToConnection(entity);
+        }
         return connectionsRepository.save(entity);
     }
 
-    private ClientConnectionEntity createAuthenticationToken(ClientConnectionEntity entity) {
+    private void addUserIdentityToConnection(
+            ClientConnectionEntity entity,
+            UserIdentity userIdentity
+    ) {
+        if (entity == null || userIdentity == null) return;
+
+        entity.setUserId(userIdentity.getUserId());
+
+        String accessToken = (userIdentity.getAccessToken() == null) ? CodeBuilder.generateRandomString() : userIdentity.getAccessToken();
+        entity.setAccessToken(accessToken);
+        entity.setAccessTokenExpiresAt(userIdentity.getAccessTokenExpiresAt());
+    }
+
+    private void addAuthenticationTokenToConnection(ClientConnectionEntity entity) {
+        if (entity == null) return;
+
         entity.setAuthToken(CodeBuilder.generateRandomString());
         entity.setAuthTokenExpiresAt(LocalDateTime.now().plusMinutes(ScaSdkConstants.CONNECTION_DEFAULT_AUTH_SESSION_MINUTES));
-        return connectionsRepository.save(entity);
     }
 }

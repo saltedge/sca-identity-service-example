@@ -28,6 +28,7 @@ import com.saltedge.sca.sdk.services.ScaSdkService
 import com.saltedge.sca.sdk.tools.CodeBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 import java.util.*
 
 @Service
@@ -74,7 +75,12 @@ class UserAuthService {
     fun authenticateScaClientAndGetRedirectUrl(username: String, password: String, secret: String): String {
         val userId: Long? = findUserId(username = username, password = password)
         return if (userId != null) {
-            scaSdkService.onUserAuthenticationSuccess(secret, userId.toString())
+            scaSdkService.onUserAuthenticationSuccess(
+                    secret,
+                    userId.toString(),
+                    CodeBuilder.generateRandomString(),
+                    LocalDateTime.now().plusMonths(1)
+            )
         } else {
             scaSdkService.onUserAuthenticationFail(secret, "Invalid Credentials")
         }
