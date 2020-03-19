@@ -6,7 +6,7 @@ designated to demonstrate SCA flow and communication between Service Provider an
 Current application implements Salt Edge Authenticator v1 API.  
 
 Consists of modules:
-* **SCA Service SDK v1**
+* **SCA Service SDK v1.1.0**
 * **Example Application**
 
 ## Application Requirements
