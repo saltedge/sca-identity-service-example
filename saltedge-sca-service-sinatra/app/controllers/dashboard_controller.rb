@@ -80,12 +80,10 @@ class DashboardController < BaseController
     post '/authorizations/create' do
       raise StandardError::BadRequest unless params.values_at(:user_id).none?(&:blank?)
 
-      amount = rand(1..200)
-
       authorization = create_new_authorization!(
         params[:user_id],
-        "Payment for #{amount} EUR",
-        "Confirm payment #{amount} EUR from account GB1234567890 to Salt Edge Payment Processor",
+        "Payment 256 EUR",
+        File.read('./public/auth.erb')
       )
 
       connections = authorization.user.connections.where(revoked: false)

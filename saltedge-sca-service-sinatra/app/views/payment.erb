@@ -92,6 +92,7 @@
     <h1 class="top-header">Payment Order Example</h1>
     <div class="container">
         <div>
+            <a href="/payments/order"><h3 style="display: inline;">[Create new]</h3></a>
             <a href="/"><h3 style="display: inline;">[Index]</h3></a>
             <a href="/users/sign_in"><h3 style="display: inline;">[Dashboard]</h3></a>
         </div>
@@ -103,7 +104,7 @@
         </div>
         
             <div id="sca_options" class="centered">
-                <div id="login_action">
+                <div id="qr_section">
                     <h3>Authorize with Authenticator</h3>
 
                     <div class="qr-section">
@@ -120,6 +121,10 @@
                         </tr>
                       <% end %>
                     </table>
+
+                    <p></p>
+                    <b>
+                    <a href=<%= @instant_action_deeplink %> class="with-margin">Click to Authorize</a>
                     </div>
                 </div>
             </div>
@@ -139,6 +144,7 @@
 
           var statusLabel = document.getElementById("payment-status")
           var userLabel = document.getElementById("payment-user")
+          var qrSection = document.getElementById("qr_section")
 
           switch(status) {
             case "confirmed": case "denied":
@@ -148,6 +154,7 @@
             case "waiting_confirmation":
               statusLabel.innerText = status
               userLabel.innerText = data["username"]
+              qrSection.style.visibility = 'hidden'
               polling()
               break
             default:
