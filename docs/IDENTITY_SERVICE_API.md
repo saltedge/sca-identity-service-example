@@ -377,7 +377,7 @@ curl \
 ---
 ### Show Authorizations List
 Return list of all current Authorizations which require end-user confirmation for Service Provider by `Access-Token` from headers.  
-Each Authorization's `data` (authorization data) is encrypted with algorithm mentioned in `algorithm` param. Necessary data for decryption (`key` and `iv`) are encrypted by asymmetric `public_key` sent on (creating new connection)[#connect-to-service-provider] earlier.  
+Each Authorization's `data` (authorization data) is **encrypted** with algorithm mentioned in `algorithm` param. Necessary data for decryption (`key` and `iv`) are encrypted by asymmetric `public_key` sent on (creating new connection)[#connect-to-service-provider] earlier.  
 
 `GET` `/api/authenticator/v1/authorizations`  
   
@@ -405,7 +405,7 @@ curl \
 - `iv` **[string]** - an initialization vector of encryption algorithm, this string is encrypted with public key linked to Mobile Client
 - `key` **[string]** - a secure key of encryption algorithm, this string is encrypted with public key linked to Mobile Client
 - `algorithm` **[string]** - encryption algorithm and block mode type
-- `data` **[string]** - encrypted authorization payload with algorithm mentioned above
+- `data` **[string]** - encrypted Authorization object with algorithm mentioned above
 
 #### Response Example
 ```json
@@ -423,7 +423,7 @@ curl \
 }
 ```
 
-#### Authorization Payload Parameters (Decrypted payload)  
+#### Authorization Object (*Decrypted `data` field*)  
 - `id` **[string]** - a unique ID of authorization model
 - `connection_id` **[string]** - a unique ID of Mobile Client (Service Connection). Used to decrypt models in the Mobile Application
 - `title` **[string]** - a human-readable title of authorization action
@@ -432,7 +432,7 @@ curl \
 - `created_at` **[datetime]** - time when the authorization was created
 - `expires_at` **[datetime]** - time when the authorization should expire
 
-#### Authorization Payload Example (Decrypted payload)  
+#### Authorization Object Example (*Decrypted `data` field*)  
 ```json
 {
   "id": "444",
@@ -450,8 +450,8 @@ curl \
   
 ---
 ### Show Authorization
-Return the one authorization which requireы end-user confirmation for Service Provider by `Access-Token` from headers and by `id` parameter.
-Each Authorization's `confirmation_data` is encrypted with algorithm mentioned in `algorithm` param. Necessary data for decryption (`key` and `iv`) are encrypted by asymmetric `public_key' sent on (creating new connection)[#connect-to-service-provider] earlier.
+Return the one authorization which requires end-user confirmation for Service Provider by `Access-Token` from headers and by `id` parameter.
+Each Authorization's `confirmation_data` is **encrypted** with algorithm mentioned in `algorithm` param. Necessary data for decryption (`key` and `iv`) are encrypted by asymmetric `public_key' sent on (creating new connection)[#connect-to-service-provider] earlier.
 
 `GET` `/api/authenticator/v1/authorizations/:authorization_id` 
   
@@ -482,7 +482,7 @@ curl \
 - `iv` **[string]** - an initialization vector of encryption algorithm, this string is encrypted with public key linked to Mobile Client
 - `key` **[string]** - a secure key of encryption algorithm, this string is encrypted with public key linked to Mobile Client
 - `algorithm` **[string]** - encryption algorithm and block mode type
-- `data` **[string]** - encrypted authorization payload with algorithm mentioned above
+- `data` **[string]** - encrypted Authorization object with algorithm mentioned above
 
 #### Response Example
 ```json
@@ -498,7 +498,7 @@ curl \
 }
 ```
 
-#### Authorization Payload Parameters (Decrypted payload)  
+#### Authorization Object (*Decrypted `data` field*)  
 - `id` **[string]** - a unique ID of authorization model
 - `connection_id` **[string]** - a unique ID of Mobile Client (Service Connection). Used to decrypt models in the Mobile Application
 - `title` **[string]** - a human-readable title of authorization action
@@ -507,7 +507,7 @@ curl \
 - `created_at` **[datetime]** - time when the authorization was created
 - `expires_at` **[datetime]** - time when the authorization should expire
 
-#### Authorization Payload Example (Decrypted payload)  
+#### Authorization Object Example (*Decrypted `data` field*)  
 ```json
 {
   "id": "444",
