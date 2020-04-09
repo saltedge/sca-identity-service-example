@@ -4,7 +4,6 @@
 * [Identity Service Models](#identity-service-models)
 * [Service Configuration](#service-configuration)
 * [API Security](#api-security)
-* [API Errors](#api-errors)
 * [Public API](#identity-service-api)
   * [API Data Types](#api-data-types)
   * [Get Configuration](#get-service-provider-configuration)
@@ -15,7 +14,10 @@
   * [Show Authorization](#show-authorization)
   * [Confirm or Deny Authorization](#confirm-or-deny-authorization)
   * [Instant Action](#instant-action)
-* [Authorization code builder example](#authorization-code-builder-example)
+  * [Consent management](#consent-management)
+* [API Errors](#api-errors)
+* [Extra Information](#extra-information)
+  * [Authorization code builder example](#authorization-code-builder-example)
 
 
 ## What is Identity Service?
@@ -144,28 +146,6 @@ As we know, sometimes in Web App Controller is received already parsed object. Y
   
 ---
 
-## API Errors
-During any request on Salt Edge SCA Service side, a number of errors may appear. In order to standardize errors while still giving some degree of freedom in explaining an error callback, parameters should include both `error_class` and `error_message`. Error message serves the purpose of communicating the issue to the Client, whereas error class should be used by client application in order to be able to handle various scenarios.
-
-Contents of the `error_message` are entirely up to the Salt Edge SCA Service, they may even be localized. However, values sent within `error_class` parameter should be from the standardized list. This list may and will be extended over time.
-  
-### Bad Request errors (code: 400):  
-* `WrongRequestFormat` - some of request params are not valid;
-* `AccessTokenMissing` - `access_token` header is missing;
-* `SignatureMissing` - `signature` header is missing;
-* `SignatureExpired` - `expires_at` header is missing or `expires_at` is before now;
-* `InvalidSignature` - `signature` param is invalid;
-* `ActionExpired` - Action entity is expired.
-  
-### Unauthorized errors (code: 401):  
-* `ConnectionNotFound` - connection associated with by `access_token` header not found or it is invalid;  
-* `UserNotFound` - connection associated with Connection not found.  
-  
-### Not Found errors (code: 404):  
-* `AuthorizationNotFound` - authorization queried by `authorization_id` param not found;  
-* `ActionNotFound` - action queried by `action_id` param not found.
-  
----
 ## Identity Service API
 
 ### API data types
@@ -650,8 +630,33 @@ curl \
 }
 ```
 ----
+  
+## API Errors
+During any request on Salt Edge SCA Service side, a number of errors may appear. In order to standardize errors while still giving some degree of freedom in explaining an error callback, parameters should include both `error_class` and `error_message`. Error message serves the purpose of communicating the issue to the Client, whereas error class should be used by client application in order to be able to handle various scenarios.
 
-## Authorization code builder example
+Contents of the `error_message` are entirely up to the Salt Edge SCA Service, they may even be localized. However, values sent within `error_class` parameter should be from the standardized list. This list may and will be extended over time.
+  
+### Bad Request errors (code: 400):  
+* `WrongRequestFormat` - some of request params are not valid;
+* `AccessTokenMissing` - `access_token` header is missing;
+* `SignatureMissing` - `signature` header is missing;
+* `SignatureExpired` - `expires_at` header is missing or `expires_at` is before now;
+* `InvalidSignature` - `signature` param is invalid;
+* `ActionExpired` - Action entity is expired.
+  
+### Unauthorized errors (code: 401):  
+* `ConnectionNotFound` - connection associated with by `access_token` header not found or it is invalid;  
+* `UserNotFound` - connection associated with Connection not found.  
+  
+### Not Found errors (code: 404):  
+* `AuthorizationNotFound` - authorization queried by `authorization_id` param not found;  
+* `ActionNotFound` - action queried by `action_id` param not found.
+  
+---
+  
+## Extra Information
+
+### Authorization code builder example
 
 If authorization code is generating as sha256, than resulting string should be Base64 encoded without paddings.
   
