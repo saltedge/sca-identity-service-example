@@ -21,7 +21,7 @@
 package com.saltedge.sca.example.controller
 
 import com.saltedge.sca.sdk.ScaSdkConstants
-import com.saltedge.sca.sdk.services.ScaSdkService
+import com.saltedge.sca.sdk.provider.ScaSdkService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller

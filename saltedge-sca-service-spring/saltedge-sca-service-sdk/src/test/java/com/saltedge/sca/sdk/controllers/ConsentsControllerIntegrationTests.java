@@ -22,7 +22,6 @@ package com.saltedge.sca.sdk.controllers;
 
 import com.saltedge.sca.sdk.MockMvcTestAbs;
 import com.saltedge.sca.sdk.TestTools;
-import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
 import com.saltedge.sca.sdk.tools.DateTools;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -33,33 +32,32 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Collections;
 
 import static com.saltedge.sca.sdk.ScaSdkConstants.*;
-import static com.saltedge.sca.sdk.controllers.AuthorizationsController.AUTHORIZATIONS_REQUEST_PATH;
-import static org.mockito.ArgumentMatchers.any;
+import static com.saltedge.sca.sdk.controllers.ConsentsController.CONSENTS_REQUEST_PATH;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(AuthorizationsController.class)
-public class AuthorizationsControllerIntegrationTests extends MockMvcTestAbs {
+@WebMvcTest(ConsentsController.class)
+public class ConsentsControllerIntegrationTests extends MockMvcTestAbs {
 	@Test
-	public void whenGetActiveAuthorizations_returnSuccess() throws Exception {
+	public void whenGetActiveConsentsTest_returnSuccess() throws Exception {
+		ArgumentCaptor<String> userCaptor = ArgumentCaptor.forClass(String.class);
 		given(connectionsRepository.findByAccessTokenAndRevokedFalse("accessToken")).willReturn(testAuthorizedConnection);
-		given(authorizationsService.getActiveAuthorizations(any(ClientConnectionEntity.class))).willReturn(new ArrayList<>());
+		given(consentsService.getActiveConsents(testAuthorizedConnection)).willReturn(Collections.emptyList());
 		String expiresAt = String.valueOf((DateTools.nowUtcSeconds() + 60));
 		String signature = TestTools.createSignature(
 				"get",
-				"http://localhost" + AUTHORIZATIONS_REQUEST_PATH,
+				"http://localhost" + CONSENTS_REQUEST_PATH,
 				expiresAt,
 				"",
 				TestTools.getRsaPrivateKey()
 		);
 
-		mvc.perform(MockMvcRequestBuilders.get(AUTHORIZATIONS_REQUEST_PATH)
+		mvc.perform(MockMvcRequestBuilders.get(CONSENTS_REQUEST_PATH)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(HEADER_KEY_ACCESS_TOKEN, "accessToken")
@@ -71,77 +69,56 @@ public class AuthorizationsControllerIntegrationTests extends MockMvcTestAbs {
 	}
 
 	@Test
-	public void whenGetAuthorizationsTest_returnError_whenNoConnection() throws Exception {
+	public void whenRevokeConsentTest_returnSuccess() throws Exception {
+		String requestUrl = "http://localhost" + CONSENTS_REQUEST_PATH + "/12";
 		ArgumentCaptor<String> userCaptor = ArgumentCaptor.forClass(String.class);
-		given(connectionsRepository.findByAccessTokenAndRevokedFalse("accessToken")).willReturn(null);
+		given(connectionsRepository.findByAccessTokenAndRevokedFalse("accessToken")).willReturn(testAuthorizedConnection);
+		given(consentsService.revokeConsent("12", testAuthorizedConnection)).willReturn(true);
+		given(consentsService.getActiveConsents(testAuthorizedConnection)).willReturn(Collections.emptyList());
 		String expiresAt = String.valueOf((DateTools.nowUtcSeconds() + 60));
 		String signature = TestTools.createSignature(
-				"get",
-				"http://localhost" + AUTHORIZATIONS_REQUEST_PATH,
+				"delete",
+				requestUrl,
 				expiresAt,
 				"",
 				TestTools.getRsaPrivateKey()
 		);
 
-		mvc.perform(MockMvcRequestBuilders.get(AUTHORIZATIONS_REQUEST_PATH).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
-				.header(HEADER_KEY_ACCESS_TOKEN, "accessToken")
-				.header(HEADER_KEY_EXPIRES_AT, expiresAt)
-				.header(HEADER_KEY_SIGNATURE, signature))
-
-				.andExpect(status().isUnauthorized())
-				.andExpect(jsonPath("$.error_class", Matchers.is("ConnectionNotFound")))
-				.andExpect(jsonPath("$.error_message", Matchers.is("Authenticator Connection Not Found.")));
-	}
-
-	@Test
-	public void getAuthorizationsTest_returnError_whenNoPublicKeyInConnection() throws Exception {
-		ClientConnectionEntity connection = new ClientConnectionEntity();
-		connection.setUserId("5");
-		given(connectionsRepository.findByAccessTokenAndRevokedFalse("accessToken")).willReturn(connection);
-		given(authorizationsService.getActiveAuthorizations(any(ClientConnectionEntity.class))).willReturn(new ArrayList<>());
-		String expiresAt = String.valueOf((DateTools.nowUtcSeconds() + 60));
-		String signature = TestTools.createSignature(
-				"get",
-				"http://localhost" + AUTHORIZATIONS_REQUEST_PATH,
-				expiresAt,
-				"",
-				TestTools.getRsaPrivateKey()
-		);
-
-		mvc.perform(MockMvcRequestBuilders.get(AUTHORIZATIONS_REQUEST_PATH)
+		mvc.perform(MockMvcRequestBuilders.delete(requestUrl)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(HEADER_KEY_ACCESS_TOKEN, "accessToken")
 				.header(HEADER_KEY_EXPIRES_AT, expiresAt)
 				.header(HEADER_KEY_SIGNATURE, signature))
 
-				.andExpect(status().isUnauthorized())
-				.andExpect(jsonPath("$.error_class", Matchers.is("ConnectionNotFound")))
-				.andExpect(jsonPath("$.error_message", Matchers.is("Authenticator Connection Not Found.")));
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.data.success", Matchers.is(true)))
+				.andExpect(jsonPath("$.data.consents", Matchers.hasSize(0)));
 	}
 
 	@Test
-	public void getAuthorizationsTest_returnError_whenNoUserInConnection() throws Exception {
-		given(connectionsRepository.findByAccessTokenAndRevokedFalse("accessToken")).willReturn(testConnection);
-		given(authorizationsService.getActiveAuthorizations(any(ClientConnectionEntity.class))).willReturn(new ArrayList<>());
+	public void givenEmptyConsentId_whenRevokeConsentTest_returnNotAllowed() throws Exception {
+		String requestUrl = "http://localhost" + CONSENTS_REQUEST_PATH + "/";
+		ArgumentCaptor<String> userCaptor = ArgumentCaptor.forClass(String.class);
+		given(connectionsRepository.findByAccessTokenAndRevokedFalse("accessToken")).willReturn(testAuthorizedConnection);
+		given(consentsService.revokeConsent("12", testAuthorizedConnection)).willReturn(true);
+		given(consentsService.getActiveConsents(testAuthorizedConnection)).willReturn(Collections.emptyList());
 		String expiresAt = String.valueOf((DateTools.nowUtcSeconds() + 60));
 		String signature = TestTools.createSignature(
-				"get",
-				"http://localhost" + AUTHORIZATIONS_REQUEST_PATH,
+				"delete",
+				requestUrl,
 				expiresAt,
 				"",
 				TestTools.getRsaPrivateKey()
 		);
 
-		mvc.perform(MockMvcRequestBuilders.get(AUTHORIZATIONS_REQUEST_PATH)
+		mvc.perform(MockMvcRequestBuilders.delete(requestUrl)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(HEADER_KEY_ACCESS_TOKEN, "accessToken")
 				.header(HEADER_KEY_EXPIRES_AT, expiresAt)
 				.header(HEADER_KEY_SIGNATURE, signature))
 
-				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.error_class", Matchers.is("UserNotFound")))
-				.andExpect(jsonPath("$.error_message", Matchers.is("User Not Found.")));
+				.andExpect(status().isMethodNotAllowed());
 	}
 }

@@ -18,7 +18,7 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.sca.sdk.services;
+package com.saltedge.sca.sdk.provider;
 
 import com.saltedge.sca.sdk.controllers.ConfigurationController;
 import com.saltedge.sca.sdk.models.AuthenticateAction;
@@ -26,6 +26,9 @@ import com.saltedge.sca.sdk.models.Authorization;
 import com.saltedge.sca.sdk.models.ClientConnection;
 import com.saltedge.sca.sdk.models.UserIdentity;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
+import com.saltedge.sca.sdk.services.AuthenticateActionsService;
+import com.saltedge.sca.sdk.services.AuthorizationsService;
+import com.saltedge.sca.sdk.services.ClientConnectionsService;
 import com.saltedge.sca.sdk.tools.EnvironmentTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,13 +40,12 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 import static com.saltedge.sca.sdk.ScaSdkConstants.*;
 import static com.saltedge.sca.sdk.tools.UrlTools.createUserAuthErrorUrl;
 import static com.saltedge.sca.sdk.tools.UrlTools.createUserAuthSuccessUrl;
-
 
 @Service
 @Validated
@@ -157,7 +159,7 @@ public class ScaSdkService {
             @NotNull String enrollSessionSecret,
             @NotEmpty String userId,
             String accessToken,
-            LocalDateTime accessTokenExpiresAt
+            Instant accessTokenExpiresAt
     ) {
         UserIdentity userIdentity = new UserIdentity(userId, accessToken, accessTokenExpiresAt);
         ClientConnectionEntity connection = connectionsService.authenticateConnection(enrollSessionSecret, userIdentity);
@@ -195,7 +197,7 @@ public class ScaSdkService {
     public AuthenticateAction createAction(
             @NotEmpty String actionCode,
             String uuid,
-            LocalDateTime actionExpiresAt
+            Instant actionExpiresAt
     ) {
         return actionsService.createAction(actionCode, uuid, actionExpiresAt);
     }

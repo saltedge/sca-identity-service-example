@@ -29,8 +29,6 @@ dependencies {
 
     implementation("com.h2database:h2:1.4.200")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation 'joda-time:joda-time:2.10.5'
-//    implementation("io.projectreactor:reactor-test")
 
     implementation project(':saltedge-sca-service-sdk')
 

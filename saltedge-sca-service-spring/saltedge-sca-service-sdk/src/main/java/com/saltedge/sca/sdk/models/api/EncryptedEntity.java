@@ -18,22 +18,43 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.sca.sdk.models.api.responces;
+package com.saltedge.sca.sdk.models.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.saltedge.sca.sdk.ScaSdkConstants;
-import com.saltedge.sca.sdk.models.api.EncryptedAuthorization;
 
-import java.util.List;
+public class EncryptedEntity {
+    @JsonProperty(ScaSdkConstants.KEY_ID)
+    public String id = "";
 
-public class AuthorizationsResponse {
+    @JsonProperty(ScaSdkConstants.KEY_CONNECTION_ID)
+    public String connectionId = "";
+
+    @JsonProperty("algorithm")
+    public String algorithm;
+
+    @JsonProperty("key")
+    public String key;
+
+    @JsonProperty("iv")
+    public String iv;
+
     @JsonProperty(ScaSdkConstants.KEY_DATA)
-    public List<EncryptedAuthorization> data;
+    public String data;
 
-    public AuthorizationsResponse() {
+    public EncryptedEntity() {
     }
 
-    public AuthorizationsResponse(List<EncryptedAuthorization> data) {
+    public EncryptedEntity(String algorithm, String key, String iv, String data) {
+        this.algorithm = algorithm;
+        this.key = key;
+        this.iv = iv;
         this.data = data;
+    }
+
+    public EncryptedEntity(String id, String connectionId, String algorithm, String key, String iv, String data) {
+        this(algorithm, key, iv, data);
+        this.id = id;
+        this.connectionId = connectionId;
     }
 }

@@ -20,40 +20,26 @@
  */
 package com.saltedge.sca.sdk.tools;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import java.time.Instant;
 
 public class DateTools {
-    /**
-     * Converts LocalDateTime to String with datetime in ISO 8601 format
-     * Quoted "Z" to indicate UTC, no timezone offset
-     *
-     * @param date LocalDateTime
-     * @return datetime string
-     */
-    public static String convertDateToIso8601(LocalDateTime date) {
-        LocalDateTime utc = date.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
-        return utc.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-    }
 
     /**
      * Checks if Expiration Datetime is passed
      *
-     * @param expirationDatetime LocalDateTime
+     * @param expirationDatetime Instant time
      * @return true if expirationDatetime is before now
      */
-    public static boolean dateIsExpired(LocalDateTime expirationDatetime) {
-        return expirationDatetime != null && expirationDatetime.isBefore(LocalDateTime.now());
+    public static boolean dateIsExpired(Instant expirationDatetime) {
+        return expirationDatetime != null && expirationDatetime.isBefore(Instant.now());
     }
 
     /**
-     * Get current UTC time
+     * Gets the number of seconds from the Java epoch of 1970-01-01T00:00:00Z.
      *
-     * @return current UTC seconds (from 01-01-1970)
+     * @return seconds count
      */
     public static Integer nowUtcSeconds() {
-        return Math.toIntExact((new Date().getTime() / 1000L));
+        return Math.toIntExact((Instant.now().getEpochSecond()));
     }
 }

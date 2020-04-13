@@ -24,7 +24,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Objects;
 
 /**
@@ -34,7 +34,7 @@ import java.util.Objects;
 public class UserIdentity {
     @NotEmpty private String userId;
     private String accessToken;
-    private LocalDateTime accessTokenExpiresAt;
+    private Instant accessTokenExpiresAt;
 
     public UserIdentity(@NotEmpty String userId) {
         this.userId = userId;
@@ -45,9 +45,9 @@ public class UserIdentity {
      *
      * @param userId unique identifier of User (Customer)
      * @param accessToken unique code for verification of access rights to SCA Service (optional)
-     * @param accessTokenExpiresAt expiration time of accessToken (optional)
+     * @param accessTokenExpiresAt expiration time (UTC) of accessToken (optional)
      */
-    public UserIdentity(@NotEmpty String userId, String accessToken, LocalDateTime accessTokenExpiresAt) {
+    public UserIdentity(@NotEmpty String userId, String accessToken, Instant accessTokenExpiresAt) {
         this.userId = userId;
         this.accessToken = accessToken;
         this.accessTokenExpiresAt = accessTokenExpiresAt;
@@ -65,7 +65,7 @@ public class UserIdentity {
         return accessToken;
     }
 
-    public LocalDateTime getAccessTokenExpiresAt() {
+    public Instant getAccessTokenExpiresAt() {
         return accessTokenExpiresAt;
     }
 

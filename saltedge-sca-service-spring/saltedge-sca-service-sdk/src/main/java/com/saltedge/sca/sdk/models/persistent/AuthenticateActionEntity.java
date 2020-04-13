@@ -22,14 +22,16 @@ package com.saltedge.sca.sdk.models.persistent;
 
 import com.saltedge.sca.sdk.models.ActionStatus;
 import com.saltedge.sca.sdk.models.AuthenticateAction;
-import com.saltedge.sca.sdk.models.converter.StringMapConverter;
+import com.saltedge.sca.sdk.tools.DateTools;
+import com.saltedge.sca.sdk.tools.StringMapConverter;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 @Entity(name = "Authenticate_Action")
@@ -42,7 +44,7 @@ public class AuthenticateActionEntity extends BaseEntity implements Authenticate
     private String uuid = "";
 
     @Column
-    private LocalDateTime expiresAt;
+    private Instant expiresAt;
 
     @Column(length = 4096)
     private String title;
@@ -60,13 +62,13 @@ public class AuthenticateActionEntity extends BaseEntity implements Authenticate
     public AuthenticateActionEntity() { }
 
     public AuthenticateActionEntity(String code, String uuid) {
-        this(code, uuid, LocalDateTime.now().plusMinutes(5));
+        this(code, uuid, Instant.now().plus(5, ChronoUnit.MINUTES));
     }
 
     public AuthenticateActionEntity(
             String code,
             String uuid,
-            LocalDateTime actionExpiresAt
+            Instant actionExpiresAt
     ) {
         this.code = code;
         this.uuid = uuid;
@@ -92,11 +94,11 @@ public class AuthenticateActionEntity extends BaseEntity implements Authenticate
     }
 
     @Override
-    public LocalDateTime getExpiresAt() {
+    public Instant getExpiresAt() {
         return expiresAt;
     }
 
-    public void setExpiresAt(LocalDateTime expiresAt) {
+    public void setExpiresAt(Instant expiresAt) {
         this.expiresAt = expiresAt;
     }
 
@@ -136,7 +138,7 @@ public class AuthenticateActionEntity extends BaseEntity implements Authenticate
 
     @Override
     public Boolean isExpired() {
-        return expiresAt != null && expiresAt.isBefore(LocalDateTime.now());
+        return DateTools.dateIsExpired(expiresAt);
     }
 
     @Override

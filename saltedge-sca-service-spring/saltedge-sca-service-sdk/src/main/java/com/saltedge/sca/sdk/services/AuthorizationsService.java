@@ -22,13 +22,11 @@ package com.saltedge.sca.sdk.services;
 
 import com.saltedge.sca.sdk.ScaSdkConstants;
 import com.saltedge.sca.sdk.models.Authorization;
-import com.saltedge.sca.sdk.models.api.EncryptedAuthorization;
-import com.saltedge.sca.sdk.models.converter.AuthorizationConverter;
+import com.saltedge.sca.sdk.models.api.EncryptedEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationsRepository;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
 import com.saltedge.sca.sdk.provider.ServiceProvider;
-import com.saltedge.sca.sdk.tools.CodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +36,8 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,11 +72,11 @@ public class AuthorizationsService {
         return authorizationsRepository.findById(authorizationId).orElse(null);
     }
 
-    public List<EncryptedAuthorization> getActiveAuthorizations(@NotNull ClientConnectionEntity connection) {
+    public List<EncryptedEntity> getActiveAuthorizations(@NotNull ClientConnectionEntity connection) {
         return AuthorizationsCollector.collectActiveAuthorizations(authorizationsRepository, connection);
     }
 
-    public EncryptedAuthorization getActiveAuthorization(@NotNull ClientConnectionEntity connection, @NotNull Long authorizationId) {
+    public EncryptedEntity getActiveAuthorization(@NotNull ClientConnectionEntity connection, @NotNull Long authorizationId) {
         return AuthorizationsCollector.collectActiveAuthorization(authorizationsRepository, connection, authorizationId);
     }
 
@@ -111,7 +109,7 @@ public class AuthorizationsService {
     ) {
         String titleValue = (title == null) ? "Authorization Request" : title;
         String descriptionValue = (description == null) ? "Confirm your identity" : description;
-        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(ScaSdkConstants.AUTHORIZATION_DEFAULT_LIFETIME_MINUTES);
+        Instant expiresAt = Instant.now().plus(ScaSdkConstants.AUTHORIZATION_DEFAULT_LIFETIME_MINUTES, ChronoUnit.MINUTES);
         AuthorizationEntity model = new AuthorizationEntity(
                 titleValue,
                 descriptionValue,

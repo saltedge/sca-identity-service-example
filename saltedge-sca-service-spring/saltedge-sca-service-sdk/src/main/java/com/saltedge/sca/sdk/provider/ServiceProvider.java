@@ -22,7 +22,10 @@ package com.saltedge.sca.sdk.provider;
 
 import com.saltedge.sca.sdk.models.AuthenticateAction;
 import com.saltedge.sca.sdk.models.Authorization;
+import com.saltedge.sca.sdk.models.Consent;
 import com.saltedge.sca.sdk.models.UserIdentity;
+
+import java.util.List;
 
 /**
  * Interface for communication between SCA Module and Service Provider application.
@@ -89,7 +92,26 @@ public interface ServiceProvider {
     /**
      * Notifies application about confirmation or denying of SCA Authorization
      *
-     * @param authorization entity with unique authorizationCode and isConfirmed fields
+     * @param authorization an entity with unique authorizationCode and isConfirmed fields
      */
     void onAuthorizationConfirmed(Authorization authorization);
+
+    /**
+     * Provides list of Consents for User
+     * Return empty list if consent management is not supported.
+     *
+     * @param userId an unique identifier of User (Customer) of ASPSP (Financial Institution)
+     * @return list of Consent objects
+     */
+    List<Consent> getActiveConsents(String userId);
+
+    /**
+     * Revoke Consent. Mark as revoked and notify concerned parties.
+     * Return always FALSE if consent management is not supported.
+     *
+     * @param userId an unique identifier of User (Customer) of ASPSP (Financial Institution)
+     * @param consentId an unique identifier of Consent of User
+     * @return result of operation, TRUE is success
+     */
+    boolean revokeConsent(String userId, String consentId);
 }

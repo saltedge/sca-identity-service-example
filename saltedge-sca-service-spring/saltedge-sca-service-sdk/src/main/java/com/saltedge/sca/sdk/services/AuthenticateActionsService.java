@@ -38,7 +38,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Service
 @Validated
@@ -69,7 +69,7 @@ public class AuthenticateActionsService {
     public AuthenticateAction createAction(
             @NotEmpty String actionCode,
             String uuid,
-            LocalDateTime actionExpiresAt
+            Instant actionExpiresAt
     ) {
         AuthenticateActionEntity action = new AuthenticateActionEntity(
                 actionCode,

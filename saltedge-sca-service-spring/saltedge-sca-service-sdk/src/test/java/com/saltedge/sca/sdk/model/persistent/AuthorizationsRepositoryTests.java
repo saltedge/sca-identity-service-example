@@ -54,7 +54,6 @@ public class AuthorizationsRepositoryTests {
 
         assertThat(savedModel.getId()).isEqualTo(1L);
         assertThat(savedModel.getCreatedAt().toString()).isNotEmpty();
-        assertThat(savedModel.getCreatedAtUTC()).isNotEmpty();
         assertThat(savedModel.getUpdatedAt().toString()).isNotEmpty();
     }
 }

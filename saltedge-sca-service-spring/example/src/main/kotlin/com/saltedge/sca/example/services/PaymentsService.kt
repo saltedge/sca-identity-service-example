@@ -24,8 +24,7 @@ import com.saltedge.sca.example.controller.SCA_ACTION_PAYMENT
 import com.saltedge.sca.example.model.PaymentOrder
 import com.saltedge.sca.example.model.PaymentOrdersRepository
 import com.saltedge.sca.example.model.UsersRepository
-import com.saltedge.sca.sdk.services.ScaSdkService
-import com.saltedge.sca.sdk.tools.CodeBuilder
+import com.saltedge.sca.sdk.provider.ScaSdkService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*

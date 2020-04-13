@@ -18,43 +18,44 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.sca.sdk.models.api;
+package com.saltedge.sca.sdk.models.api.responces;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.saltedge.sca.sdk.ScaSdkConstants;
+import com.saltedge.sca.sdk.models.api.EncryptedEntity;
 
-public class EncryptedAuthorization {
-    @JsonProperty(ScaSdkConstants.KEY_ID)
-    public String id = "";
+import java.util.List;
 
-    @JsonProperty(ScaSdkConstants.KEY_CONNECTION_ID)
-    public String connectionId = "";
+import static com.saltedge.sca.sdk.ScaSdkConstants.KEY_SUCCESS;
 
-    @JsonProperty("algorithm")
-    public String algorithm;
-
-    @JsonProperty("key")
-    public String key;
-
-    @JsonProperty("iv")
-    public String iv;
-
+public class RevokeConsentResponse {
     @JsonProperty(ScaSdkConstants.KEY_DATA)
-    public String data;
+    public Data data;
 
-    public EncryptedAuthorization() {
+    public RevokeConsentResponse() {
     }
 
-    public EncryptedAuthorization(String algorithm, String key, String iv, String data) {
-        this.algorithm = algorithm;
-        this.key = key;
-        this.iv = iv;
+    public RevokeConsentResponse(Data data) {
         this.data = data;
     }
 
-    public EncryptedAuthorization(String id, String connectionId, String algorithm, String key, String iv, String data) {
-        this(algorithm, key, iv, data);
-        this.id = id;
-        this.connectionId = connectionId;
+    public RevokeConsentResponse(Boolean success, List<EncryptedEntity> consents) {
+        this.data = new Data(success, consents);
+    }
+
+    public static class Data {
+        @JsonProperty(KEY_SUCCESS)
+        public Boolean success;
+
+        @JsonProperty("consents")
+        public List<EncryptedEntity> consents;
+
+        public Data() {
+        }
+
+        public Data(Boolean success, List<EncryptedEntity> consents) {
+            this.success = success;
+            this.consents = consents;
+        }
     }
 }

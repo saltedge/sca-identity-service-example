@@ -27,6 +27,7 @@ import com.saltedge.sca.example.tools.getApplicationUrl
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_SECRET
 import com.saltedge.sca.sdk.models.AuthenticateAction
 import com.saltedge.sca.sdk.models.Authorization
+import com.saltedge.sca.sdk.models.Consent
 import com.saltedge.sca.sdk.models.UserIdentity
 import com.saltedge.sca.sdk.provider.ServiceProvider
 import com.saltedge.sca.sdk.tools.CodeBuilder
@@ -36,7 +37,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 /**
  * Provides required by SCA module information and receives Action and Authorization events.
@@ -97,12 +100,12 @@ class ScaProviderService : ServiceProvider {
      */
     override fun getUserIdByAuthenticationSessionSecret(sessionSecret: String?): UserIdentity? {
         val userId: String? = usersService.findUserIdByAuthSessionCode(sessionSecret)
-        return if (userId.isNullOrBlank()) null;
+        return if (userId.isNullOrBlank()) null
         else {
             UserIdentity(
                     userId,
                     CodeBuilder.generateRandomString(),
-                    LocalDateTime.now().plusMonths(1)
+                    Instant.now().plus(1, ChronoUnit.MONTHS)
             )
         }
     }
@@ -158,5 +161,13 @@ class ScaProviderService : ServiceProvider {
                 paymentUUID = authorization.authorizationCode ?: return,
                 confirmed = authorization.confirmed ?: return
         )
+    }
+
+    override fun getActiveConsents(userId: String?): List<Consent> {
+        return emptyList()//TODO
+    }
+
+    override fun revokeConsent(userId: String?, consentId: String?): Boolean {
+        return false//TODO
     }
 }

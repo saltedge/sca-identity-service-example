@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.saltedge.sca.sdk.TestTools;
 import com.saltedge.sca.sdk.models.api.ErrorResponse;
 import com.saltedge.sca.sdk.models.api.requests.UpdateAuthorizationRequest;
-import com.saltedge.sca.sdk.models.api.responces.AuthorizationsResponse;
+import com.saltedge.sca.sdk.models.api.responces.CollectionResponse;
 import com.saltedge.sca.sdk.models.api.responces.UpdateAuthorizationResponse;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationsRepository;
@@ -48,6 +48,7 @@ import org.springframework.util.LinkedMultiValueMap;
 
 import javax.naming.NamingException;
 import java.io.FileNotFoundException;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -200,7 +201,7 @@ public class AuthorizationErrorsIntegrationTests {
 		given(connectionsRepository.findByAccessTokenAndRevokedFalse("accessToken")).willReturn(testConnection);
 		given(authorizationsRepository.findByUserIdAndExpiresAtGreaterThanAndConfirmedIsNull(
 				userCaptor.capture(),
-				any(LocalDateTime.class))
+				any(Instant.class))
 		).willReturn(new ArrayList<>());
 
 		LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
@@ -208,7 +209,7 @@ public class AuthorizationErrorsIntegrationTests {
 		headers.add(HEADER_KEY_EXPIRES_AT, expiresAt);
 		headers.add(HEADER_KEY_SIGNATURE, signature);
 
-		ResponseEntity<AuthorizationsResponse> response = testRestTemplate.exchange(requestUrl, HttpMethod.GET, new HttpEntity<>(headers), AuthorizationsResponse.class);
+		ResponseEntity<CollectionResponse> response = testRestTemplate.exchange(requestUrl, HttpMethod.GET, new HttpEntity<>(headers), CollectionResponse.class);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(response.getBody().data).isEmpty();
@@ -239,7 +240,7 @@ public class AuthorizationErrorsIntegrationTests {
 		given(authorizationsRepository.findFirstByIdAndUserIdAndExpiresAtGreaterThanAndConfirmedIsNull(
 				eq(1L),
 				userCaptor.capture(),
-				any(LocalDateTime.class))
+				any(Instant.class))
 		).willReturn(testAuthorization);
 
 		ResponseEntity<UpdateAuthorizationResponse> response = testRestTemplate.exchange(requestUrl, HttpMethod.PUT, new HttpEntity<>(body, headers), UpdateAuthorizationResponse.class);

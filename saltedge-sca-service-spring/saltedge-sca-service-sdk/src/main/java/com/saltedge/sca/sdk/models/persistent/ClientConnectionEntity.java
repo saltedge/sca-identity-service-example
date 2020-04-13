@@ -30,7 +30,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.security.PublicKey;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity(name = "Client_Connection")
 @Table(name = "Client_Connection")
@@ -51,13 +51,13 @@ public class ClientConnectionEntity extends BaseEntity implements ClientConnecti
     private String authSessionSecret = "";
 
     @Column
-    private LocalDateTime authSessionSecretExpiresAt = null;
+    private Instant authSessionSecretExpiresAt = null;
 
     @Column(length = 4096)
     private String accessToken = "";
 
     @Column
-    private LocalDateTime accessTokenExpiresAt = null;
+    private Instant accessTokenExpiresAt = null;
 
     @Column
     private Boolean revoked = false;
@@ -83,7 +83,7 @@ public class ClientConnectionEntity extends BaseEntity implements ClientConnecti
     }
 
     @Override
-    public LocalDateTime getAccessTokenExpiresAt() {
+    public Instant getAccessTokenExpiresAt() {
         return accessTokenExpiresAt;
     }
 
@@ -102,6 +102,14 @@ public class ClientConnectionEntity extends BaseEntity implements ClientConnecti
         return userId;
     }
 
+    @Override
+    public PublicKey getPublicKey() {
+        if (StringUtils.isEmpty(publicKey)) throw new Unauthorized.ConnectionNotFound();
+        PublicKey key = KeyTools.convertPemStringToPublicKey(publicKey);
+        if (key == null) throw new Unauthorized.ConnectionNotFound();
+        return key;
+    }
+
     public String getReturnUrl() {
         return returnUrl;
     }
@@ -110,7 +118,7 @@ public class ClientConnectionEntity extends BaseEntity implements ClientConnecti
         return authSessionSecret;
     }
 
-    public LocalDateTime getAuthSessionSecretExpiresAt() {
+    public Instant getAuthSessionSecretExpiresAt() {
         return authSessionSecretExpiresAt;
     }
 
@@ -134,7 +142,7 @@ public class ClientConnectionEntity extends BaseEntity implements ClientConnecti
         this.authSessionSecret = authSessionSecret;
     }
 
-    public void setAuthTokenExpiresAt(LocalDateTime authTokenExpiresAt) {
+    public void setAuthTokenExpiresAt(Instant authTokenExpiresAt) {
         this.authSessionSecretExpiresAt = authTokenExpiresAt;
     }
 
@@ -142,7 +150,7 @@ public class ClientConnectionEntity extends BaseEntity implements ClientConnecti
         this.accessToken = accessToken;
     }
 
-    public void setAccessTokenExpiresAt(LocalDateTime accessTokenExpiresAt) {
+    public void setAccessTokenExpiresAt(Instant accessTokenExpiresAt) {
         this.accessTokenExpiresAt = accessTokenExpiresAt;
     }
 
@@ -152,13 +160,6 @@ public class ClientConnectionEntity extends BaseEntity implements ClientConnecti
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public PublicKey getPublicKey() {
-        if (StringUtils.isEmpty(publicKey)) throw new Unauthorized.ConnectionNotFound();
-        PublicKey key = KeyTools.convertPemStringToPublicKey(publicKey);
-        if (key == null) throw new Unauthorized.ConnectionNotFound();
-        return key;
     }
 
     public boolean hasAuthSessionExpired() {

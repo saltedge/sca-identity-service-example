@@ -28,7 +28,7 @@ import com.saltedge.sca.example.tools.clearActionCookie
 import com.saltedge.sca.sdk.ScaSdkConstants
 import com.saltedge.sca.sdk.errors.NotFound
 import com.saltedge.sca.sdk.models.ActionStatus
-import com.saltedge.sca.sdk.services.ScaSdkService
+import com.saltedge.sca.sdk.provider.ScaSdkService
 import com.saltedge.sca.sdk.tools.QrTools
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired

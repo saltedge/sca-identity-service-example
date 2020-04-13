@@ -24,7 +24,7 @@ import com.saltedge.sca.example.model.User
 import com.saltedge.sca.example.services.UsersService
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_CONNECTION_ID
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_USER_ID
-import com.saltedge.sca.sdk.services.ScaSdkService
+import com.saltedge.sca.sdk.provider.ScaSdkService
 import com.saltedge.sca.sdk.tools.CodeBuilder
 import freemarker.template.Configuration
 import freemarker.template.Template

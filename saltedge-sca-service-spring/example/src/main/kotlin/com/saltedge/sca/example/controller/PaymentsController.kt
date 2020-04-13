@@ -27,7 +27,7 @@ import com.saltedge.sca.example.services.UsersService
 import com.saltedge.sca.example.tools.COOKIE_PAYMENT_ACTION
 import com.saltedge.sca.example.tools.saveActionCookie
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_ACTION_UUID
-import com.saltedge.sca.sdk.services.ScaSdkService
+import com.saltedge.sca.sdk.provider.ScaSdkService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller

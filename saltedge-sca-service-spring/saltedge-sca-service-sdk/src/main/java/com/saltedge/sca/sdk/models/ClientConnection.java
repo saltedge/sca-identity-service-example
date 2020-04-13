@@ -20,13 +20,15 @@
  */
 package com.saltedge.sca.sdk.models;
 
-import java.time.LocalDateTime;
+import java.security.PublicKey;
+import java.time.Instant;
 
 public interface ClientConnection extends BaseEntityAbs {
     String getPublicKeyString();
+    PublicKey getPublicKey();
     String getPlatform();
     String getAccessToken();
-    LocalDateTime getAccessTokenExpiresAt();
+    Instant getAccessTokenExpiresAt();
     String getPushToken();
     Boolean getRevoked();
     String getUserId();

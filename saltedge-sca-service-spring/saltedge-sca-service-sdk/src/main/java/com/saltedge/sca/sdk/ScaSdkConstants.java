@@ -21,6 +21,8 @@
 package com.saltedge.sca.sdk;
 
 public class ScaSdkConstants {
+    public final static String SDK_PACKAGE = "com.saltedge.sca.sdk";
+
     public final static String AUTHENTICATOR_API_BASE_PATH = "/api/authenticator/v1";
     public final static String APP_LINK_PREFIX_CONNECT = "authenticator://saltedge.com/connect";
     public final static String APP_LINK_PREFIX_ACTION = "authenticator://saltedge.com/action";
@@ -43,6 +45,7 @@ public class ScaSdkConstants {
     public final static String KEY_PLATFORM = "platform";
     public final static String KEY_PUSH_TOKEN = "push_token";
     public final static String KEY_TITLE = "title";
+    public final static String KEY_DESCRIPTION = "description";
     public final static String KEY_EXPIRES_AT = "expires_at";
     public final static String KEY_CREATED_AT = "created_at";
     public final static String KEY_CONNECT_URL = "connect_url";

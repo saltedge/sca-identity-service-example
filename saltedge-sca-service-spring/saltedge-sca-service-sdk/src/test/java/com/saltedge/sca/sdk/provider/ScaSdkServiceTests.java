@@ -18,11 +18,15 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.sca.sdk.services;
+package com.saltedge.sca.sdk.provider;
 
 import com.saltedge.sca.sdk.models.UserIdentity;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
+import com.saltedge.sca.sdk.provider.ScaSdkService;
 import com.saltedge.sca.sdk.provider.ServiceProvider;
+import com.saltedge.sca.sdk.services.AuthenticateActionsService;
+import com.saltedge.sca.sdk.services.AuthorizationsService;
+import com.saltedge.sca.sdk.services.ClientConnectionsService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +36,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.validation.ConstraintViolationException;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -154,7 +158,7 @@ public class ScaSdkServiceTests {
 		//given
 		UserIdentity identity = new UserIdentity("1");
 		ClientConnectionEntity initialConnection = new ClientConnectionEntity();
-		initialConnection.setAuthTokenExpiresAt(LocalDateTime.MIN);
+		initialConnection.setAuthTokenExpiresAt(Instant.MIN);
 		initialConnection.setReturnUrl("my-app://return");
 		given(connectionsService.authenticateConnection("secret", identity)).willReturn(initialConnection);
 
@@ -170,7 +174,7 @@ public class ScaSdkServiceTests {
 		//given
 		UserIdentity identity = new UserIdentity("1");
 		ClientConnectionEntity initialConnection = new ClientConnectionEntity();
-		initialConnection.setAuthTokenExpiresAt(LocalDateTime.MAX);
+		initialConnection.setAuthTokenExpiresAt(Instant.MAX);
 		initialConnection.setId(1L);
 		initialConnection.setReturnUrl("my-app://return");
 		initialConnection.setAccessToken("accessToken");

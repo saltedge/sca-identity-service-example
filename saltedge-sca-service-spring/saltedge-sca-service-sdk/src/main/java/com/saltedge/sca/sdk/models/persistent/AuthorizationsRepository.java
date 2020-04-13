@@ -23,7 +23,7 @@ package com.saltedge.sca.sdk.models.persistent;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 public interface AuthorizationsRepository extends JpaRepository<AuthorizationEntity, Long> {
@@ -33,12 +33,12 @@ public interface AuthorizationsRepository extends JpaRepository<AuthorizationEnt
     @NonNull
     List<AuthorizationEntity> findByUserIdAndExpiresAtGreaterThanAndConfirmedIsNull(
             @NonNull String userId,
-            @NonNull LocalDateTime currentDate
+            @NonNull Instant currentDate
     );
 
     AuthorizationEntity findFirstByIdAndUserIdAndExpiresAtGreaterThanAndConfirmedIsNull(
             @NonNull Long id,
             @NonNull String userId,
-            @NonNull LocalDateTime currentDate
+            @NonNull Instant currentDate
     );
 }

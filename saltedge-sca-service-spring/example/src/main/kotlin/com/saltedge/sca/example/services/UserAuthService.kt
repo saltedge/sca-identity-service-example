@@ -24,11 +24,12 @@ import com.saltedge.sca.example.controller.SCA_ACTION_LOGIN
 import com.saltedge.sca.example.model.User
 import com.saltedge.sca.example.model.UsersRepository
 import com.saltedge.sca.sdk.models.AuthenticateAction
-import com.saltedge.sca.sdk.services.ScaSdkService
+import com.saltedge.sca.sdk.provider.ScaSdkService
 import com.saltedge.sca.sdk.tools.CodeBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 @Service
@@ -79,7 +80,7 @@ class UserAuthService {
                     secret,
                     userId.toString(),
                     CodeBuilder.generateRandomString(),
-                    LocalDateTime.now().plusMonths(1)
+                    Instant.now().plus(1, ChronoUnit.MONTHS)
             )
         } else {
             scaSdkService.onUserAuthenticationFail(secret, "Invalid Credentials")

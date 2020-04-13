@@ -18,32 +18,21 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.sca.sdk.tools;
+package com.saltedge.sca.sdk.models.api.responces;
 
-import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.saltedge.sca.sdk.ScaSdkConstants;
 
-import java.time.Instant;
-import java.util.Date;
+import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+public class CollectionResponse<T> {
+    @JsonProperty(ScaSdkConstants.KEY_DATA)
+    public List<T> data;
 
-public class DateToolsTests {
-	@Test
-	public void dateIsExpiredTest() {
-		Instant ldt = Instant.parse("2000-01-01T09:00:00Z");
+    public CollectionResponse() {
+    }
 
-		assertThat(DateTools.dateIsExpired(ldt)).isTrue();
-
-		ldt = Instant.now().plusSeconds(1);
-
-		assertThat(DateTools.dateIsExpired(ldt)).isFalse();
-
-		assertThat(DateTools.dateIsExpired(null)).isFalse();
-	}
-
-	@Test
-	public void nowUtcSecondsTest() {
-		assertThat(DateTools.nowUtcSeconds()).isCloseTo(Math.toIntExact((new Date().getTime() / 1000L)), Assertions.within(1));
-	}
+    public CollectionResponse(List<T> data) {
+        this.data = data;
+    }
 }

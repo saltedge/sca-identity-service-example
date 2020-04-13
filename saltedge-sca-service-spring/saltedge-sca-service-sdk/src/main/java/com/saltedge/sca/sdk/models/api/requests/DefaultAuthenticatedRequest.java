@@ -22,11 +22,11 @@ package com.saltedge.sca.sdk.models.api.requests;
 
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
 
-public class EmptyAuthenticatedRequest extends AuthenticatedRequestAbs {
-    public EmptyAuthenticatedRequest() {
+public class DefaultAuthenticatedRequest extends AuthenticatedRequestAbs {
+    public DefaultAuthenticatedRequest() {
     }
 
-    public EmptyAuthenticatedRequest(ClientConnectionEntity connection) {
+    public DefaultAuthenticatedRequest(ClientConnectionEntity connection) {
         setConnection(connection);
     }
 }

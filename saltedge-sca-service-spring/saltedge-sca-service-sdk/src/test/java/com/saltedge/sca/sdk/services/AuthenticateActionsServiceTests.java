@@ -20,13 +20,12 @@
  */
 package com.saltedge.sca.sdk.services;
 
-import com.google.common.collect.ImmutableList;
+import com.saltedge.sca.sdk.MockServiceTestAbs;
 import com.saltedge.sca.sdk.errors.BadRequest;
 import com.saltedge.sca.sdk.errors.NotFound;
 import com.saltedge.sca.sdk.models.AuthenticateAction;
 import com.saltedge.sca.sdk.models.api.responces.ActionResponse;
 import com.saltedge.sca.sdk.models.persistent.*;
-import com.saltedge.sca.sdk.provider.ServiceProvider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -36,7 +35,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.validation.ConstraintViolationException;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -46,7 +46,7 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ActionsServiceTests {
+public class AuthenticateActionsServiceTests extends MockServiceTestAbs {
 	@Autowired
 	private AuthenticateActionsService testService;
 	@MockBean
@@ -55,8 +55,6 @@ public class ActionsServiceTests {
 	private AuthenticateActionsRepository actionsRepository;
 	@MockBean
 	private ClientNotificationService clientNotificationService;
-	@MockBean
-	private ServiceProvider serviceProvider;
 
 	@Test
 	public void givenInvalidParams_whenOnNewAuthenticatedAction_thenThrowConstraintViolationException() {
@@ -80,7 +78,7 @@ public class ActionsServiceTests {
 	public void givenExpiredAction_whenOnNewAuthenticatedAction_thenThrowActionExpiredException() {
 		//given
 		AuthenticateActionEntity entity = new AuthenticateActionEntity();
-		entity.setExpiresAt(LocalDateTime.MIN);
+		entity.setExpiresAt(Instant.MIN);
 		given(actionsRepository.findFirstByUuid("id1")).willReturn(entity);
 
 		//then
@@ -97,7 +95,7 @@ public class ActionsServiceTests {
 		connection.setUserId("user1");
 
 		AuthenticateActionEntity action = new AuthenticateActionEntity();
-		action.setExpiresAt(LocalDateTime.now().plusMinutes(5));
+		action.setExpiresAt(Instant.now().plus(5, ChronoUnit.MINUTES));
 		given(actionsRepository.findFirstByUuid("action1")).willReturn(action);
 		given(serviceProvider.onAuthenticateAction(any(AuthenticateAction.class))).willReturn(null);
 
@@ -120,12 +118,18 @@ public class ActionsServiceTests {
 		connection.setId(1L);
 		connection.setUserId("user1");
 
-		AuthorizationEntity savedAuthorization = new AuthorizationEntity("titleValue", "descriptionValue", LocalDateTime.now().plusMinutes(5), "authorizationCode", "user1");
+		AuthorizationEntity savedAuthorization = new AuthorizationEntity(
+				"titleValue",
+				"descriptionValue",
+				Instant.now().plus(5, ChronoUnit.MINUTES),
+				"authorizationCode",
+				"user1"
+		);
 		savedAuthorization.setId(2L);
 		given(authorizationsRepository.save(any(AuthorizationEntity.class))).willReturn(savedAuthorization);
 
 		AuthenticateActionEntity savedAction = new AuthenticateActionEntity();
-		savedAction.setExpiresAt(LocalDateTime.now().plusMinutes(5));
+		savedAction.setExpiresAt(Instant.now().plus(5, ChronoUnit.MINUTES));
 		given(actionsRepository.findFirstByUuid("action1")).willReturn(savedAction);
 		given(serviceProvider.onAuthenticateAction(any(AuthenticateAction.class))).willReturn(10L);
 
