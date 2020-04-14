@@ -57,6 +57,9 @@ public class Consent {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     public Instant expiresAt;
 
+    @JsonProperty(KEY_CONNECTION_ID)
+    public String connectionId;
+
     public Consent() {
     }
 

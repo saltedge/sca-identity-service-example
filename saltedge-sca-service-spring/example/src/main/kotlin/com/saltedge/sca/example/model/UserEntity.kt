@@ -23,23 +23,23 @@ package com.saltedge.sca.example.model
 import com.saltedge.sca.sdk.tools.CodeBuilder
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
-import java.time.LocalDateTime
+import java.time.Instant
 import java.util.*
 import javax.persistence.*
 
 @Entity
-class User() {
+class UserEntity() {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     public var id: Long = 0
 
     @Column
     @CreationTimestamp
-    private val createdAt: LocalDateTime? = null
+    private val createdAt: Instant? = null
 
     @Column
     @UpdateTimestamp
-    private val updatedAt: LocalDateTime? = null
+    private val updatedAt: Instant? = null
 
     @Column(nullable = false, length = 64, unique = true)
     var name: String = ""

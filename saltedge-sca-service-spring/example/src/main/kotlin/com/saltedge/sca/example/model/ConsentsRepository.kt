@@ -18,8 +18,12 @@
  * For the additional permissions granted for Salt Edge Authenticator
  * under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
  */
-package com.saltedge.sca.example.tools
+package com.saltedge.sca.example.model
 
-import org.joda.time.DateTime
+import org.springframework.data.jpa.repository.JpaRepository
+import java.time.Instant
 
-fun Long.toDateTime(): DateTime = DateTime(this)
+interface ConsentsRepository : JpaRepository<ConsentEntity, Long> {
+    fun findByUserIdAndRevokedFalseAndExpiresAtGreaterThan(userId: Long, currentDate: Instant): List<ConsentEntity>
+    fun findFirstByIdAndUserId(id: Long, userId: Long): ConsentEntity?
+}

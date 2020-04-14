@@ -93,7 +93,7 @@ public class ConsentsControllerIntegrationTests extends MockMvcTestAbs {
 
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.data.success", Matchers.is(true)))
-				.andExpect(jsonPath("$.data.consents", Matchers.hasSize(0)));
+				.andExpect(jsonPath("$.data.consent_id", Matchers.is("12")));
 	}
 
 	@Test

@@ -20,7 +20,7 @@
  */
 package com.saltedge.sca.example.controller
 
-import com.saltedge.sca.example.model.PaymentOrder
+import com.saltedge.sca.example.model.PaymentOrderEntity
 import com.saltedge.sca.example.services.PaymentsService
 import com.saltedge.sca.example.services.UserAuthService
 import com.saltedge.sca.example.services.UsersService
@@ -50,8 +50,6 @@ class PaymentsController {
     private lateinit var userAuthService: UserAuthService
     @Autowired
     private lateinit var usersService: UsersService
-    @Autowired
-    private lateinit var scaSdkService: ScaSdkService
 
     private val template = "payments_order"
 
@@ -61,7 +59,7 @@ class PaymentsController {
             @RequestParam(value = "create_new", required = false) createNew: Boolean?,
             response: HttpServletResponse
     ): ModelAndView {
-        val payment: PaymentOrder = paymentsService.getOrCreatePaymentOrder(savedPaymentUUID, createNew ?: false)
+        val payment: PaymentOrderEntity = paymentsService.getOrCreatePaymentOrder(savedPaymentUUID, createNew ?: false)
         if (savedPaymentUUID != payment.uuid) saveActionCookie(COOKIE_PAYMENT_ACTION, payment.uuid, response)
         return ModelAndView(template)
                 .addObject("payment", payment)

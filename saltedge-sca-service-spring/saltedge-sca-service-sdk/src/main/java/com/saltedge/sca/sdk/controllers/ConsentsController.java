@@ -31,7 +31,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotEmpty;
-import java.util.List;
 
 /**
  * REST Controller designated for serving Consent Management
@@ -67,7 +66,6 @@ public class ConsentsController {
             DefaultAuthenticatedRequest request
     ) {
         boolean result = consentsService.revokeConsent(consentId, request.getConnection());
-        List<EncryptedEntity> encryptedConsents = consentsService.getActiveConsents(request.getConnection());
-        return ResponseEntity.ok(new RevokeConsentResponse(result, encryptedConsents));
+        return ResponseEntity.ok(new RevokeConsentResponse(result, consentId));
     }
 }

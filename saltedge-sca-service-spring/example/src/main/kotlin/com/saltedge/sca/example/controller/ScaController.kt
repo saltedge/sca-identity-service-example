@@ -20,7 +20,7 @@
  */
 package com.saltedge.sca.example.controller
 
-import com.saltedge.sca.example.model.PaymentOrder
+import com.saltedge.sca.example.model.PaymentOrderEntity
 import com.saltedge.sca.example.services.PaymentsService
 import com.saltedge.sca.example.services.UsersService
 import com.saltedge.sca.example.tools.COOKIE_AUTHENTICATION_ACTION
@@ -112,7 +112,7 @@ class ScaController {
             @RequestParam("payment_uuid") paymentUUID: String,
             response: HttpServletResponse
     ): Map<String, Any> {
-        val payment: PaymentOrder? = paymentsService.getPaymentByUUID(paymentUUID)
+        val payment: PaymentOrderEntity? = paymentsService.getPaymentByUUID(paymentUUID)
         val userName = payment?.userId?.let { usersService.findUser(it) }?.name ?: "Unknown"
 
         return mapOf(

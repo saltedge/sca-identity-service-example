@@ -86,6 +86,7 @@ public class EncryptedEntityFactory {
             Long connectionId,
             PublicKey publicKey
     ) {
+        consent.connectionId = connectionId.toString();
         return createEncryptedEntity(
                 String.valueOf(consent.getId()),
                 String.valueOf(connectionId),

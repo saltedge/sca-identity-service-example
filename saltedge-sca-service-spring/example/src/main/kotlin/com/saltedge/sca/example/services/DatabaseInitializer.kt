@@ -22,36 +22,37 @@ package com.saltedge.sca.example.services
 
 import com.saltedge.sca.example.model.UserEntity
 import com.saltedge.sca.example.model.UsersRepository
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Service
+import org.springframework.context.event.ContextRefreshedEvent
+import org.springframework.context.event.EventListener
+import org.springframework.stereotype.Component
 
-@Service
-class UsersService {
+@Component
+class DatabaseInitializer {
     @Autowired
-    lateinit var usersRepository: UsersRepository
+    private val usersRepository: UsersRepository? = null
+    private var user: UserEntity? = null
 
-    fun findUser(userId: Long): UserEntity? {
-        return usersRepository.findFirstById(userId)
+    @EventListener
+    fun seed(event: ContextRefreshedEvent?) {
+        user = seedUsers()
     }
 
-    fun findUserIdByAuthSessionCode(sessionSecret: String?): String? {
-        if (sessionSecret == null) return null
-        val user = usersRepository.findFirstByAuthSessionSecret(authSessionSecret = sessionSecret) ?: return null
-        if (user.authSessionSecretIsExpired()) return null
-        return user.id.toString()
+    private fun seedUsers(): UserEntity {
+        return if (usersRepository!!.count() == 0L) {
+            log.info("DatabaseInitializer: Users Seeded")
+            usersRepository.save(UserEntity(
+                    "username",
+                    "secret"
+            ))
+        } else {
+            log.info("DatabaseInitializer: Users Seeding Not Required")
+            usersRepository.findAll()[0]
+        }
     }
 
-    fun getOrCreateUserConnectSecret(userId: Long?): String? {
-        return userId?.let { usersRepository.findFirstById(it) }?.let { getOrCreateUserConnectSecret(it) }
-    }
-
-    private fun getOrCreateUserConnectSecret(user: UserEntity): String? {
-        return user.let {
-            if (it.authSessionSecret == null || it.authSessionSecretIsExpired()) {
-                it.createAuthSessionSecret()
-                usersRepository.save(it)
-            }
-            it
-        }.authSessionSecret
+    companion object {
+        private val log = LoggerFactory.getLogger(DatabaseInitializer::class.java)
     }
 }

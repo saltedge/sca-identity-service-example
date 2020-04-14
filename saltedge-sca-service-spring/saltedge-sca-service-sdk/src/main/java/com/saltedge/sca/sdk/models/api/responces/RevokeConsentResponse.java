@@ -22,9 +22,6 @@ package com.saltedge.sca.sdk.models.api.responces;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.saltedge.sca.sdk.ScaSdkConstants;
-import com.saltedge.sca.sdk.models.api.EncryptedEntity;
-
-import java.util.List;
 
 import static com.saltedge.sca.sdk.ScaSdkConstants.KEY_SUCCESS;
 
@@ -39,23 +36,23 @@ public class RevokeConsentResponse {
         this.data = data;
     }
 
-    public RevokeConsentResponse(Boolean success, List<EncryptedEntity> consents) {
-        this.data = new Data(success, consents);
+    public RevokeConsentResponse(Boolean success, String consentId) {
+        this.data = new Data(success, consentId);
     }
 
     public static class Data {
         @JsonProperty(KEY_SUCCESS)
         public Boolean success;
 
-        @JsonProperty("consents")
-        public List<EncryptedEntity> consents;
+        @JsonProperty("consent_id")
+        public String consentId;
 
         public Data() {
         }
 
-        public Data(Boolean success, List<EncryptedEntity> consents) {
+        public Data(Boolean success, String consentId) {
             this.success = success;
-            this.consents = consents;
+            this.consentId = consentId;
         }
     }
 }

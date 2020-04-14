@@ -83,6 +83,6 @@ public class EncryptedEntityFactoryTests {
 
 		String decryptedData = new String(CryptTools.decryptAes(Base64.getDecoder().decode(encryptedObject.data), key, iv));
 
-		assertThat(decryptedData).isEqualTo("{\"id\":\"id1\",\"title\":\"title\",\"description\":\"description\",\"created_at\":\"2020-01-01T00:00:00Z\",\"expires_at\":\"2020-03-01T00:00:00Z\"}");
+		assertThat(decryptedData).isEqualTo("{\"id\":\"id1\",\"title\":\"title\",\"description\":\"description\",\"created_at\":\"2020-01-01T00:00:00Z\",\"expires_at\":\"2020-03-01T00:00:00Z\",\"connection_id\":\"1\"}");
 	}
 }

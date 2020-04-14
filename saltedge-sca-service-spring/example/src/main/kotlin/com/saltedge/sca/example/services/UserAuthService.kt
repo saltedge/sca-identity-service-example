@@ -21,7 +21,7 @@
 package com.saltedge.sca.example.services
 
 import com.saltedge.sca.example.controller.SCA_ACTION_LOGIN
-import com.saltedge.sca.example.model.User
+import com.saltedge.sca.example.model.UserEntity
 import com.saltedge.sca.example.model.UsersRepository
 import com.saltedge.sca.sdk.models.AuthenticateAction
 import com.saltedge.sca.sdk.provider.ScaSdkService
@@ -61,7 +61,7 @@ class UserAuthService {
             errorCallback(error)
             null
         } else {
-            usersRepository.save(User(name = username, password = password)).id
+            usersRepository.save(UserEntity(name = username, password = password)).id
         }
     }
 

@@ -23,6 +23,7 @@ package com.saltedge.sca.example.services
 import com.saltedge.sca.example.controller.SCA_ACTION_LOGIN
 import com.saltedge.sca.example.controller.SCA_ACTION_PAYMENT
 import com.saltedge.sca.example.controller.SIGN_IN_SCA_PATH
+import com.saltedge.sca.example.model.ConsentsRepository
 import com.saltedge.sca.example.tools.getApplicationUrl
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_SECRET
 import com.saltedge.sca.sdk.models.AuthenticateAction
@@ -38,7 +39,6 @@ import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 import org.springframework.web.util.UriComponentsBuilder
 import java.time.Instant
-import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 /**
@@ -53,6 +53,8 @@ class ScaProviderService : ServiceProvider {
     lateinit var usersService: UsersService
     @Autowired
     lateinit var paymentsService: PaymentsService
+    @Autowired
+    lateinit var consentsRepository: ConsentsRepository
 
     /**
      * Provides human readable name of Service Provider
@@ -105,7 +107,7 @@ class ScaProviderService : ServiceProvider {
             UserIdentity(
                     userId,
                     CodeBuilder.generateRandomString(),
-                    Instant.now().plus(1, ChronoUnit.MONTHS)
+                    Instant.now().plus(30, ChronoUnit.DAYS)
             )
         }
     }
@@ -164,10 +166,27 @@ class ScaProviderService : ServiceProvider {
     }
 
     override fun getActiveConsents(userId: String?): List<Consent> {
-        return emptyList()//TODO
+        return consentsRepository.findByUserIdAndRevokedFalseAndExpiresAtGreaterThan(
+                userId = userId?.toLongOrNull() ?: return emptyList(),
+                currentDate = Instant.now()
+        ).map {
+            Consent(
+                it.id.toString(),
+                it.title,
+                it.description,
+                it.createdAt,
+                it.expiresAt
+            )
+        }
     }
 
     override fun revokeConsent(userId: String?, consentId: String?): Boolean {
-        return false//TODO
+        var consent = consentsRepository.findFirstByIdAndUserId(
+                id = consentId?.toLongOrNull() ?: return false,
+                userId = userId?.toLongOrNull() ?: return false
+        ) ?: return false
+        consent.revoked = true
+        consent = consentsRepository.save(consent)
+        return consent.revoked
     }
 }

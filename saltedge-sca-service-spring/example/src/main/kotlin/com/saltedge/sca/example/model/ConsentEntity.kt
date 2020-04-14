@@ -20,50 +20,53 @@
  */
 package com.saltedge.sca.example.model
 
-import com.saltedge.sca.sdk.models.AuthenticateAction
+import com.saltedge.sca.sdk.tools.DateTools
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
-import java.time.LocalDateTime
+import java.time.Instant
 import javax.persistence.*
 
 @Entity
-class PaymentOrder() {
+class ConsentEntity() {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    public var id: Long = 0
+    var id: Long = 0
 
     @Column
     @CreationTimestamp
-    private val createdAt: LocalDateTime? = null
+    var createdAt: Instant? = null
 
     @Column
     @UpdateTimestamp
-    private val updatedAt: LocalDateTime? = null
+    var updatedAt: Instant? = null
 
-    @Column(nullable = false, length = 4096, unique = true)
-    var uuid: String = ""
-
-    @Column(nullable = false, length = 64)
-    var amount: String = ""
-
-    @Column(nullable = false, length = 3)
-    var currency: String = ""
+    @Column(nullable = false, length = 1024)
+    var title: String = ""
 
     @Column(nullable = false, length = 4096)
-    var payeeName: String = ""
-
-    @Column(nullable = false, length = 4096)
-    var payeeAddress: String = ""
+    var description: String = ""
 
     @Column
-    var userId: Long? = null
+    var expiresAt: Instant? = null
 
-    @Column(nullable = false, length = 256)
-    var status: String = "waiting_confirmation"
+    @Column
+    var revoked = false
 
-    fun isClosed(): Boolean = status == "closed_success" || status == "closed_deny" || status == "closed_error"
+    @ManyToOne var user: UserEntity? = null
 
-    fun isWaitingConfirmation(): Boolean = status == "waiting_confirmation"
+    constructor(
+            title: String,
+            description: String,
+            expiresAt: Instant,
+            user: UserEntity
+    ) : this() {
+        this.title = title
+        this.description = description
+        this.expiresAt = expiresAt
+        this.user = user
+    }
 
-    fun isAuthenticated(): Boolean = userId != null
+    fun isExpired(): Boolean {
+        return DateTools.dateIsExpired(expiresAt)
+    }
 }

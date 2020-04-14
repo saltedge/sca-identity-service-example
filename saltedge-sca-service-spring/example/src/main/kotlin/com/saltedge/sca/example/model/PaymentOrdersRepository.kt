@@ -22,7 +22,6 @@ package com.saltedge.sca.example.model
 
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface PaymentOrdersRepository : JpaRepository<PaymentOrder, Long> {
-    fun findFirstById(id: Long?): PaymentOrder?
-    fun findFirstByUuid(uuid: String): PaymentOrder?
+interface PaymentOrdersRepository : JpaRepository<PaymentOrderEntity, Long> {
+    fun findFirstByUuid(uuid: String): PaymentOrderEntity?
 }
