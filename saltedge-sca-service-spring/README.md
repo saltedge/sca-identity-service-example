@@ -6,7 +6,7 @@ designated to demonstrate SCA flow and communication between Service Provider an
 Current application implements Salt Edge Authenticator v1 API.  
 
 Consists of modules:
-* **SCA Service SDK v1.1.0**
+* **SCA Service SDK v1.2.0**
 * **Example Application**
 
 ## Application Requirements
@@ -58,7 +58,7 @@ Consists of modules:
   
 ## SDK Integration
 
-1. Add SDK to target application as Module or as JAR library (`out/saltedge-sca-service-sdk-1.1.0-all.jar`);
+1. Add SDK to target application as Module or as JAR library (`out/saltedge-sca-service-sdk-x.x.x-all.jar`);
 1. Setup application as [described before](#example-application-quick-setup)  
   (add configuration)
 1. Add SDK package (`com.saltedge.sca.sdk`) to component scan annotation in Application class.
