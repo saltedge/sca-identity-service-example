@@ -715,10 +715,7 @@ curl \
 
 ### Revoke Consent  
 
-Revoke list of all active Consents managed by Service Provider (ASPSP).  
-And return list of all active Consents except previously revoked.
-
-Each Consent object (`data` field) is **encrypted** with algorithm mentioned in `algorithm` field. Necessary data for decryption (`key` and `iv`) are encrypted by asymmetric `public_key` related to `connection_id`.  
+Revoke Consent managed by Service Provider (ASPSP).  And return result of operation.
 
 <img src="images/sca_consent_management_revoke.png" alt="sca_consent_management_revoke" width="240"/>
 
@@ -744,53 +741,18 @@ curl \
 
 #### Response Body Parameters
 - `success` **[boolean]** - a result of revoke action;
-- `consents` **[array]** - a list of active consents;
-- `id` **[string]** - an unique ID of Consent object;
-- `connection_id` **[string]** - an unique ID of Mobile Client (Service Connection). Used to decrypt models in the Mobile Application;
-- `iv` **[string]** - an initialization vector of encryption algorithm, this string is encrypted with public key linked to Mobile Client;
-- `key` **[string]** - a secure key of encryption algorithm, this string is encrypted with public key linked to Mobile Client;
-- `algorithm` **[string]** - an encryption algorithm and block mode type;
-- `data` **[string]** - an encrypted Consent object with algorithm mentioned above.
+- `consent_id` **[string]** - an unique ID of revoked Consent model;
 
 #### Response Example
 ```json
 {
   "data": {
     "success": true,
-    "consents": [
-      {
-        "id": "556",
-        "connection_id": "333",
-        "iv": "o3TDCc3rKYTx...RVH+aOFpS9NIg==\n",
-        "key": "BtV7EB3Erv8xEQ.../jeBRyFa75A6po5XlwWiEiuzQ==\n",
-        "algorithm": "AES-256-CBC",
-        "data": "YlnrNOHvUIPem/O58rMzdsvkXidLvgGpdMalD9c1mlg=\n"
-      }
-    ]
+    "consent_id": "12"
   }
 }
 ```  
   
-#### Consent Object (*Decrypted `data` field*)  
-- `id` **[string]** - an unique ID of Consent model;
-- `connection_id` **[string]** - an unique ID of Mobile Client (Service Connection). Used to decrypt models in the Mobile Application;
-- `title` **[string]** - a human-readable title of Consent;
-- `description` **[string]** - a description of Consent. Can be as human-readable plain text, or HTML encoded page;
-- `created_at` **[datetime]** - specifies the datetime in ISO 8601 (“yyyy-mm-ddTHH:mm:ssZ”) format, when the Consent was created;
-- `expires_at` **[datetime]** - specifies the datetime in ISO 8601 (“yyyy-mm-ddTHH:mm:ssZ”) format, when the Consent should expire.
-
-#### Consent Object Example (*Decrypted `data` field*)  
-```json
-{
-  "id": "444",
-  "connection_id": "333",
-  "title": "Access Account information",
-  "description": "Access Account information of GB123456789 in Universal Bank",
-  "created_at": "2017-09-22T08:29:03Z",
-  "expires_at": "2017-09-22T08:34:03Z"
-}
-```
-
 **Note:**  
 **[See Response Errors](#api-errors)**
 
