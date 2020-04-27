@@ -24,7 +24,7 @@ import com.saltedge.sca.example.controller.SCA_ACTION_PAYMENT
 import com.saltedge.sca.example.model.PaymentOrderEntity
 import com.saltedge.sca.example.model.PaymentOrdersRepository
 import com.saltedge.sca.example.model.UsersRepository
-import com.saltedge.sca.sdk.provider.ScaSdkService
+import com.saltedge.sca.sdk.provider.ScaSDKCallbackService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*
@@ -36,7 +36,7 @@ class PaymentsService {
     @Autowired
     private lateinit var paymentsRepository: PaymentOrdersRepository
     @Autowired
-    private lateinit var scaSdkService: ScaSdkService
+    private lateinit var scaSdkService: ScaSDKCallbackService
 
     fun getOrCreatePaymentOrder(savedPaymentUUID: String, createNew: Boolean): PaymentOrderEntity {
         var payment: PaymentOrderEntity? = getPaymentByUUID(savedPaymentUUID)

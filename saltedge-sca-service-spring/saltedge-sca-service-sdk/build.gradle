@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'maven'
     id 'org.springframework.boot' version "2.2.2.RELEASE"
     id 'io.spring.dependency-management' version "1.0.8.RELEASE"
     id 'com.github.johnrengelman.shadow' version '5.2.0'
@@ -22,14 +23,6 @@ jar {
     enabled = true
 }
 
-shadowJar {
-    destinationDirectory = file('../out')
-    manifest {
-        attributes('Implementation-Title': project.name, 'Implementation-Version': project.version)
-    }
-    from sourceSets.main.allSource
-}
-
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -41,4 +34,20 @@ dependencies {
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+shadowJar {
+    destinationDirectory = file('../out')
+    manifest {
+        attributes('Implementation-Title': project.name, 'Implementation-Version': project.version)
+    }
+    from sourceSets.main.allSource
+}
+
+uploadShadow {
+    repositories {
+        mavenDeployer {
+            repository(url: uri("${rootProject.projectDir}/../maven-repo"))
+        }
+    }
 }

@@ -26,7 +26,7 @@ import com.saltedge.sca.example.model.UserEntity
 import com.saltedge.sca.example.services.UsersService
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_CONNECTION_ID
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_USER_ID
-import com.saltedge.sca.sdk.provider.ScaSdkService
+import com.saltedge.sca.sdk.provider.ScaSDKCallbackService
 import com.saltedge.sca.sdk.tools.CodeBuilder
 import freemarker.template.Configuration
 import freemarker.template.Template
@@ -54,7 +54,7 @@ class UserDashboardController {
     @Autowired
     private lateinit var usersService: UsersService
     @Autowired
-    private lateinit var scaSdkService: ScaSdkService
+    private lateinit var scaSdkService: ScaSDKCallbackService
     @Autowired
     private lateinit var consentsRepository: ConsentsRepository
 

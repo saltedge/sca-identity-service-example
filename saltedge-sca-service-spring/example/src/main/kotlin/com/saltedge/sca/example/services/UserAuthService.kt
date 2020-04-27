@@ -24,7 +24,7 @@ import com.saltedge.sca.example.controller.SCA_ACTION_LOGIN
 import com.saltedge.sca.example.model.UserEntity
 import com.saltedge.sca.example.model.UsersRepository
 import com.saltedge.sca.sdk.models.AuthenticateAction
-import com.saltedge.sca.sdk.provider.ScaSdkService
+import com.saltedge.sca.sdk.provider.ScaSDKCallbackService
 import com.saltedge.sca.sdk.tools.CodeBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -37,7 +37,7 @@ class UserAuthService {
     @Autowired
     private lateinit var usersRepository: UsersRepository
     @Autowired
-    private lateinit var scaSdkService: ScaSdkService
+    private lateinit var scaSdkService: ScaSDKCallbackService
 
     fun getOrCreateAuthSession(savedSessionCode: String): String {
         var action = scaSdkService.getActionByUUID(savedSessionCode)

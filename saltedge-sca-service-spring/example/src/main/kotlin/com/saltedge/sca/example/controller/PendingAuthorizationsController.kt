@@ -21,7 +21,7 @@
 package com.saltedge.sca.example.controller
 
 import com.saltedge.sca.sdk.ScaSdkConstants
-import com.saltedge.sca.sdk.provider.ScaSdkService
+import com.saltedge.sca.sdk.provider.ScaSDKCallbackService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -37,7 +37,7 @@ const val AUTHORIZATIONS_PATH = "/authorizations"
 class PendingAuthorizationsController {
     private val log = LoggerFactory.getLogger(PaymentsController::class.java)
     @Autowired
-    private lateinit var scaSdkService: ScaSdkService
+    private lateinit var scaSdkService: ScaSDKCallbackService
 
     private val template = "payments_order"
 
