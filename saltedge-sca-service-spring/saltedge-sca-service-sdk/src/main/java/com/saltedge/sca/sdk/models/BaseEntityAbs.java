@@ -20,12 +20,12 @@
  */
 package com.saltedge.sca.sdk.models;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public interface BaseEntityAbs {
     Long getId();
-    LocalDateTime getCreatedAt();
-    void setCreatedAt(LocalDateTime createdAt);
-    LocalDateTime getUpdatedAt();
-    void setUpdatedAt(LocalDateTime updatedAt);
+    Instant getCreatedAt();
+    void setCreatedAt(Instant createdAt);
+    Instant getUpdatedAt();
+    void setUpdatedAt(Instant updatedAt);
 }

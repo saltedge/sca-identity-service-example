@@ -22,9 +22,9 @@ package com.saltedge.sca.example.model
 
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface UsersRepository : JpaRepository<User, Long> {
-    fun findFirstById(id: Long?): User?
-    fun findFirstByName(name: String): User?
-    fun findFirstByNameAndPassword(name: String, password: String): User?
-    fun findFirstByAuthSessionSecret(authSessionSecret: String): User?
+interface UsersRepository : JpaRepository<UserEntity, Long> {
+    fun findFirstById(id: Long?): UserEntity?
+    fun findFirstByName(name: String): UserEntity?
+    fun findFirstByNameAndPassword(name: String, password: String): UserEntity?
+    fun findFirstByAuthSessionSecret(authSessionSecret: String): UserEntity?
 }

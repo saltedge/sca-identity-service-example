@@ -1,6 +1,12 @@
 [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
 # Salt Edge Authenticator SCA Service SDK Changelog
 
+## 1.2.0 (2020-04-14)
+
+### Add
+
+* Consent management feature
+
 ## 1.1.0 (2020-03-19)
 
 ### Add

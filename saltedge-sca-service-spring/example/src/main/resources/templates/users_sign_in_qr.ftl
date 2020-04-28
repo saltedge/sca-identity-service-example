@@ -49,7 +49,9 @@
             var poll = setTimeout(refreshStatus, 3000)
         }
 
-        polling()
+        <#if action_uuid??>
+            polling()
+        </#if>
     </script>
 </head>
 <body>

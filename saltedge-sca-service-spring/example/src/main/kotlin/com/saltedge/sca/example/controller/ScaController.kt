@@ -20,7 +20,7 @@
  */
 package com.saltedge.sca.example.controller
 
-import com.saltedge.sca.example.model.PaymentOrder
+import com.saltedge.sca.example.model.PaymentOrderEntity
 import com.saltedge.sca.example.services.PaymentsService
 import com.saltedge.sca.example.services.UsersService
 import com.saltedge.sca.example.tools.COOKIE_AUTHENTICATION_ACTION
@@ -28,7 +28,7 @@ import com.saltedge.sca.example.tools.clearActionCookie
 import com.saltedge.sca.sdk.ScaSdkConstants
 import com.saltedge.sca.sdk.errors.NotFound
 import com.saltedge.sca.sdk.models.ActionStatus
-import com.saltedge.sca.sdk.services.ScaSdkService
+import com.saltedge.sca.sdk.provider.ScaSDKCallbackService
 import com.saltedge.sca.sdk.tools.QrTools
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -49,7 +49,7 @@ const val SCA_ACTION_PAYMENT = "authenticate_payment_action"
 class ScaController {
     private val log = LoggerFactory.getLogger(ScaController::class.java)
     @Autowired
-    private lateinit var scaSdkService: ScaSdkService
+    private lateinit var scaSdkService: ScaSDKCallbackService
     @Autowired
     private lateinit var usersService: UsersService
     @Autowired
@@ -112,7 +112,7 @@ class ScaController {
             @RequestParam("payment_uuid") paymentUUID: String,
             response: HttpServletResponse
     ): Map<String, Any> {
-        val payment: PaymentOrder? = paymentsService.getPaymentByUUID(paymentUUID)
+        val payment: PaymentOrderEntity? = paymentsService.getPaymentByUUID(paymentUUID)
         val userName = payment?.userId?.let { usersService.findUser(it) }?.name ?: "Unknown"
 
         return mapOf(

@@ -27,7 +27,7 @@ import com.saltedge.sca.sdk.tools.DateTools;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 /**
  * @see com.saltedge.sca.sdk.models.Authorization
@@ -36,7 +36,7 @@ import java.time.LocalDateTime;
 @Table(name = "Transaction_Authorization")
 public class AuthorizationEntity extends BaseEntity implements Authorization {
     @Column(nullable = false)
-    private LocalDateTime expiresAt;
+    private Instant expiresAt;
 
     private Boolean confirmed;
 
@@ -54,7 +54,13 @@ public class AuthorizationEntity extends BaseEntity implements Authorization {
 
     public AuthorizationEntity() {}//Default constructor for Repository
 
-    public AuthorizationEntity(String title, String description, LocalDateTime expiresAt, String authorizationCode, String userId) {
+    public AuthorizationEntity(
+            String title,
+            String description,
+            Instant expiresAt,
+            String authorizationCode,
+            String userId
+    ) {
         this.title = title;
         this.description = description;
         this.expiresAt = expiresAt;
@@ -63,15 +69,7 @@ public class AuthorizationEntity extends BaseEntity implements Authorization {
     }
 
     public Boolean isExpired() {
-        return this.expiresAt != null && expiresAt.isBefore(LocalDateTime.now());
-    }
-
-    public String getCreatedAtUTC() {
-        return DateTools.convertDateToIso8601(getCreatedAt());
-    }
-
-    public String getExpiresAtUTC() {
-        return DateTools.convertDateToIso8601(expiresAt);
+        return DateTools.dateIsExpired(this.expiresAt);
     }
 
     public AuthorizationStatus getStatus() {
@@ -81,7 +79,7 @@ public class AuthorizationEntity extends BaseEntity implements Authorization {
     }
 
     @Override
-    public LocalDateTime getExpiresAt() {
+    public Instant getExpiresAt() {
         return expiresAt;
     }
 

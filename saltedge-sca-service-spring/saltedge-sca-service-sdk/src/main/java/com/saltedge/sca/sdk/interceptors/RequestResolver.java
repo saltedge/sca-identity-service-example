@@ -25,7 +25,7 @@ import com.saltedge.sca.sdk.ScaSdkConstants;
 import com.saltedge.sca.sdk.errors.BadRequest;
 import com.saltedge.sca.sdk.errors.Unauthorized;
 import com.saltedge.sca.sdk.models.api.requests.AuthenticatedRequestAbs;
-import com.saltedge.sca.sdk.models.api.requests.EmptyAuthenticatedRequest;
+import com.saltedge.sca.sdk.models.api.requests.DefaultAuthenticatedRequest;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionsRepository;
 import com.saltedge.sca.sdk.tools.DateTools;
@@ -97,8 +97,8 @@ public class RequestResolver implements HandlerMethodArgumentResolver {
 
         if (parameter.getParameterType() == ClientConnectionEntity.class) {
             return connection;
-        } else if (parameter.getParameterType() == EmptyAuthenticatedRequest.class) {
-            return new EmptyAuthenticatedRequest(connection);
+        } else if (parameter.getParameterType() == DefaultAuthenticatedRequest.class) {
+            return new DefaultAuthenticatedRequest(connection);
         } else {
             Object result = mapper.readValue(requestBody, parameter.getParameterType());
             if (result instanceof AuthenticatedRequestAbs) {

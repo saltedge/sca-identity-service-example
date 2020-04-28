@@ -23,10 +23,12 @@ package com.saltedge.sca.example.services
 import com.saltedge.sca.example.controller.SCA_ACTION_LOGIN
 import com.saltedge.sca.example.controller.SCA_ACTION_PAYMENT
 import com.saltedge.sca.example.controller.SIGN_IN_SCA_PATH
+import com.saltedge.sca.example.model.ConsentsRepository
 import com.saltedge.sca.example.tools.getApplicationUrl
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_SECRET
 import com.saltedge.sca.sdk.models.AuthenticateAction
 import com.saltedge.sca.sdk.models.Authorization
+import com.saltedge.sca.sdk.models.Consent
 import com.saltedge.sca.sdk.models.UserIdentity
 import com.saltedge.sca.sdk.provider.ServiceProvider
 import com.saltedge.sca.sdk.tools.CodeBuilder
@@ -36,7 +38,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 import org.springframework.web.util.UriComponentsBuilder
-import java.time.LocalDateTime
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 /**
  * Provides required by SCA module information and receives Action and Authorization events.
@@ -50,6 +53,8 @@ class ScaProviderService : ServiceProvider {
     lateinit var usersService: UsersService
     @Autowired
     lateinit var paymentsService: PaymentsService
+    @Autowired
+    lateinit var consentsRepository: ConsentsRepository
 
     /**
      * Provides human readable name of Service Provider
@@ -97,12 +102,12 @@ class ScaProviderService : ServiceProvider {
      */
     override fun getUserIdByAuthenticationSessionSecret(sessionSecret: String?): UserIdentity? {
         val userId: String? = usersService.findUserIdByAuthSessionCode(sessionSecret)
-        return if (userId.isNullOrBlank()) null;
+        return if (userId.isNullOrBlank()) null
         else {
             UserIdentity(
                     userId,
                     CodeBuilder.generateRandomString(),
-                    LocalDateTime.now().plusMonths(1)
+                    Instant.now().plus(30, ChronoUnit.DAYS)
             )
         }
     }
@@ -158,5 +163,30 @@ class ScaProviderService : ServiceProvider {
                 paymentUUID = authorization.authorizationCode ?: return,
                 confirmed = authorization.confirmed ?: return
         )
+    }
+
+    override fun getActiveConsents(userId: String?): List<Consent> {
+        return consentsRepository.findByUserIdAndRevokedFalseAndExpiresAtGreaterThan(
+                userId = userId?.toLongOrNull() ?: return emptyList(),
+                currentDate = Instant.now()
+        ).map {
+            Consent(
+                it.id.toString(),
+                it.title,
+                it.description,
+                it.createdAt,
+                it.expiresAt
+            )
+        }
+    }
+
+    override fun revokeConsent(userId: String?, consentId: String?): Boolean {
+        var consent = consentsRepository.findFirstByIdAndUserId(
+                id = consentId?.toLongOrNull() ?: return false,
+                userId = userId?.toLongOrNull() ?: return false
+        ) ?: return false
+        consent.revoked = true
+        consent = consentsRepository.save(consent)
+        return consent.revoked
     }
 }

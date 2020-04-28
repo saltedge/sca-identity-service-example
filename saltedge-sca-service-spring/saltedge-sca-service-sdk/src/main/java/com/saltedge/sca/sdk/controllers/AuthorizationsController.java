@@ -21,11 +21,11 @@
 package com.saltedge.sca.sdk.controllers;
 
 import com.saltedge.sca.sdk.ScaSdkConstants;
-import com.saltedge.sca.sdk.models.api.EncryptedAuthorization;
-import com.saltedge.sca.sdk.models.api.requests.EmptyAuthenticatedRequest;
+import com.saltedge.sca.sdk.models.api.EncryptedEntity;
+import com.saltedge.sca.sdk.models.api.requests.DefaultAuthenticatedRequest;
 import com.saltedge.sca.sdk.models.api.requests.UpdateAuthorizationRequest;
 import com.saltedge.sca.sdk.models.api.responces.AuthorizationResponse;
-import com.saltedge.sca.sdk.models.api.responces.AuthorizationsResponse;
+import com.saltedge.sca.sdk.models.api.responces.CollectionResponse;
 import com.saltedge.sca.sdk.models.api.responces.UpdateAuthorizationResponse;
 import com.saltedge.sca.sdk.services.AuthorizationsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,17 +50,17 @@ public class AuthorizationsController {
     private AuthorizationsService authorizationsService;
 
     @GetMapping
-    public ResponseEntity<AuthorizationsResponse> getActiveAuthorizations(EmptyAuthenticatedRequest request) {
-        List<EncryptedAuthorization> result = authorizationsService.getActiveAuthorizations(request.getConnection());
-        return ResponseEntity.ok(new AuthorizationsResponse(result));
+    public ResponseEntity<CollectionResponse<EncryptedEntity>> getActiveAuthorizations(DefaultAuthenticatedRequest request) {
+        List<EncryptedEntity> result = authorizationsService.getActiveAuthorizations(request.getConnection());
+        return ResponseEntity.ok(new CollectionResponse<>(result));
     }
 
     @GetMapping("/{" + ScaSdkConstants.KEY_AUTHORIZATION_ID + "}")
     public ResponseEntity<AuthorizationResponse> getActiveAuthorization(
             @PathVariable(ScaSdkConstants.KEY_AUTHORIZATION_ID) @NotNull Long authorizationId,
-            EmptyAuthenticatedRequest request
+            DefaultAuthenticatedRequest request
     ) {
-        EncryptedAuthorization authorization = authorizationsService.getActiveAuthorization(request.getConnection(), authorizationId);
+        EncryptedEntity authorization = authorizationsService.getActiveAuthorization(request.getConnection(), authorizationId);
         return ResponseEntity.ok(new AuthorizationResponse(authorization));
     }
 

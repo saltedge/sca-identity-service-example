@@ -21,11 +21,10 @@
 package com.saltedge.sca.example.services
 
 import com.saltedge.sca.example.controller.SCA_ACTION_PAYMENT
-import com.saltedge.sca.example.model.PaymentOrder
+import com.saltedge.sca.example.model.PaymentOrderEntity
 import com.saltedge.sca.example.model.PaymentOrdersRepository
 import com.saltedge.sca.example.model.UsersRepository
-import com.saltedge.sca.sdk.services.ScaSdkService
-import com.saltedge.sca.sdk.tools.CodeBuilder
+import com.saltedge.sca.sdk.provider.ScaSDKCallbackService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*
@@ -37,10 +36,10 @@ class PaymentsService {
     @Autowired
     private lateinit var paymentsRepository: PaymentOrdersRepository
     @Autowired
-    private lateinit var scaSdkService: ScaSdkService
+    private lateinit var scaSdkService: ScaSDKCallbackService
 
-    fun getOrCreatePaymentOrder(savedPaymentUUID: String, createNew: Boolean): PaymentOrder {
-        var payment: PaymentOrder? = getPaymentByUUID(savedPaymentUUID)
+    fun getOrCreatePaymentOrder(savedPaymentUUID: String, createNew: Boolean): PaymentOrderEntity {
+        var payment: PaymentOrderEntity? = getPaymentByUUID(savedPaymentUUID)
         if (payment == null || payment.isClosed() || createNew) {
             payment = createNewPaymentOrder()
         }
@@ -49,12 +48,12 @@ class PaymentsService {
 
     fun createAuthenticateActionAppLink(paymentUUID: String): String = scaSdkService.createAuthenticateActionAppLink(paymentUUID)
 
-    fun getPaymentByUUID(paymentUUID: String): PaymentOrder? {
+    fun getPaymentByUUID(paymentUUID: String): PaymentOrderEntity? {
         return paymentsRepository.findFirstByUuid(paymentUUID)
     }
 
     fun onAuthenticatePaymentOrder(paymentUUID: String, userId: Long): Long? {
-        val payment: PaymentOrder = paymentsRepository.findFirstByUuid(paymentUUID) ?: return null
+        val payment: PaymentOrderEntity = paymentsRepository.findFirstByUuid(paymentUUID) ?: return null
         payment.userId = userId
         return if (requireSCAConfirmation(payment)) {
             paymentsRepository.save(payment)
@@ -73,14 +72,14 @@ class PaymentsService {
     }
 
     fun onAuthorizePaymentOrder(paymentUUID: String, confirmed: Boolean) {
-        val payment: PaymentOrder = paymentsRepository.findFirstByUuid(paymentUUID) ?: return
+        val payment: PaymentOrderEntity = paymentsRepository.findFirstByUuid(paymentUUID) ?: return
         payment.status = if (confirmed) "closed_success" else "closed_deny"
         paymentsRepository.save(payment)
     }
 
-    private fun createNewPaymentOrder(): PaymentOrder {
+    private fun createNewPaymentOrder(): PaymentOrderEntity {
         val amount = (0 until 200).random().toDouble()
-        val payment = PaymentOrder().apply {
+        val payment = PaymentOrderEntity().apply {
             this.uuid = UUID.randomUUID().toString()
             this.amount = "%.2f".format(amount)
             this.currency = "EUR"
@@ -92,7 +91,7 @@ class PaymentsService {
         return payment
     }
 
-    private fun requireSCAConfirmation(payment: PaymentOrder): Boolean {
+    private fun requireSCAConfirmation(payment: PaymentOrderEntity): Boolean {
         return (payment.amount.toDoubleOrNull() ?: return false) > 50.0
     }
 }

@@ -38,7 +38,8 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -137,6 +138,6 @@ public class ClientConnectionsService {
         if (entity == null) return;
 
         entity.setAuthToken(CodeBuilder.generateRandomString());
-        entity.setAuthTokenExpiresAt(LocalDateTime.now().plusMinutes(ScaSdkConstants.CONNECTION_DEFAULT_AUTH_SESSION_MINUTES));
+        entity.setAuthTokenExpiresAt(Instant.now().plus(ScaSdkConstants.CONNECTION_DEFAULT_AUTH_SESSION_MINUTES, ChronoUnit.MINUTES));
     }
 }

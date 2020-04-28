@@ -20,17 +20,21 @@
  */
 package com.saltedge.sca.example
 
+import com.saltedge.sca.sdk.ScaSdkConstants
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.runApplication
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 const val EXAMPLE_PACKAGE = "com.saltedge.sca.example"
-const val SDK_PACKAGE = "com.saltedge.sca.sdk"
 
-@SpringBootApplication(scanBasePackages = [EXAMPLE_PACKAGE, SDK_PACKAGE])
-@EnableJpaRepositories(basePackages = [EXAMPLE_PACKAGE, SDK_PACKAGE])
-@EntityScan(basePackages = [EXAMPLE_PACKAGE, SDK_PACKAGE])
+/**
+ * An example application that simulates (demonstrates) work of ASPSP (Finance Institution)
+ * Appends SDK_PACKAGE path for Spring Components scan, JpaRepositories scan and JpaEntities scan.
+ */
+@SpringBootApplication(scanBasePackages = [EXAMPLE_PACKAGE, ScaSdkConstants.SDK_PACKAGE])
+@EnableJpaRepositories(basePackages = [EXAMPLE_PACKAGE, ScaSdkConstants.SDK_PACKAGE])
+@EntityScan(basePackages = [EXAMPLE_PACKAGE, ScaSdkConstants.SDK_PACKAGE])
 open class ScaExampleApplication
 
 fun main(args: Array<String>) {

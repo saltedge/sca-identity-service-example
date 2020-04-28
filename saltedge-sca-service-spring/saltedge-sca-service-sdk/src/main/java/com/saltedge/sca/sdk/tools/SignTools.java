@@ -20,12 +20,16 @@
  */
 package com.saltedge.sca.sdk.tools;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.util.Base64;
 
 public class SignTools {
+    private static Logger log = LoggerFactory.getLogger(SignTools.class);
 
     public static Boolean verify(
             String signature,
@@ -48,7 +52,7 @@ public class SignTools {
         } catch (IllegalArgumentException e) {
             return false;
         } catch (Exception e) {
-            e.printStackTrace(); // TODO log
+            log.error("SignTools.verify", e);
             return false;
         }
     }

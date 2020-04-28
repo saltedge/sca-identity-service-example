@@ -20,13 +20,13 @@
  */
 package com.saltedge.sca.sdk.services;
 
+import com.saltedge.sca.sdk.MockServiceTestAbs;
 import com.saltedge.sca.sdk.models.ClientConnection;
 import com.saltedge.sca.sdk.models.UserIdentity;
 import com.saltedge.sca.sdk.models.api.requests.CreateConnectionRequest;
 import com.saltedge.sca.sdk.models.api.responces.CreateConnectionResponse;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionsRepository;
-import com.saltedge.sca.sdk.provider.ServiceProvider;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,7 +37,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.validation.ConstraintViolationException;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 import static com.saltedge.sca.sdk.tools.UrlTools.DEFAULT_AUTHENTICATOR_RETURN_TO;
@@ -50,13 +50,11 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ClientConnectionsServiceTests {
+public class ClientConnectionsServiceTests extends MockServiceTestAbs {
 	@Autowired
 	private ClientConnectionsService testService;
 	@MockBean
 	private ClientConnectionsRepository connectionsRepository;
-	@MockBean
-	private ServiceProvider serviceProvider;
 
 	@Test
 	public void givenInvalidParams_whenCreateConnection_thenThrowConstraintViolationException() {
@@ -66,7 +64,7 @@ public class ClientConnectionsServiceTests {
 	@Test
 	public void givenUnknownAuthorizationSecret_whenCreateConnection_thenReturnRedirectToAuthPage() {
 		//given
-		CreateConnectionRequest.Data requestData = new CreateConnectionRequest.Data(keyValue, DEFAULT_AUTHENTICATOR_RETURN_TO, "android", "token", null);
+		CreateConnectionRequest.Data requestData = new CreateConnectionRequest.Data(publicKey, DEFAULT_AUTHENTICATOR_RETURN_TO, "android", "token", null);
 		ClientConnectionEntity savedEntity = new ClientConnectionEntity();
 		savedEntity.setId(1L);
 		savedEntity.setPublicKey(requestData.getPublicKey());
@@ -84,7 +82,7 @@ public class ClientConnectionsServiceTests {
 		//then
 		ArgumentCaptor<ClientConnectionEntity> entityCaptor = ArgumentCaptor.forClass(ClientConnectionEntity.class);
 		verify(connectionsRepository).save(entityCaptor.capture());
-		assertThat(entityCaptor.getValue().getPublicKeyString()).isEqualTo(keyValue);
+		assertThat(entityCaptor.getValue().getPublicKeyString()).isEqualTo(publicKey);
 		assertThat(entityCaptor.getValue().getReturnUrl()).isEqualTo(DEFAULT_AUTHENTICATOR_RETURN_TO);
 		assertThat(entityCaptor.getValue().getPushToken()).isEqualTo("token");
 		assertThat(entityCaptor.getValue().getPlatform()).isEqualTo("android");
@@ -101,7 +99,7 @@ public class ClientConnectionsServiceTests {
 	public void givenUnknownAuthorizationSecret_whenCreateConnection_thenReturnRedirectToReturnPage() {
 		//given
 		UserIdentity identity = new UserIdentity("1");
-		CreateConnectionRequest.Data requestData = new CreateConnectionRequest.Data(keyValue, DEFAULT_AUTHENTICATOR_RETURN_TO, "android", "token", null);
+		CreateConnectionRequest.Data requestData = new CreateConnectionRequest.Data(publicKey, DEFAULT_AUTHENTICATOR_RETURN_TO, "android", "token", null);
 		ClientConnectionEntity savedEntity = new ClientConnectionEntity();
 		savedEntity.setId(1L);
 		savedEntity.setPublicKey(requestData.getPublicKey());
@@ -121,7 +119,7 @@ public class ClientConnectionsServiceTests {
 		//then
 		ArgumentCaptor<ClientConnectionEntity> entityCaptor = ArgumentCaptor.forClass(ClientConnectionEntity.class);
 		verify(connectionsRepository).save(entityCaptor.capture());
-		assertThat(entityCaptor.getValue().getPublicKeyString()).isEqualTo(keyValue);
+		assertThat(entityCaptor.getValue().getPublicKeyString()).isEqualTo(publicKey);
 		assertThat(entityCaptor.getValue().getReturnUrl()).isEqualTo(DEFAULT_AUTHENTICATOR_RETURN_TO);
 		assertThat(entityCaptor.getValue().getPushToken()).isEqualTo("token");
 		assertThat(entityCaptor.getValue().getPlatform()).isEqualTo("android");
@@ -213,7 +211,7 @@ public class ClientConnectionsServiceTests {
 	public void givenConnectionWithExpiredAuthSession_whenAuthenticateConnection_thenReturnNotAuthenticatedConnection() {
 		//given
 		ClientConnectionEntity initialConnection = createNotAuthenticatedConnection();
-		initialConnection.setAuthTokenExpiresAt(LocalDateTime.MIN);
+		initialConnection.setAuthTokenExpiresAt(Instant.MIN);
 		given(connectionsRepository.findByAuthSessionSecret("secret")).willReturn(initialConnection);
 
 		//when
@@ -227,7 +225,7 @@ public class ClientConnectionsServiceTests {
 	public void givenValidConnection_whenAuthenticateConnection_thenReturnAuthenticatedConnection() {
 		//given
 		ClientConnectionEntity initialConnection = createNotAuthenticatedConnection();
-		initialConnection.setAuthTokenExpiresAt(LocalDateTime.MAX);
+		initialConnection.setAuthTokenExpiresAt(Instant.MAX);
 		given(connectionsRepository.findByAuthSessionSecret("secret")).willReturn(initialConnection);
 
 		ClientConnectionEntity savedConnection = createNotAuthenticatedConnection();
@@ -248,36 +246,5 @@ public class ClientConnectionsServiceTests {
 		assertThat(entityCaptor.getValue().getAccessToken()).isEqualTo("accessToken");
 		assertThat(entityCaptor.getValue().isAuthenticated()).isTrue();
 		assertThat(result.isAuthenticated()).isTrue();
-	}
-
-	private String keyValue = "-----BEGIN PUBLIC KEY-----\n" +
-			"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3Nsu1t3t/Kgd6Jeq6Yyo\n" +
-			"tvbIuOgdL/5Ng/fny1fjxO4LKUlvaPDOxw5LXERfOJ5H0B7JX0Uu2ZFt4P0veOBv\n" +
-			"ja0E2HS0VyUZGlb2EA1atRCueTgyzjw5PxpjIwr/HbZhqoSxzbba4N8OFpnX+sck\n" +
-			"VCbF1cQ7qXLaFVAZrq8Hyklb05884ZDpLth1aTnnRStSKJkAi2+6V4xyRMLE5ylz\n" +
-			"d6LF/S4Tvlw1/WpDmpPZSw+Cc4mzGSKi3PBGMVDpfLrJQxFwuh5TF/M1x+f0pQkB\n" +
-			"yohWj7OqBxEkYbfCKkmjmPUKhoe9PQCKwJT6MSaVEbfbsSZlHWw1p7NzOmLVEbGO\n" +
-			"1wIDAQAB\n" +
-			"-----END PUBLIC KEY-----";
-
-	private ClientConnectionEntity createAuthenticatedConnection() {
-		ClientConnectionEntity savedEntity = new ClientConnectionEntity();
-		savedEntity.setId(1L);
-		savedEntity.setPublicKey("key");
-		savedEntity.setPushToken("token");
-		savedEntity.setPlatform("ios");
-		savedEntity.setReturnUrl(DEFAULT_AUTHENTICATOR_RETURN_TO);
-		savedEntity.setUserId("1");
-		return savedEntity;
-	}
-
-	private ClientConnectionEntity createNotAuthenticatedConnection() {
-		ClientConnectionEntity savedEntity = new ClientConnectionEntity();
-		savedEntity.setId(1L);
-		savedEntity.setPublicKey("key");
-		savedEntity.setPushToken("token");
-		savedEntity.setPlatform("ios");
-		savedEntity.setReturnUrl(DEFAULT_AUTHENTICATOR_RETURN_TO);
-		return savedEntity;
 	}
 }

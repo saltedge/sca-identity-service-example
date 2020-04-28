@@ -23,30 +23,19 @@ package com.saltedge.sca.sdk.tools;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.Instant;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DateToolsTests {
 	@Test
-	public void convertDateToIso8601Test() {
-		LocalDateTime dateTimeInLocalZone = LocalDateTime.of(2000, 1, 1, 7, 0)
-				.atZone(ZoneId.of("UTC"))
-				.withZoneSameInstant(ZoneId.systemDefault())
-				.toLocalDateTime();
-
-		assertThat(DateTools.convertDateToIso8601(dateTimeInLocalZone)).isEqualTo("2000-01-01T07:00:00.000Z");
-	}
-
-	@Test
 	public void dateIsExpiredTest() {
-		LocalDateTime ldt = LocalDateTime.of(2000, 1, 1, 9, 0);
+		Instant ldt = Instant.parse("2000-01-01T09:00:00Z");
 
 		assertThat(DateTools.dateIsExpired(ldt)).isTrue();
 
-		ldt = LocalDateTime.now().plusSeconds(1);
+		ldt = Instant.now().plusSeconds(1);
 
 		assertThat(DateTools.dateIsExpired(ldt)).isFalse();
 

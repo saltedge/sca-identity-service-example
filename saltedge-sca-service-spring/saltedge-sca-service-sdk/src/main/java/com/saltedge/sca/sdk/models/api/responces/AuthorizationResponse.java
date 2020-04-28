@@ -22,16 +22,16 @@ package com.saltedge.sca.sdk.models.api.responces;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.saltedge.sca.sdk.ScaSdkConstants;
-import com.saltedge.sca.sdk.models.api.EncryptedAuthorization;
+import com.saltedge.sca.sdk.models.api.EncryptedEntity;
 
 public class AuthorizationResponse {
     @JsonProperty(ScaSdkConstants.KEY_DATA)
-    public EncryptedAuthorization data;
+    public EncryptedEntity data;
 
     public AuthorizationResponse() {
     }
 
-    public AuthorizationResponse(EncryptedAuthorization data) {
+    public AuthorizationResponse(EncryptedEntity data) {
         this.data = data;
     }
 }

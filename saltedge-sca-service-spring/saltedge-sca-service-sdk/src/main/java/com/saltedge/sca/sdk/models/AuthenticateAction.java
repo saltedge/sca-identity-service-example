@@ -20,7 +20,7 @@
  */
 package com.saltedge.sca.sdk.models;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Map;
 
 /**
@@ -31,7 +31,7 @@ import java.util.Map;
 public interface AuthenticateAction extends BaseEntityAbs {
     String getCode();
     String getUUID();
-    LocalDateTime getExpiresAt();
+    Instant getExpiresAt();
     String getUserId();
     Boolean isExpired();
     Boolean isAuthenticated();

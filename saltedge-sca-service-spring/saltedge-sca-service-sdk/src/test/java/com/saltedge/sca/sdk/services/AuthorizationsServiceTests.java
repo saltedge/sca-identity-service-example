@@ -20,10 +20,10 @@
  */
 package com.saltedge.sca.sdk.services;
 
+import com.saltedge.sca.sdk.MockServiceTestAbs;
 import com.saltedge.sca.sdk.models.Authorization;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationsRepository;
-import com.saltedge.sca.sdk.provider.ServiceProvider;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +34,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.validation.ConstraintViolationException;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,15 +45,13 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class AuthorizationsServiceTests {
+public class AuthorizationsServiceTests extends MockServiceTestAbs {
 	@Autowired
 	private AuthorizationsService testService;
 	@MockBean
 	private AuthorizationsRepository testRepository;
 	@MockBean
 	private ClientNotificationService notificationService;
-	@MockBean
-	private ServiceProvider serviceProvider;
 
 	@Test
 	public void givenInvalidParams_whenCreateAuthorization_thenThrowConstraintViolationException() {
@@ -76,7 +74,7 @@ public class AuthorizationsServiceTests {
 		verify(testRepository).save(entityCaptor.capture());
 		verify(notificationService).sendNotificationsForUser("1", savedEntity);
 
-		assertThat(entityCaptor.getValue().getExpiresAt()).isAfter(LocalDateTime.now());
+		assertThat(entityCaptor.getValue().getExpiresAt()).isAfter(Instant.now());
 		assertThat(entityCaptor.getValue().getConfirmed()).isNull();
 		assertThat(entityCaptor.getValue().getTitle()).isEqualTo("test title");
 		assertThat(entityCaptor.getValue().getDescription()).isEqualTo("test desc");

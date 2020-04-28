@@ -22,7 +22,7 @@ package com.saltedge.sca.sdk.controllers;
 
 import com.saltedge.sca.sdk.ScaSdkConstants;
 import com.saltedge.sca.sdk.models.api.requests.CreateConnectionRequest;
-import com.saltedge.sca.sdk.models.api.requests.EmptyAuthenticatedRequest;
+import com.saltedge.sca.sdk.models.api.requests.DefaultAuthenticatedRequest;
 import com.saltedge.sca.sdk.models.api.responces.CreateConnectionResponse;
 import com.saltedge.sca.sdk.models.api.responces.RevokeConnectionResponse;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
@@ -65,8 +65,14 @@ class ConnectionsController {
         return ResponseEntity.ok(result);
     }
 
+    /**
+     * Revoke Connection (mark as revoked) and return operation result
+     *
+     * @param request with Connection entity
+     * @return operation result
+     */
     @DeleteMapping
-    public ResponseEntity<RevokeConnectionResponse> revokeConnection(EmptyAuthenticatedRequest request) {
+    public ResponseEntity<RevokeConnectionResponse> revokeConnection(DefaultAuthenticatedRequest request) {
         ClientConnectionEntity connection = request.getConnection();
         connectionsService.revokeConnection(connection);
         return ResponseEntity.ok(new RevokeConnectionResponse(true, connection.getAccessToken()));

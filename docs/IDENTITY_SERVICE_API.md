@@ -1,11 +1,11 @@
 # SCA Service (Identity Service)
 
 * [What is Identity Service?](#what-is-identity-service)
-* [Identity Service Models](#identity-service-models)
 * [Service Configuration](#service-configuration)
+* [Identity Service Models And API Data Types](#identity-service-models-and-api-data-types)
 * [API Security](#api-security)
+* [API Common Headers](#api-common-headers)
 * [Public API](#identity-service-api)
-  * [API Data Types](#api-data-types)
   * [Get Configuration](#get-service-provider-configuration)
   * [Connect to Service Provider](#connect-to-service-provider)
   * [Obtain Access Token](#obtain-access-token)
@@ -14,7 +14,10 @@
   * [Show Authorization](#show-authorization)
   * [Confirm or Deny Authorization](#confirm-or-deny-authorization)
   * [Instant Action](#instant-action)
+    * [Authenticate Instant Action](#Authenticate-Instant-Action)
   * [Consent management](#consent-management)
+    * [Show Consents List](#Show-Consents-List)
+    * [Revoke Consent](#Revoke-Consent)
 * [API Errors](#api-errors)
 * [Extra Information](#extra-information)
   * [Authorization code builder example](#authorization-code-builder-example)
@@ -40,12 +43,41 @@ Besides public API, may be implemented next useful end-points for internal usage
 * Revoke connection. For some reasons (security reason, cleaning job, etc.) Bank (Service Provider) should have possibility to revoke any connection
 * Create new authorization. Identity service should create new authorization with data from request from Core banking (`authorization_code`, `title`, `description`, `user_id`), and send notifications (through Push Service) about new authorization to related connections.
 
-## Identity Service Models
+## Service Configuration
+
+Authenticator application can has hardcoded service configuration (e.g. service url) or support dynamic configuration.  
+
+For dynamic confoguration we propose to use application links (deep-links) or encoded in QR code image application links.
+For initiating connect flow, service should generate application link for initiating connection in mobile application. 
+Example of application link:  
+``` 
+  authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration
+```  
+
+Application link can contains extra authentication data (`connect_query` param). This connect flow is named "Instant Enrollment".  
+Additional authentication parameter should be sent to service while [connecting to provider](#connect-to-service-provider).  
+Example of application link with exta data:  
+``` 
+  authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration&connect_query=A12345678
+```  
+
+More information on "Instant Enrollment" can be found [here](https://github.com/saltedge/sca-identity-service-example/wiki/Value-added-features#instant-enrollment).
+
+### Push Server Configuration
+ - `push_server_url` - a URL of Push Server
+ - `push_server_app_id` - a unique token string, released by Push Server owner
+ - `push_server_app_secret` - a unique token string, released by Push Server owner
+
+***Optional***, if Push Service is implemented inside Identity Service.
+  
+---
+
+## Identity Service Models And API Data Types
 
 ![schema](images/authenticator_models_schema.png)
 
 ### User model
-`User` represents an abstract single customer of Bank's Identity Service (e.g  Service Provider). This entity is already present in Bank's Identity Service.
+`User` represents an abstract single customer of ASPSP's Identity Service (e.g  Service Provider). This entity is already present in Bank's Identity Service.
 
 ### Connection (Mobile Client) model
 `Mobile Client` represents a single connection between `User` and  Mobile Application. Each `User` can have multiple `Mobile Client`'s because user can have many connections to a single Service Provider from different applications.
@@ -82,33 +114,23 @@ Besides public API, may be implemented next useful end-points for internal usage
 - `public_key` - a unique Asymmetric Public Key in PEM format string
 - `created_at` - a datetime
 
-### Push Server Configuration
- - `push_server_url` - a URL of Push Server
- - `push_server_app_id` - a unique token string, released by Push Server owner
- - `push_server_app_secret` - a unique token string, released by Push Server owner
+### API data types
+The following section describes the different data types used for request and response data.
 
-***Optional***, if Push Service is implemented inside Identity Service.
+[JSON format](https://restfulapi.net/json-data-types/) is used for request/response data formatting. Since all data is eventually represented as UTF-8 strings, these types mostly define what characters are considered valid for data of a specific type. Additional validation rules may apply for specific parameters.  
+Several primitive types:
+**Boolean** - A case insensitive Boolean value, represented as either `true` or `false`.
 
-## Service Configuration
+**Integer** - An integer number. For example: `123`
 
-Authenticator application can has hardcoded service configuration (e.g. service url) or support dynamic configuration.  
+**String** - A string of characters. For example: `"any string"`
 
-For dynamic confoguration we propose to use application links (deep-links) or encoded in QR code image application links.
-For initiating connect flow, service should generate application link for initiating connection in mobile application. 
-Example of application link:  
-``` 
-  authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration
-```  
+**TimeStamp** - The time and date represented in ISO 8601 format (e.g. `2017-04-19T13:53:31Z`). The time and date must always be represented in the GMT time zone, even if the server or client uses a different default time zone.
 
-Application link can contains extra authentication data (`connect_query` param). This connect flow is named "Instant Enrollment".  
-Additional authentication parameter should be sent to service while [connecting to provider](#connect-to-service-provider).  
-Example of application link with exta data:  
-``` 
-  authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration&connect_query=A12345678
-```  
+**Array** - An array of values. Arrays are encoded by adding brackets.  For example: `"data": ["1", "2", "3"]`
 
-More information on "Instant Enrollment" can be found [here](https://github.com/saltedge/sca-identity-service-example/wiki/Value-added-features#instant-enrollment).
-  
+**Object/Hashmap/Dictionary** - An associative array of values. For example: `"data": { id: "1", connection_id: "333" }`
+
 ---
 
 ## API Security
@@ -143,47 +165,26 @@ The fields  `request_method`, `original_url` and `post_body` from the `Signature
 **Note:**  
 **_Signature field on mobile app is being created with body which is equal to raw string of request payload.
 As we know, sometimes in Web App Controller is received already parsed object. You must use raw string of request payload because signature generation/veification is very sensitive to `post_body` string._**
-  
+
 ---
 
-## Identity Service API
-
-### API data types
-The following section describes the different data types used for request and response data.
-
-[JSON format](https://restfulapi.net/json-data-types/) is used for request/response data formatting. Since all data is eventually represented as UTF-8 strings, these types mostly define what characters are considered valid for data of a specific type. Additional validation rules may apply for specific parameters.  
-Several primitive types:
-**Boolean** - A case insensitive Boolean value, represented as either `true` or `false`.
-
-**Integer** - An integer number. For example: `123`
-
-**String** - A string of characters. For example: `"any string"`
-
-**TimeStamp** - The time and date represented in ISO 8601 format (e.g. `2017-04-19T13:53:31Z`). The time and date must always be represented in the GMT time zone, even if the server or client uses a different default time zone.
-
-**Array** - An array of values. Arrays are encoded by adding brackets.  For example: `"data": ["1", "2", "3"]`
-
-**Object/Hashmap/Dictionary** - An associative array of values. For example: `"data": { id: "1", connection_id: "333" }`
-
-### Headers
+## API Common Headers
 
 There are several common points about the request we send:
 - The `Content-Type` header is  `application/json`;
 - There is a `Signature` header that identifies the request was signed;
 - There is a `Expires-at` header that identifies expiration time of the request;
-- The JSON object sent will always have a  `data` field;
+- `User-Agent` request header is a characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent.
 
----
-
-### User-Agent Header
-The User-Agent request header is a characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent.
-
-Example:
+User-Agent Example:
 ```
 Application name; version name/code; installer name; phone manufacturer; model; SDK version
-```
-
+```  
+  
 ---
+  
+## Identity Service API  
+
 ### Get Service provider configuration   
 Public resource (not authenticated) for fetching of initial data of Service Provider.
 Included in [deep-link](#qr-code). Endpoint can be arbitrary and not in Authenticator API namespace (`/api/authenticator/v1/`)
@@ -585,7 +586,7 @@ For more information please read [Instant Action WIKI](https://github.com/salted
 - `connect_url` **[string, required]** - base url of the Identity Service's Connection
 - `return_to` **[string, optional]** - an url, which is used for redirect
 
-#### Perform Action:
+### Authenticate Instant Action:
 
 `PUT` `/api/authenticator/v1/action/:uuid`
 
@@ -629,6 +630,133 @@ curl \
   ]
 }
 ```
+
+---
+
+### Consent Management
+
+It is the set of functions that allows the customer to determine what permissions to access the ASPSP he gave and to revoke a certain consent.  
+
+### Show Consents List  
+
+Return list of all active Consents managed by Service Provider (ASPSP).  
+Each Consent object (`data` field) is **encrypted** with algorithm mentioned in `algorithm` field. Necessary data for decryption (`key` and `iv`) are encrypted by asymmetric `public_key` related to `connection_id`.  
+
+<img src="images/sca_consent_management_show_list.png" alt="sca_consent_management_show_list" width="240"/>
+
+`GET` `/api/authenticator/v1/consents`
+
+```bash
+curl \
+  -H 'Content-Type: application/json' \
+  -H 'Access-Token: replace_with_your_token' \
+  -H 'Expires-at: expires_at_time' \
+  -H 'Signature: generated_signature' \
+  -H 'User-Agent: device_info' \
+  -X GET \
+  https://sca_service.org/api/authenticator/v1/consents
+```
+  
+#### Request Headers 
+- `Accept-Language` **[string, optional]** - preferred by client application locale variant. By default `en`;
+- `Access-Token` **[string, required]** - access token, required to access resources which require authentication;
+- `Expires-at` **[datetime, required]** - expiration time of request as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
+- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature;
+- `User-Agent` **[string, required]** - request header is a characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent.
+
+#### Response Body Parameters
+- `id` **[string]** - an unique ID of Consent object;
+- `connection_id` **[string]** - an unique ID of Mobile Client (Service Connection). Used to decrypt models in the Mobile Application;
+- `iv` **[string]** - an initialization vector of encryption algorithm, this string is encrypted with public key linked to Mobile Client;
+- `key` **[string]** - a secure key of encryption algorithm, this string is encrypted with public key linked to Mobile Client;
+- `algorithm` **[string]** - an encryption algorithm and block mode type;
+- `data` **[string]** - an encrypted Consent object with algorithm mentioned above.
+
+#### Response Example
+```json
+{
+  "data": [
+    {
+      "id": "555",
+      "connection_id": "333",
+      "iv": "o3TDCc3rKYTx...RVH+aOFpS9NIg==\n",
+      "key": "BtV7EB3Erv8xEQ.../jeBRyFa75A6po5XlwWiEiuzQ==\n",
+      "algorithm": "AES-256-CBC",
+      "data": "YlnrNOHvUIPem/O58rMzdsvkXidLvgGpdMalD9c1mlg=\n"
+    }
+  ]
+}
+```  
+  
+#### Consent Object (*Decrypted `data` field*)  
+- `id` **[string]** - an unique ID of Consent model;
+- `connection_id` **[string]** - an unique ID of Mobile Client (Service Connection). Used to decrypt models in the Mobile Application;
+- `title` **[string]** - a human-readable title of Consent;
+- `description` **[string]** - a description of Consent. Can be as human-readable plain text, or HTML encoded page;
+- `created_at` **[datetime]** - specifies the datetime in ISO 8601 (“yyyy-mm-ddTHH:mm:ssZ”) format, when the Consent was created;
+- `expires_at` **[datetime]** - specifies the datetime in ISO 8601 (“yyyy-mm-ddTHH:mm:ssZ”) format, when the Consent should expire.
+
+#### Consent Object Example (*Decrypted `data` field*)  
+```json
+{
+  "id": "555",
+  "connection_id": "333",
+  "title": "Access Account information",
+  "description": "Access Account information of GB123456789 in Universal Bank",
+  "created_at": "2017-09-22T08:29:03Z",
+  "expires_at": "2017-09-22T08:34:03Z"
+}
+```
+
+**Note:**  
+**[See Response Errors](#api-errors)**
+
+---
+
+### Revoke Consent  
+
+Revoke Consent managed by Service Provider (ASPSP).  And return result of operation.
+
+<img src="images/sca_consent_management_revoke.png" alt="sca_consent_management_revoke" width="240"/>
+
+`DELETE` `/api/authenticator/v1/consents/:id`
+
+```bash
+curl \
+  -H 'Content-Type: application/json' \
+  -H 'Access-Token: replace_with_your_token' \
+  -H 'Expires-at: expires_at_time' \
+  -H 'Signature: generated_signature' \
+  -H 'User-Agent: device_info' \
+  -X DELETE \
+  https://sca_service.org/api/authenticator/v1/consents/555
+```
+  
+#### Request Headers 
+- `Accept-Language` **[string, optional]** - preferred by client application locale variant. By default `en`;
+- `Access-Token` **[string, required]** - access token, required to access resources which require authentication;
+- `Expires-at` **[datetime, required]** - expiration time of request as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
+- `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature;
+- `User-Agent` **[string, required]** - request header is a characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent.
+
+#### Response Body Parameters
+- `success` **[boolean]** - a result of revoke action;
+- `consent_id` **[string]** - an unique ID of revoked Consent model;
+
+#### Response Example
+```json
+{
+  "data": {
+    "success": true,
+    "consent_id": "12"
+  }
+}
+```  
+  
+**Note:**  
+**[See Response Errors](#api-errors)**
+
+
 ----
   
 ## API Errors

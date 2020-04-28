@@ -21,14 +21,14 @@
 package com.saltedge.sca.sdk.services;
 
 import com.saltedge.sca.sdk.errors.NotFound;
-import com.saltedge.sca.sdk.models.api.EncryptedAuthorization;
-import com.saltedge.sca.sdk.models.converter.AuthorizationConverter;
+import com.saltedge.sca.sdk.models.api.EncryptedEntity;
+import com.saltedge.sca.sdk.tools.EncryptedEntityFactory;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationsRepository;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
 
 import java.security.PublicKey;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +44,7 @@ public class AuthorizationsCollector {
      * @param connection to Client Authenticator with RSA Public Key
      * @return list of Encrypted Authorizations
      */
-    public static List<EncryptedAuthorization> collectActiveAuthorizations(
+    public static List<EncryptedEntity> collectActiveAuthorizations(
             AuthorizationsRepository authorizationsRepository,
             ClientConnectionEntity connection
     ) {
@@ -52,11 +52,11 @@ public class AuthorizationsCollector {
 
         List<AuthorizationEntity> authorizations = authorizationsRepository.findByUserIdAndExpiresAtGreaterThanAndConfirmedIsNull(
                 connection.getUserId(),
-                LocalDateTime.now()
+                Instant.now()
         );
 
         return authorizations.stream()
-                .map(item -> AuthorizationConverter.encryptAuthorization(item, connection.getId(), publicKey))
+                .map(item -> EncryptedEntityFactory.encryptAuthorization(item, connection.getId(), publicKey))
                 .collect(Collectors.toList());
     }
 
@@ -68,14 +68,14 @@ public class AuthorizationsCollector {
      * @param authorizationId of required entity
      * @return EncryptedAuthorization object
      */
-    public static EncryptedAuthorization collectActiveAuthorization(
+    public static EncryptedEntity collectActiveAuthorization(
             AuthorizationsRepository authorizationsRepository,
             ClientConnectionEntity connection,
             Long authorizationId
     ) {
         PublicKey publicKey = connection.getPublicKey();
         AuthorizationEntity authorization = findActiveAuthorization(authorizationsRepository, connection, authorizationId);
-        return AuthorizationConverter.encryptAuthorization(authorization, connection.getId(), publicKey);
+        return EncryptedEntityFactory.encryptAuthorization(authorization, connection.getId(), publicKey);
     }
 
     /**
@@ -94,7 +94,7 @@ public class AuthorizationsCollector {
         AuthorizationEntity authorization = authorizationsRepository.findFirstByIdAndUserIdAndExpiresAtGreaterThanAndConfirmedIsNull(
                 authorizationId,
                 connection.getUserId(),
-                LocalDateTime.now()
+                Instant.now()
         );
         if (authorization == null) throw new NotFound.AuthorizationNotFound();
         return authorization;

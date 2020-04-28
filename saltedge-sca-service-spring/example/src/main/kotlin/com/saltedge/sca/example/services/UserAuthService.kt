@@ -21,14 +21,15 @@
 package com.saltedge.sca.example.services
 
 import com.saltedge.sca.example.controller.SCA_ACTION_LOGIN
-import com.saltedge.sca.example.model.User
+import com.saltedge.sca.example.model.UserEntity
 import com.saltedge.sca.example.model.UsersRepository
 import com.saltedge.sca.sdk.models.AuthenticateAction
-import com.saltedge.sca.sdk.services.ScaSdkService
+import com.saltedge.sca.sdk.provider.ScaSDKCallbackService
 import com.saltedge.sca.sdk.tools.CodeBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 @Service
@@ -36,7 +37,7 @@ class UserAuthService {
     @Autowired
     private lateinit var usersRepository: UsersRepository
     @Autowired
-    private lateinit var scaSdkService: ScaSdkService
+    private lateinit var scaSdkService: ScaSDKCallbackService
 
     fun getOrCreateAuthSession(savedSessionCode: String): String {
         var action = scaSdkService.getActionByUUID(savedSessionCode)
@@ -60,7 +61,7 @@ class UserAuthService {
             errorCallback(error)
             null
         } else {
-            usersRepository.save(User(name = username, password = password)).id
+            usersRepository.save(UserEntity(name = username, password = password)).id
         }
     }
 
@@ -79,7 +80,7 @@ class UserAuthService {
                     secret,
                     userId.toString(),
                     CodeBuilder.generateRandomString(),
-                    LocalDateTime.now().plusMonths(1)
+                    Instant.now().plus(1, ChronoUnit.MONTHS)
             )
         } else {
             scaSdkService.onUserAuthenticationFail(secret, "Invalid Credentials")

@@ -20,7 +20,7 @@
  */
 package com.saltedge.sca.example.services
 
-import com.saltedge.sca.example.model.User
+import com.saltedge.sca.example.model.UserEntity
 import com.saltedge.sca.example.model.UsersRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -30,7 +30,7 @@ class UsersService {
     @Autowired
     lateinit var usersRepository: UsersRepository
 
-    fun findUser(userId: Long): User? {
+    fun findUser(userId: Long): UserEntity? {
         return usersRepository.findFirstById(userId)
     }
 
@@ -45,7 +45,7 @@ class UsersService {
         return userId?.let { usersRepository.findFirstById(it) }?.let { getOrCreateUserConnectSecret(it) }
     }
 
-    private fun getOrCreateUserConnectSecret(user: User): String? {
+    private fun getOrCreateUserConnectSecret(user: UserEntity): String? {
         return user.let {
             if (it.authSessionSecret == null || it.authSessionSecretIsExpired()) {
                 it.createAuthSessionSecret()

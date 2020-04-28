@@ -26,6 +26,7 @@ import com.saltedge.sca.sdk.provider.ServiceProvider;
 import com.saltedge.sca.sdk.services.AuthenticateActionsService;
 import com.saltedge.sca.sdk.services.AuthorizationsService;
 import com.saltedge.sca.sdk.services.ClientConnectionsService;
+import com.saltedge.sca.sdk.services.ConsentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -45,6 +46,8 @@ abstract public class MockMvcTestAbs {
     protected AuthorizationsService authorizationsService;
     @MockBean
     protected AuthenticateActionsService actionsService;
+    @MockBean
+    protected ConsentsService consentsService;
 
     protected String publicKey;
     protected ClientConnectionEntity testAuthorizedConnection;

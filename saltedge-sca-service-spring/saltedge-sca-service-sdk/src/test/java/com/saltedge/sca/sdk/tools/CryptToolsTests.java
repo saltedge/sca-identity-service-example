@@ -21,39 +21,14 @@
 package com.saltedge.sca.sdk.tools;
 
 import com.saltedge.sca.sdk.TestTools;
-import com.saltedge.sca.sdk.models.api.EncryptedAuthorization;
-import com.saltedge.sca.sdk.models.converter.AuthorizationConverter;
 import org.junit.Test;
 
-import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.Base64;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CryptToolsTests {
-	@Test
-	public void encryptTest() throws Exception {
-		PublicKey publicKey = TestTools.getRsaPublicKey();
-		PrivateKey privateKey = TestTools.getRsaPrivateKey();
-		String data = "{\"data\": 1}";
-
-		EncryptedAuthorization encryptedObject = AuthorizationConverter.createEncryptedAuthorization(data, publicKey);
-
-		byte[] key = decryptRsa(Base64.getDecoder().decode(encryptedObject.key), privateKey);
-		byte[] iv = decryptRsa(Base64.getDecoder().decode(encryptedObject.iv), privateKey);
-
-		assertThat(key.length).isEqualTo(32);
-		assertThat(iv.length).isEqualTo(16);
-
-		String decryptedData = new String(decryptAes(Base64.getDecoder().decode(encryptedObject.data), key, iv));
-
-		assertThat(decryptedData).isEqualTo(data);
-	}
-
 	@Test
 	public void encryptRsaTest() throws Exception {
 		PublicKey publicKey = TestTools.getRsaPublicKey();
@@ -61,7 +36,7 @@ public class CryptToolsTests {
 		String data = "{\"data\": 1}";
 
 		byte[] encryptedData = CryptTools.encryptRsa(data.getBytes(), publicKey);
-		String decryptedData = new String(decryptRsa(encryptedData, privateKey));
+		String decryptedData = new String(CryptTools.decryptRsa(encryptedData, privateKey));
 
 		assertThat(decryptedData).isEqualTo(data);
 	}
@@ -77,20 +52,8 @@ public class CryptToolsTests {
 
 		byte[] encryptedData = CryptTools.encryptAes(data, aesKey, aesIV);
 
-		String decryptedData = new String(decryptAes(encryptedData, aesKey, aesIV));
+		String decryptedData = new String(CryptTools.decryptAes(encryptedData, aesKey, aesIV));
 
 		assertThat(decryptedData).isEqualTo(data);
-	}
-
-	private byte[] decryptRsa(byte[] data, PrivateKey privateKey) throws Exception {
-		Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-		cipher.init(Cipher.DECRYPT_MODE, privateKey);
-		return cipher.doFinal(data);
-	}
-
-	private byte[] decryptAes(byte[] encryptedData, byte[] key, byte[] iv) throws Exception {
-		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-		cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"), new IvParameterSpec(iv));
-		return cipher.doFinal(encryptedData);
 	}
 }

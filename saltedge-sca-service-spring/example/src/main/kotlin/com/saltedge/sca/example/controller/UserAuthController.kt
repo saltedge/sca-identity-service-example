@@ -25,7 +25,7 @@ import com.saltedge.sca.example.tools.COOKIE_AUTHENTICATION_ACTION
 import com.saltedge.sca.example.tools.saveActionCookie
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_ACTION_UUID
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_SECRET
-import com.saltedge.sca.sdk.services.ScaSdkService
+import com.saltedge.sca.sdk.provider.ScaSDKCallbackService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -49,7 +49,7 @@ class UserSignInController {
     @Autowired
     private lateinit var userAuthService: UserAuthService
     @Autowired
-    private lateinit var scaSdkService: ScaSdkService
+    private lateinit var scaSdkService: ScaSDKCallbackService
 
     @GetMapping(SIGN_IN_PATH)
     fun showSignInWithQr(

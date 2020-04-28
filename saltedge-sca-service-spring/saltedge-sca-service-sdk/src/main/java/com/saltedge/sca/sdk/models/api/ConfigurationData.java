@@ -22,11 +22,16 @@ package com.saltedge.sca.sdk.models.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.lang.NonNull;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
 
 import static com.saltedge.sca.sdk.ScaSdkConstants.KEY_CONNECT_URL;
 
+/**
+ * SCA Service configuration data
+ */
+@Validated
 public class ConfigurationData {
     @JsonProperty(KEY_CONNECT_URL)
     @NotNull
@@ -52,6 +57,9 @@ public class ConfigurationData {
     @NotNull
     public String version = "1";
 
+    public ConfigurationData() {
+    }
+
     public ConfigurationData(
             @NonNull String connectUrl,
             @NonNull String code,
@@ -64,5 +72,29 @@ public class ConfigurationData {
         this.name = name;
         this.logoUrl = logoUrl;
         this.supportEmail = supportEmail;
+    }
+
+    public String getConnectUrl() {
+        return connectUrl;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getLogoUrl() {
+        return logoUrl;
+    }
+
+    public String getSupportEmail() {
+        return supportEmail;
+    }
+
+    public String getVersion() {
+        return version;
     }
 }

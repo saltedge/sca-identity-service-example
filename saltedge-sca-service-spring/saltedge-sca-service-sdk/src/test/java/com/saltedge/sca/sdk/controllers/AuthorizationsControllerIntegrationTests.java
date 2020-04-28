@@ -59,7 +59,9 @@ public class AuthorizationsControllerIntegrationTests extends MockMvcTestAbs {
 				TestTools.getRsaPrivateKey()
 		);
 
-		mvc.perform(MockMvcRequestBuilders.get(AUTHORIZATIONS_REQUEST_PATH).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+		mvc.perform(MockMvcRequestBuilders.get(AUTHORIZATIONS_REQUEST_PATH)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
 				.header(HEADER_KEY_ACCESS_TOKEN, "accessToken")
 				.header(HEADER_KEY_EXPIRES_AT, expiresAt)
 				.header(HEADER_KEY_SIGNATURE, signature))

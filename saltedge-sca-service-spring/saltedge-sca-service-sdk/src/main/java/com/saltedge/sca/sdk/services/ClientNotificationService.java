@@ -100,7 +100,7 @@ public class ClientNotificationService {
                 connection.getPlatform(),
                 connection.getId().toString(),
                 authorization.getId().toString(),
-                authorization.getExpiresAtUTC()
+                authorization.getExpiresAt().toString()
         );
     }
 
