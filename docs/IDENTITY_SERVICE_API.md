@@ -588,7 +588,7 @@ For more information please read [Instant Action WIKI](https://github.com/salted
 
 ### Authenticate Instant Action:
 
-`PUT` `/api/authenticator/v1/action/:uuid`
+`PUT` `/api/authenticator/v1/actions/:uuid`
 
 ```bash
 curl \
