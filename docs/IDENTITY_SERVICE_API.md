@@ -621,13 +621,11 @@ curl \
 #### Response Example
 ```json
 {
-  "data": [
-    {
+  "data": {
       "success": true,
       "connection_id": "333",
       "authorization_id": "9998"
-    }
-  ]
+  }
 }
 ```
 
