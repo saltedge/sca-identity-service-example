@@ -615,8 +615,8 @@ curl \
 #### Response Body Parameters:
 
 - `success` **[boolean, required]** - result of the operation
-- `connection_id` **[string, optional]** - an unique ID of Mobile Client (Service Connection)
-- `authorization_id` **[string, optional]** - an unique code of authorization model
+- `connection_id` **[string, required]** - an unique ID of Mobile Client (Service Connection)
+- `authorization_id` **[string, required]** - an unique code of authorization model
 
 #### Response Example
 ```json
