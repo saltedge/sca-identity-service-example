@@ -35,7 +35,7 @@ Fork this repository
 
 1. Change directory:
 	```
-	cd sinatra-example
+	cd saltedge-sca-service-sinatra
 	```
 
 1. Run Bundler to pull the required dependencies:
@@ -70,7 +70,7 @@ Fork this repository
 
 1. Change directory:
 	```
-	cd sinatra-example
+	cd saltedge-sca-service-sinatra
 	```
 
 1. Init database configuration
