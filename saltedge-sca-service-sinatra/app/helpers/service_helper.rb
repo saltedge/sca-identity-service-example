@@ -142,7 +142,7 @@ module Sinatra
       if connection.user_id.present?
         url = redirect_url(connection, connection.user_id, 'success')
       else
-        url = "https://#{request.host_with_port}/users/register?token=#{connection.connect_session_token}"
+        url = "https://#{request.host_with_port}/users/register_sca?token=#{connection.connect_session_token}"
       end
 
       {
@@ -273,7 +273,6 @@ module Sinatra
         'http://pngimg.com/uploads/visa/visa_PNG4.png',
         'http://pngimg.com/uploads/mastercard/mastercard_PNG16.png',
         'https://static-eu.insales.ru/files/1/906/6783882/original/PayPal-Logo.png',
-        'https://www.google.com/logos/doodles/2015/googles-new-logo-5078286822539264.3-hp2x.gif'
       ].sample
       {
         code:          'demobank',
