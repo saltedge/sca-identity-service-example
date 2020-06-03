@@ -118,11 +118,11 @@ class UserAuthorizeController < BaseController
   end
 
   get '/users/register' do
-    @session_token = params['token']
     erb :create_new_user
   end
 
   get '/users/register_sca' do
+    @session_token = params['token']
     erb :sca_sign_in
   end
 
