@@ -123,7 +123,7 @@ public class ScaSdkServiceTests {
 		testService.createAuthorization("1", "code", "test title", "test desc");
 
 		//then
-		verify(authorizationsService).createAuthorization("1", "code", "test title", "test desc");
+		verify(authorizationsService).createAuthorizationAndSendToUser("1", "code", "test title", "test desc");
 	}
 
 	@Test

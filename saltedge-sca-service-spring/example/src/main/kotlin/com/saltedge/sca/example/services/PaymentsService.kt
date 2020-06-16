@@ -49,24 +49,6 @@ class PaymentsService {
         return paymentsRepository.findFirstByUuid(paymentUUID)
     }
 
-    fun authenticatePayment(paymentUUID: String, userId: Long): Long? {
-        val payment: PaymentOrderEntity = paymentsRepository.findFirstByUuid(paymentUUID) ?: return null
-        payment.userId = userId
-        paymentsRepository.save(payment)
-        return scaSdkService.createAuthorization(
-                userId.toString(),
-                paymentUUID,
-                "Payment confirmation",
-                "Confirm payment for \n${payment.payeeName}\n${payment.payeeAddress}\nAmount: ${payment.amount} ${payment.currency}"
-        ).id
-    }
-
-    fun onAuthorizePaymentOrder(paymentUUID: String, confirmed: Boolean) {
-        val payment: PaymentOrderEntity = paymentsRepository.findFirstByUuid(paymentUUID) ?: return
-        payment.status = if (confirmed) "closed_success" else "closed_deny"
-        paymentsRepository.save(payment)
-    }
-
     private fun createNewPaymentOrder(): PaymentOrderEntity {
         val amount = (0 until 200).random().toDouble()
         val payment = PaymentOrderEntity().apply {

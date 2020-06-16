@@ -131,10 +131,6 @@ public class AuthenticateActionEntity extends BaseEntity implements Authenticate
         return authorizationId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     @Override
     public Map<String, String> getExtra() {
         return extra;
@@ -159,5 +155,13 @@ public class AuthenticateActionEntity extends BaseEntity implements Authenticate
         if (isAuthenticated()) return ActionStatus.AUTHENTICATED;
         if (isExpired()) return ActionStatus.EXPIRED;
         return ActionStatus.WAITING_AUTHENTICATION;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setAuthorizationId(String authorizationId) {
+        this.authorizationId = authorizationId;
     }
 }

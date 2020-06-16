@@ -22,6 +22,7 @@ package com.saltedge.sca.sdk.services;
 
 import com.saltedge.sca.sdk.ScaSdkConstants;
 import com.saltedge.sca.sdk.models.Authorization;
+import com.saltedge.sca.sdk.models.AuthorizationContent;
 import com.saltedge.sca.sdk.models.api.EncryptedEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationsRepository;
@@ -48,6 +49,13 @@ public class AuthorizationsService {
     private AuthorizationsRepository authorizationsRepository;
     @Autowired
     private ClientNotificationService clientNotificationService;
+
+    public Authorization createAuthorization(
+            @NotEmpty String userId,
+            @NotNull AuthorizationContent authorizationContent
+    ) {
+        return createAndSaveAuthorization(userId, authorizationContent.confirmationCode, authorizationContent.title, authorizationContent.description);
+    }
 
     public Authorization createAuthorizationAndSendToUser(
             @NotEmpty String userId,

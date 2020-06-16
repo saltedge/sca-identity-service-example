@@ -51,6 +51,7 @@ import java.io.FileNotFoundException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static com.saltedge.sca.sdk.ScaSdkConstants.*;
 import static com.saltedge.sca.sdk.controllers.AuthorizationsController.AUTHORIZATIONS_REQUEST_PATH;
@@ -71,9 +72,9 @@ public class AuthorizationErrorsIntegrationTests {
 	@MockBean
 	private AuthorizationsRepository authorizationsRepository;
 
-	private TestRestTemplate testRestTemplate = new TestRestTemplate();
-	private ClientConnectionEntity testConnection;
-	private AuthorizationEntity testAuthorization;
+	private final TestRestTemplate testRestTemplate = new TestRestTemplate();
+	private final ClientConnectionEntity testConnection;
+	private final AuthorizationEntity testAuthorization;
 	
 	public AuthorizationErrorsIntegrationTests() throws Exception {
 		testConnection = new ClientConnectionEntity();
@@ -212,7 +213,7 @@ public class AuthorizationErrorsIntegrationTests {
 		ResponseEntity<CollectionResponse> response = testRestTemplate.exchange(requestUrl, HttpMethod.GET, new HttpEntity<>(headers), CollectionResponse.class);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(response.getBody().data).isEmpty();
+		assertThat(Objects.requireNonNull(response.getBody()).data).isEmpty();
 	}
 
 	@Test
@@ -246,7 +247,7 @@ public class AuthorizationErrorsIntegrationTests {
 		ResponseEntity<UpdateAuthorizationResponse> response = testRestTemplate.exchange(requestUrl, HttpMethod.PUT, new HttpEntity<>(body, headers), UpdateAuthorizationResponse.class);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(response.getBody().data.success).isFalse();
+		assertThat(Objects.requireNonNull(response.getBody()).data.success).isFalse();
 	}
 
 	private String getBaseUrl() {

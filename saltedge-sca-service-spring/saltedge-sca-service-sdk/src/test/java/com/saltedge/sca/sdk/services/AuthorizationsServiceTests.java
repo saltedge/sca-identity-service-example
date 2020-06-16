@@ -55,8 +55,8 @@ public class AuthorizationsServiceTests extends MockServiceTestAbs {
 
 	@Test
 	public void givenInvalidParams_whenCreateAuthorization_thenThrowConstraintViolationException() {
-		assertThrows(ConstraintViolationException.class, () -> testService.createAuthorization(null, null, null, null));
-		assertThrows(ConstraintViolationException.class, () -> testService.createAuthorization("", "", "", ""));
+		assertThrows(ConstraintViolationException.class, () -> testService.createAuthorizationAndSendToUser(null, null, null, null));
+		assertThrows(ConstraintViolationException.class, () -> testService.createAuthorizationAndSendToUser("", "", "", ""));
 	}
 
 	@Test
@@ -67,7 +67,7 @@ public class AuthorizationsServiceTests extends MockServiceTestAbs {
 		given(testRepository.save(any(AuthorizationEntity.class))).willReturn(savedEntity);
 
 		//when
-		testService.createAuthorization("1", "code", "test title", "test desc");
+		testService.createAuthorizationAndSendToUser("1", "code", "test title", "test desc");
 
 		//then
 		ArgumentCaptor<AuthorizationEntity> entityCaptor = ArgumentCaptor.forClass(AuthorizationEntity.class);

@@ -22,6 +22,8 @@ package com.saltedge.sca.sdk.services;
 
 import com.saltedge.sca.sdk.errors.BadRequest;
 import com.saltedge.sca.sdk.errors.NotFound;
+import com.saltedge.sca.sdk.models.Authorization;
+import com.saltedge.sca.sdk.models.AuthorizationContent;
 import com.saltedge.sca.sdk.models.api.responces.ActionResponse;
 import com.saltedge.sca.sdk.models.persistent.AuthenticateActionEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthenticateActionsRepository;
@@ -43,22 +45,31 @@ public class ActionsAuthenticateService {
     @Autowired
     private AuthenticateActionsRepository actionsRepository;
     @Autowired
+    private AuthorizationsService authorizationsService;
+    @Autowired
     private ServiceProvider serviceProvider;
 
-    public ActionResponse onNewAuthenticatedAction(@NotEmpty String actionUUID, @NotNull ClientConnectionEntity connection) throws NotFound.ActionNotFound {
+    public ActionResponse onNewAuthenticatedAction(
+            @NotEmpty String actionUUID,
+            @NotNull ClientConnectionEntity connection
+    ) throws NotFound.ActionNotFound {
+        ActionResponse response;
         AuthenticateActionEntity action = actionsRepository.findFirstByUuid(actionUUID);
         if (action == null) throw new NotFound.ActionNotFound();
         if (action.isExpired()) throw new BadRequest.ActionExpired();
 
         action.setUserId(connection.getUserId());
-        actionsRepository.save(action);
+        AuthorizationContent authorizationContent = serviceProvider.onAuthenticateAction(action);
 
-        Long authorizationId = serviceProvider.onAuthenticateAction(action);
-
-        if (authorizationId != null) {
-            return new ActionResponse(true, String.valueOf(connection.getId()), String.valueOf(authorizationId));
+        if (authorizationContent != null) {
+            Authorization authorization = authorizationsService.createAuthorization(connection.getUserId(), authorizationContent);
+            String authorizationIdValue = String.valueOf(authorization.getId());
+            action.setAuthorizationId(authorizationIdValue);
+            response = new ActionResponse(true, String.valueOf(connection.getId()), authorizationIdValue);
         } else {
-            return new ActionResponse(false, null, null);
+            response = new ActionResponse(false, null, null);
         }
+        actionsRepository.save(action);
+        return response;
     }
 }

@@ -3,10 +3,11 @@
   <groupId>com.saltedge.sca.sdk</groupId>
   <artifactId>saltedge-sca-service-sdk</artifactId>
   <versioning>
-    <release>1.2.0</release>
+    <release>1.2.1</release>
     <versions>
       <version>1.2.0</version>
+      <version>1.2.1</version>
     </versions>
-    <lastUpdated>20200427141850</lastUpdated>
+    <lastUpdated>20200616130334</lastUpdated>
   </versioning>
 </metadata>

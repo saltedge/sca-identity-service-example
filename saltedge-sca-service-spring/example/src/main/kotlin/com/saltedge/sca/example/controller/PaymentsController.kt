@@ -21,6 +21,7 @@
 package com.saltedge.sca.example.controller
 
 import com.saltedge.sca.example.model.PaymentOrderEntity
+import com.saltedge.sca.example.services.PaymentsConfirmService
 import com.saltedge.sca.example.services.PaymentsService
 import com.saltedge.sca.example.services.UserAuthService
 import com.saltedge.sca.example.services.UsersService
@@ -45,6 +46,8 @@ class PaymentsController {
     private val log = LoggerFactory.getLogger(PaymentsController::class.java)
     @Autowired
     private lateinit var paymentsService: PaymentsService
+    @Autowired
+    private lateinit var paymentsConfirmService: PaymentsConfirmService
     @Autowired
     private lateinit var userAuthService: UserAuthService
     @Autowired
@@ -76,7 +79,7 @@ class PaymentsController {
         val userId: Long? = userAuthService.findUserId(username = username, password = password)
         return when {
             userId != null -> {
-                paymentsService.authenticatePayment(paymentUUID, userId)
+                paymentsConfirmService.authenticatePaymentOrder(paymentUUID, userId)
                 ModelAndView("redirect:$PAYMENTS_ORDER_PATH")
             }
             else -> {

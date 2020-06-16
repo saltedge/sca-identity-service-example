@@ -65,14 +65,6 @@ class UserAuthService {
         }
     }
 
-    private fun validateUsernameAndPassword(username: String, password: String): String? {
-        return when {
-            username.isBlank() || password.isBlank() -> "Invalid credentials"
-            usersRepository.findFirstByName(name = username) != null -> "Username exist"
-            else -> null
-        }
-    }
-
     fun authenticateScaClientAndGetRedirectUrl(username: String, password: String, secret: String): String {
         val userId: Long? = findUserId(username = username, password = password)
         return if (userId != null) {
@@ -87,20 +79,19 @@ class UserAuthService {
         }
     }
 
+    private fun validateUsernameAndPassword(username: String, password: String): String? {
+        return when {
+            username.isBlank() || password.isBlank() -> "Invalid credentials"
+            usersRepository.findFirstByName(name = username) != null -> "Username exist"
+            else -> null
+        }
+    }
+
     private fun createAuthenticateAction(): AuthenticateAction? {
         return scaSdkService.createAction(
                 SCA_ACTION_LOGIN,
                 UUID.randomUUID().toString(),
                 null
         );
-    }
-
-    fun onAuthenticateUser(userId: String, uuid: String?): Long? {
-        return scaSdkService.createAuthorization(
-                userId,
-                uuid,
-                "Access to Salt Edge Admin page",
-                "Authorize access to Salt Edge Admin page."
-        ).id
     }
 }

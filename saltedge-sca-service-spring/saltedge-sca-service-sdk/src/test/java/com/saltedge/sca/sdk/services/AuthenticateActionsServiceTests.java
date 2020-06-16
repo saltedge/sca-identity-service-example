@@ -24,6 +24,7 @@ import com.saltedge.sca.sdk.MockServiceTestAbs;
 import com.saltedge.sca.sdk.errors.BadRequest;
 import com.saltedge.sca.sdk.errors.NotFound;
 import com.saltedge.sca.sdk.models.AuthenticateAction;
+import com.saltedge.sca.sdk.models.AuthorizationContent;
 import com.saltedge.sca.sdk.models.api.responces.ActionResponse;
 import com.saltedge.sca.sdk.models.persistent.*;
 import org.junit.Test;
@@ -48,7 +49,7 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest
 public class AuthenticateActionsServiceTests extends MockServiceTestAbs {
 	@Autowired
-	private ActionsService testService;
+	private ActionsAuthenticateService testService;
 	@MockBean
 	private AuthorizationsRepository authorizationsRepository;
 	@MockBean
@@ -89,7 +90,7 @@ public class AuthenticateActionsServiceTests extends MockServiceTestAbs {
 	}
 
 	@Test
-	public void givenValidAction_whenOnNewAuthenticatedAction_thenReturnSuccessWithoutSca() {
+	public void givenValidAction_whenOnNewAuthenticatedAction_thenReturnFalse() {
 		//given
 		ClientConnectionEntity connection = new ClientConnectionEntity();
 		connection.setUserId("user1");
@@ -108,7 +109,7 @@ public class AuthenticateActionsServiceTests extends MockServiceTestAbs {
 		ArgumentCaptor<AuthenticateActionEntity> captor = ArgumentCaptor.forClass(AuthenticateActionEntity.class);
 		verify(actionsRepository).save(captor.capture());
 		assertThat(captor.getValue().getUserId()).isEqualTo("user1");
-		assertThat(result).isEqualTo(new ActionResponse(true, null, null));
+		assertThat(result).isEqualTo(new ActionResponse(false, null, null));
 	}
 
 	@Test
@@ -131,7 +132,8 @@ public class AuthenticateActionsServiceTests extends MockServiceTestAbs {
 		AuthenticateActionEntity savedAction = new AuthenticateActionEntity();
 		savedAction.setExpiresAt(Instant.now().plus(5, ChronoUnit.MINUTES));
 		given(actionsRepository.findFirstByUuid("action1")).willReturn(savedAction);
-		given(serviceProvider.onAuthenticateAction(any(AuthenticateAction.class))).willReturn(10L);
+		given(serviceProvider.onAuthenticateAction(any(AuthenticateAction.class)))
+				.willReturn(new AuthorizationContent("code", "title", "description"));
 
 		assertThat(savedAction.getUserId()).isNull();
 
@@ -142,32 +144,6 @@ public class AuthenticateActionsServiceTests extends MockServiceTestAbs {
 		ArgumentCaptor<AuthenticateActionEntity> actionCaptor = ArgumentCaptor.forClass(AuthenticateActionEntity.class);
 		verify(actionsRepository).save(actionCaptor.capture());
 		assertThat(actionCaptor.getValue().getUserId()).isEqualTo("user1");
-		assertThat(result).isEqualTo(new ActionResponse(true, "1", "10"));
-	}
-
-	@Test
-	public void givenInvalidActionCode_whenCreateAction_thenThrowConstraintViolationException() {
-		assertThrows(ConstraintViolationException.class, () -> testService.createAction("", "", null));
-	}
-
-	@Test
-	public void givenActionCode_whenGetActionByUUID_thenSaveNewActionWithCodeAndNewUUID() {
-		//given
-		AuthenticateActionEntity action = new AuthenticateActionEntity();
-		action.setCode("test_code");
-		action.setUuid("action1");
-		given(actionsRepository.findFirstByUuid("action1")).willReturn(action);
-
-		//when
-		AuthenticateAction result = testService.getActionByUUID("action1");
-
-		//then
-		assertThat(result.getCode()).isEqualTo("test_code");
-		assertThat(result.getUUID()).isEqualTo("action1");
-	}
-
-	@Test
-	public void givenInvalidUUID_whenGetActionByUUID_thenThrowConstraintViolationException() {
-		assertThrows(ConstraintViolationException.class, () -> testService.getActionByUUID(""));
+		assertThat(result).isEqualTo(new ActionResponse(true, "1", "2"));
 	}
 }
