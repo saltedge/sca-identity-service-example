@@ -52,6 +52,8 @@ class ScaProviderService : ServiceProvider {
     @Autowired
     lateinit var usersService: UsersService
     @Autowired
+    lateinit var userAuthService: UserAuthService
+    @Autowired
     lateinit var paymentsService: PaymentsService
     @Autowired
     lateinit var consentsRepository: ConsentsRepository
@@ -141,12 +143,15 @@ class ScaProviderService : ServiceProvider {
      */
     override fun onAuthenticateAction(action: AuthenticateAction): Long? {
         if (action.isExpired) return null
+        val userId = action.userId ?: return null
         when (action.code) {
-            SCA_ACTION_LOGIN -> return null
+            SCA_ACTION_LOGIN -> {
+                return userAuthService.onAuthenticateUser(userId, action.uuid)
+            }
             SCA_ACTION_PAYMENT -> {
-                return paymentsService.onAuthenticatePaymentOrder(
+                return paymentsService.authenticatePayment(
                         paymentUUID = action.uuid,
-                        userId = action.userId.toLongOrNull() ?: return null
+                        userId = userId.toLongOrNull() ?: return null
                 )
             }
             else -> return null

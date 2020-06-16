@@ -23,7 +23,7 @@ package com.saltedge.sca.sdk;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionsRepository;
 import com.saltedge.sca.sdk.provider.ServiceProvider;
-import com.saltedge.sca.sdk.services.AuthenticateActionsService;
+import com.saltedge.sca.sdk.services.ActionsService;
 import com.saltedge.sca.sdk.services.AuthorizationsService;
 import com.saltedge.sca.sdk.services.ClientConnectionsService;
 import com.saltedge.sca.sdk.services.ConsentsService;
@@ -45,7 +45,7 @@ abstract public class MockMvcTestAbs {
     @MockBean
     protected AuthorizationsService authorizationsService;
     @MockBean
-    protected AuthenticateActionsService actionsService;
+    protected ActionsService actionsService;
     @MockBean
     protected ConsentsService consentsService;
 

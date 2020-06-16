@@ -22,7 +22,7 @@ package com.saltedge.sca.sdk.provider;
 
 import com.saltedge.sca.sdk.models.UserIdentity;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
-import com.saltedge.sca.sdk.services.AuthenticateActionsService;
+import com.saltedge.sca.sdk.services.ActionsService;
 import com.saltedge.sca.sdk.services.AuthorizationsService;
 import com.saltedge.sca.sdk.services.ClientConnectionsService;
 import org.junit.Test;
@@ -59,7 +59,7 @@ public class ScaSdkServiceTests {
 	@MockBean
 	private ClientConnectionsService connectionsService;
 	@MockBean
-	private AuthenticateActionsService actionsService;
+	private ActionsService actionsService;
 
 	@Test
 	public void givenConnectionsService_whenGetClientConnections_thenReturnListOfConnections() {

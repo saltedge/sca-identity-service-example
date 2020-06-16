@@ -20,14 +20,9 @@
  */
 package com.saltedge.sca.sdk.services;
 
-import com.saltedge.sca.sdk.errors.BadRequest;
-import com.saltedge.sca.sdk.errors.NotFound;
 import com.saltedge.sca.sdk.models.AuthenticateAction;
-import com.saltedge.sca.sdk.models.api.responces.ActionResponse;
 import com.saltedge.sca.sdk.models.persistent.AuthenticateActionEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthenticateActionsRepository;
-import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
-import com.saltedge.sca.sdk.provider.ServiceProvider;
 import com.saltedge.sca.sdk.tools.CodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,34 +32,14 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
 @Service
 @Validated
-public class AuthenticateActionsService {
-    private Logger log = LoggerFactory.getLogger(AuthenticateActionsService.class);
+public class ActionsService {
+    private final Logger log = LoggerFactory.getLogger(ActionsService.class);
     @Autowired
     private AuthenticateActionsRepository actionsRepository;
-    @Autowired
-    private ServiceProvider serviceProvider;
-
-    public ActionResponse onNewAuthenticatedAction(@NotEmpty String actionUUID, @NotNull ClientConnectionEntity connection) throws NotFound.ActionNotFound {
-        AuthenticateActionEntity action = actionsRepository.findFirstByUuid(actionUUID);
-        if (action == null) throw new NotFound.ActionNotFound();
-        if (action.isExpired()) throw new BadRequest.ActionExpired();
-
-        action.setUserId(connection.getUserId());
-        actionsRepository.save(action);
-
-        Long authorizationId = serviceProvider.onAuthenticateAction(action);
-
-        if (authorizationId != null) {
-            return new ActionResponse(true, String.valueOf(connection.getId()), String.valueOf(authorizationId));
-        } else {
-            return new ActionResponse(true, null, null);
-        }
-    }
 
     public AuthenticateAction createAction(
             @NotEmpty String actionCode,

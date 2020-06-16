@@ -94,4 +94,13 @@ class UserAuthService {
                 null
         );
     }
+
+    fun onAuthenticateUser(userId: String, uuid: String?): Long? {
+        return scaSdkService.createAuthorization(
+                userId,
+                uuid,
+                "Access to Salt Edge Admin page",
+                "Authorize access to Salt Edge Admin page."
+        ).id
+    }
 }

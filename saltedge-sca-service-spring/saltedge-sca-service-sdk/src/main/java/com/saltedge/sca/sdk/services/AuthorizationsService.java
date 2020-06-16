@@ -26,7 +26,6 @@ import com.saltedge.sca.sdk.models.api.EncryptedEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationsRepository;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
-import com.saltedge.sca.sdk.provider.ServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,15 +43,13 @@ import java.util.stream.Collectors;
 @Service
 @Validated
 public class AuthorizationsService {
-    private Logger log = LoggerFactory.getLogger(AuthorizationsService.class);
+    private final Logger log = LoggerFactory.getLogger(AuthorizationsService.class);
     @Autowired
     private AuthorizationsRepository authorizationsRepository;
     @Autowired
     private ClientNotificationService clientNotificationService;
-    @Autowired
-    private ServiceProvider serviceProvider;
 
-    public Authorization createAuthorization(
+    public Authorization createAuthorizationAndSendToUser(
             @NotEmpty String userId,
             @NotEmpty String confirmationCode,
             @NotEmpty String title,
@@ -78,27 +75,6 @@ public class AuthorizationsService {
 
     public EncryptedEntity getActiveAuthorization(@NotNull ClientConnectionEntity connection, @NotNull Long authorizationId) {
         return AuthorizationsCollector.collectActiveAuthorization(authorizationsRepository, connection, authorizationId);
-    }
-
-    public boolean confirmAuthorization(
-            @NotNull ClientConnectionEntity connection,
-            @NotNull Long authorizationId,
-            @NotNull String authorizationCode,
-            @NotNull boolean confirmAuthorization
-    ) {
-        AuthorizationEntity authorization = AuthorizationsCollector.findActiveAuthorization(
-                authorizationsRepository,
-                connection,
-                authorizationId
-        );
-
-        boolean canUpdateAuthorization = authorization.getAuthorizationCode().equals(authorizationCode);
-        if (canUpdateAuthorization) {
-            authorization.setConfirmed(confirmAuthorization);
-            authorizationsRepository.save(authorization);
-            serviceProvider.onAuthorizationConfirmed(authorization);
-        }
-        return canUpdateAuthorization;
     }
 
     private Authorization createAndSaveAuthorization(

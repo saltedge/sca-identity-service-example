@@ -48,7 +48,7 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest
 public class AuthenticateActionsServiceTests extends MockServiceTestAbs {
 	@Autowired
-	private AuthenticateActionsService testService;
+	private ActionsService testService;
 	@MockBean
 	private AuthorizationsRepository authorizationsRepository;
 	@MockBean

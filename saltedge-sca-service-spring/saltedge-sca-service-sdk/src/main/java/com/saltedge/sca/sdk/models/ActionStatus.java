@@ -20,6 +20,10 @@
  */
 package com.saltedge.sca.sdk.models;
 
-public enum  ActionStatus {
-    WAITING_AUTHENTICATION, EXPIRED, AUTHENTICATED
+public enum ActionStatus {
+    WAITING_AUTHENTICATION, EXPIRED, AUTHENTICATED;
+
+    public String toLowerString() {
+        return toString().toLowerCase();
+    }
 }

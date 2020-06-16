@@ -93,16 +93,23 @@ class ScaController {
             response: HttpServletResponse
     ): Map<String, String> {
         val action = scaSdkService.getActionByUUID(actionUUID) ?: throw NotFound.ActionNotFound()
-        return if (action.status == ActionStatus.AUTHENTICATED) {
-            val userId = action.userId?.toLongOrNull() ?: return mapOf("status" to action.status.toString().toLowerCase())
-            clearActionCookie(COOKIE_AUTHENTICATION_ACTION, response)
+        val authorization = action.authorizationId?.toLongOrNull()?.let { scaSdkService.getAuthorizationById(it) }
 
-            mapOf(
-                    "status" to action.status.toString().toLowerCase(),
-                    "redirect" to UserDashboardController.createDashboardLink(userId)
-            )
-        } else {
-            mapOf("status" to action.status.toString().toLowerCase())
+        return when (action.status ?: throw NotFound.ActionNotFound()) {
+            ActionStatus.WAITING_AUTHENTICATION -> mapOf("status" to action.status.toLowerString())
+            ActionStatus.EXPIRED -> mapOf("status" to action.status.toLowerString())
+            ActionStatus.AUTHENTICATED -> {
+                val userId = action.userId?.toLongOrNull() ?: throw NotFound.UserNotFound()
+                if (authorization?.confirmed == true) {
+                    clearActionCookie(COOKIE_AUTHENTICATION_ACTION, response)
+                    mapOf(
+                        "status" to action.status.toLowerString(),
+                        "redirect" to UserDashboardController.createDashboardLink(userId)
+                    )
+                } else {
+                    mapOf("status" to ActionStatus.WAITING_AUTHENTICATION.toLowerString())
+                }
+            }
         }
     }
 

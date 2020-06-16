@@ -76,7 +76,7 @@ class PaymentsController {
         val userId: Long? = userAuthService.findUserId(username = username, password = password)
         return when {
             userId != null -> {
-                paymentsService.onAuthenticatePaymentOrder(paymentUUID, userId)
+                paymentsService.authenticatePayment(paymentUUID, userId)
                 ModelAndView("redirect:$PAYMENTS_ORDER_PATH")
             }
             else -> {

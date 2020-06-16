@@ -26,7 +26,7 @@ import com.saltedge.sca.sdk.models.Authorization;
 import com.saltedge.sca.sdk.models.ClientConnection;
 import com.saltedge.sca.sdk.models.UserIdentity;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
-import com.saltedge.sca.sdk.services.AuthenticateActionsService;
+import com.saltedge.sca.sdk.services.ActionsService;
 import com.saltedge.sca.sdk.services.AuthorizationsService;
 import com.saltedge.sca.sdk.services.ClientConnectionsService;
 import com.saltedge.sca.sdk.tools.EnvironmentTools;
@@ -53,7 +53,7 @@ import static com.saltedge.sca.sdk.tools.UrlTools.createUserAuthSuccessUrl;
 @Service
 @Validated
 public class ScaSDKCallbackService {
-    private Logger log = LoggerFactory.getLogger(ScaSDKCallbackService.class);
+    private final Logger log = LoggerFactory.getLogger(ScaSDKCallbackService.class);
     @Autowired
     private Environment env;
     @Autowired
@@ -61,7 +61,7 @@ public class ScaSDKCallbackService {
     @Autowired
     private ClientConnectionsService connectionsService;
     @Autowired
-    private AuthenticateActionsService actionsService;
+    private ActionsService actionsService;
 
     /**
      * Returns list of client connections (Authenticators) related to user.
@@ -124,7 +124,7 @@ public class ScaSDKCallbackService {
             @NotEmpty String title,
             @NotEmpty String description
     ) {
-        return authorizationsService.createAuthorization(userId, confirmationCode, title, description);
+        return authorizationsService.createAuthorizationAndSendToUser(userId, confirmationCode, title, description);
     }
 
     /**
