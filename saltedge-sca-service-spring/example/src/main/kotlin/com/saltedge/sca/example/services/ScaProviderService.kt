@@ -26,10 +26,7 @@ import com.saltedge.sca.example.controller.SIGN_IN_SCA_PATH
 import com.saltedge.sca.example.model.ConsentsRepository
 import com.saltedge.sca.example.tools.getApplicationUrl
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_SECRET
-import com.saltedge.sca.sdk.models.AuthenticateAction
-import com.saltedge.sca.sdk.models.Authorization
-import com.saltedge.sca.sdk.models.Consent
-import com.saltedge.sca.sdk.models.UserIdentity
+import com.saltedge.sca.sdk.models.*
 import com.saltedge.sca.sdk.provider.ServiceProvider
 import com.saltedge.sca.sdk.tools.CodeBuilder
 import org.slf4j.Logger
@@ -52,7 +49,7 @@ class ScaProviderService : ServiceProvider {
     @Autowired
     lateinit var usersService: UsersService
     @Autowired
-    lateinit var paymentsService: PaymentsService
+    lateinit var paymentsConfirmService: PaymentsConfirmService
     @Autowired
     lateinit var consentsRepository: ConsentsRepository
 
@@ -137,19 +134,24 @@ class ScaProviderService : ServiceProvider {
      * It can be Sign-in to portal action or Payment action which requires authentication.
      *
      * @param action entity with uuid and userId
-     * @return return authorization id if SCA confirmation is required or null.
+     * @return return authorization content (title, description) for creating Authorization object (SCA confirmation),
+     *         if null then user will receive Instant action error.
      */
-    override fun onAuthenticateAction(action: AuthenticateAction): Long? {
+    override fun onAuthenticateAction(action: AuthenticateAction): AuthorizationContent? {
         if (action.isExpired) return null
-        when (action.code) {
-            SCA_ACTION_LOGIN -> return null
-            SCA_ACTION_PAYMENT -> {
-                return paymentsService.onAuthenticatePaymentOrder(
-                        paymentUUID = action.uuid,
-                        userId = action.userId.toLongOrNull() ?: return null
+        val userId = action.userId.toLongOrNull() ?: return null
+        return when (action.code) {
+            SCA_ACTION_LOGIN -> {
+                AuthorizationContent(
+                        action.uuid,
+                        "Access to Salt Edge Admin page",
+                        "Authorize access to Salt Edge Admin page."
                 )
             }
-            else -> return null
+            SCA_ACTION_PAYMENT -> {
+                paymentsConfirmService.authenticatePaymentOrder(paymentUUID = action.uuid, userId = userId)
+            }
+            else -> null
         }
     }
 
@@ -159,7 +161,7 @@ class ScaProviderService : ServiceProvider {
      * @param authorization entity with unique authorizationCode and isConfirmed fields
      */
     override fun onAuthorizationConfirmed(authorization: Authorization) {
-        paymentsService.onAuthorizePaymentOrder(
+        paymentsConfirmService.authorizePaymentOrder(
                 paymentUUID = authorization.authorizationCode ?: return,
                 confirmed = authorization.confirmed ?: return
         )

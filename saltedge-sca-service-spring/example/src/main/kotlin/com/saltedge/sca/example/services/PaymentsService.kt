@@ -23,7 +23,6 @@ package com.saltedge.sca.example.services
 import com.saltedge.sca.example.controller.SCA_ACTION_PAYMENT
 import com.saltedge.sca.example.model.PaymentOrderEntity
 import com.saltedge.sca.example.model.PaymentOrdersRepository
-import com.saltedge.sca.example.model.UsersRepository
 import com.saltedge.sca.sdk.provider.ScaSDKCallbackService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -31,8 +30,6 @@ import java.util.*
 
 @Service
 class PaymentsService {
-    @Autowired
-    private lateinit var usersRepository: UsersRepository
     @Autowired
     private lateinit var paymentsRepository: PaymentOrdersRepository
     @Autowired
@@ -50,31 +47,6 @@ class PaymentsService {
 
     fun getPaymentByUUID(paymentUUID: String): PaymentOrderEntity? {
         return paymentsRepository.findFirstByUuid(paymentUUID)
-    }
-
-    fun onAuthenticatePaymentOrder(paymentUUID: String, userId: Long): Long? {
-        val payment: PaymentOrderEntity = paymentsRepository.findFirstByUuid(paymentUUID) ?: return null
-        payment.userId = userId
-        return if (requireSCAConfirmation(payment)) {
-            paymentsRepository.save(payment)
-            val authorization = scaSdkService.createAuthorization(
-                    userId.toString(),
-                    payment.uuid,
-                    "Payment confirmation",
-                    "Confirm payment for \n${payment.payeeName}\n${payment.payeeAddress}\nAmount: ${payment.amount} ${payment.currency}"
-            )
-            authorization.id
-        } else {
-            payment.status = "closed"
-            paymentsRepository.save(payment)
-            null
-        }
-    }
-
-    fun onAuthorizePaymentOrder(paymentUUID: String, confirmed: Boolean) {
-        val payment: PaymentOrderEntity = paymentsRepository.findFirstByUuid(paymentUUID) ?: return
-        payment.status = if (confirmed) "closed_success" else "closed_deny"
-        paymentsRepository.save(payment)
     }
 
     private fun createNewPaymentOrder(): PaymentOrderEntity {

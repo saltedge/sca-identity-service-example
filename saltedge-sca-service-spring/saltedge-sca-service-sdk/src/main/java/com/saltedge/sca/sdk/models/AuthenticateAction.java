@@ -33,6 +33,7 @@ public interface AuthenticateAction extends BaseEntityAbs {
     String getUUID();
     Instant getExpiresAt();
     String getUserId();
+    String getAuthorizationId();
     Boolean isExpired();
     Boolean isAuthenticated();
     ActionStatus getStatus();

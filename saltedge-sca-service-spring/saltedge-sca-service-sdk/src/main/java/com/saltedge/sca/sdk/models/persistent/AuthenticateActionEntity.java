@@ -55,6 +55,9 @@ public class AuthenticateActionEntity extends BaseEntity implements Authenticate
     @Column(length = 4096)
     private String userId;
 
+    @Column(length = 1024)
+    private String authorizationId;
+
     @Column(name = "extra", nullable = false)
     @Convert(converter = StringMapConverter.class)
     public Map<String, String> extra;
@@ -123,8 +126,9 @@ public class AuthenticateActionEntity extends BaseEntity implements Authenticate
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    @Override
+    public String getAuthorizationId() {
+        return authorizationId;
     }
 
     @Override
@@ -151,5 +155,13 @@ public class AuthenticateActionEntity extends BaseEntity implements Authenticate
         if (isAuthenticated()) return ActionStatus.AUTHENTICATED;
         if (isExpired()) return ActionStatus.EXPIRED;
         return ActionStatus.WAITING_AUTHENTICATION;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setAuthorizationId(String authorizationId) {
+        this.authorizationId = authorizationId;
     }
 }

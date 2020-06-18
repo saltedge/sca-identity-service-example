@@ -27,6 +27,7 @@ import com.saltedge.sca.sdk.models.api.requests.UpdateAuthorizationRequest;
 import com.saltedge.sca.sdk.models.api.responces.AuthorizationResponse;
 import com.saltedge.sca.sdk.models.api.responces.CollectionResponse;
 import com.saltedge.sca.sdk.models.api.responces.UpdateAuthorizationResponse;
+import com.saltedge.sca.sdk.services.AuthorizationsConfirmService;
 import com.saltedge.sca.sdk.services.AuthorizationsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -48,6 +49,8 @@ public class AuthorizationsController {
     public final static String AUTHORIZATIONS_REQUEST_PATH = ScaSdkConstants.AUTHENTICATOR_API_BASE_PATH + "/authorizations";
     @Autowired
     private AuthorizationsService authorizationsService;
+    @Autowired
+    private AuthorizationsConfirmService authorizationsConfirmService;
 
     @GetMapping
     public ResponseEntity<CollectionResponse<EncryptedEntity>> getActiveAuthorizations(DefaultAuthenticatedRequest request) {
@@ -69,7 +72,7 @@ public class AuthorizationsController {
             @PathVariable(ScaSdkConstants.KEY_AUTHORIZATION_ID) @NotNull Long authorizationId,
             @Valid UpdateAuthorizationRequest request
     ) {
-        boolean result = authorizationsService.confirmAuthorization(
+        boolean result = authorizationsConfirmService.confirmAuthorization(
                 request.getConnection(),
                 authorizationId,
                 request.data.authorizationCode,

@@ -9,7 +9,7 @@ _This application is just a Proof Of Concept._
 This codebase contains SDK module which is the set of tools for simplification of communication between ASPSP/Bank and Salt Edge Authenticator Application.    
 The SDK module implements the Salt Edge Authenticator v1 API.  
 [See how to add SDK](#SDK-Integration)  
-**Last stable version of SDK library is "1.2.0".**  
+**Last stable version of SDK library is "1.2.1".**  
 
 ### Codebase consists of modules:
 * **example** - simulates work of ASPSP/Bank Application.  
@@ -107,7 +107,9 @@ Example Application implements custom admin page for creating users, authorizing
   * `getProviderLogoUrl()` - Provides logo image of Service Provider. Will be displayed for end customers;  
   * `getProviderSupportEmail()` - Provides email of Service Provider for clients support. Will be displayed for end customers;  
   * `onAuthorizationConfirmed(Authorization authorization)` - Notifies application about confirmation or denying of SCA Authorization;  
-  * `onAuthenticateAction(AuthenticateAction action)` - Notifies application about receiving new authenticated Action request. It can be Sign-in to portal action or Payment action which requires authentication;  
+  * `onAuthenticateAction(AuthenticateAction action)` - Notifies application about receiving new authenticated Action request. 
+    It can be Sign-in to portal action or Payment action which requires authentication;
+    Return AuthorizationContent object with `confirmationCode`, `title` and `description`.  
     (**Ignore if Instant Action flow is not supported**)   
     
 ### 5. Use service `ScaSDKCallbackService` for backward communication between Application and SCA SDK Module. Using of service functions is not mandatory and depends on implemented features (Enrollment, Instant Enrollment, Authorization and Instant Action)  

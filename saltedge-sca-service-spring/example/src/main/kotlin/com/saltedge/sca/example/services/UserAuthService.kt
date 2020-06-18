@@ -65,14 +65,6 @@ class UserAuthService {
         }
     }
 
-    private fun validateUsernameAndPassword(username: String, password: String): String? {
-        return when {
-            username.isBlank() || password.isBlank() -> "Invalid credentials"
-            usersRepository.findFirstByName(name = username) != null -> "Username exist"
-            else -> null
-        }
-    }
-
     fun authenticateScaClientAndGetRedirectUrl(username: String, password: String, secret: String): String {
         val userId: Long? = findUserId(username = username, password = password)
         return if (userId != null) {
@@ -84,6 +76,14 @@ class UserAuthService {
             )
         } else {
             scaSdkService.onUserAuthenticationFail(secret, "Invalid Credentials")
+        }
+    }
+
+    private fun validateUsernameAndPassword(username: String, password: String): String? {
+        return when {
+            username.isBlank() || password.isBlank() -> "Invalid credentials"
+            usersRepository.findFirstByName(name = username) != null -> "Username exist"
+            else -> null
         }
     }
 

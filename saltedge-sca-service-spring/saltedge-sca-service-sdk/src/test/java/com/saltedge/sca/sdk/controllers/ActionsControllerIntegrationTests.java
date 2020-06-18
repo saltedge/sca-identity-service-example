@@ -46,7 +46,7 @@ public class ActionsControllerIntegrationTests extends MockMvcTestAbs {
 	public void putActionTest_returnSuccess() throws Exception {
 		ArgumentCaptor<String> userCaptor = ArgumentCaptor.forClass(String.class);
 		given(connectionsRepository.findByAccessTokenAndRevokedFalse("accessToken")).willReturn(testAuthorizedConnection);
-		given(actionsService.onNewAuthenticatedAction("123", testAuthorizedConnection)).willReturn(new ActionResponse(true, null, null));
+		given(actionsAuthenticateService.onNewAuthenticatedAction("123", testAuthorizedConnection)).willReturn(new ActionResponse(true, null, null));
 		String expiresAt = String.valueOf((DateTools.nowUtcSeconds() + 60));
 		String signature = TestTools.createSignature(
 				"put",

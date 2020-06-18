@@ -20,10 +20,7 @@
  */
 package com.saltedge.sca.sdk.provider;
 
-import com.saltedge.sca.sdk.models.AuthenticateAction;
-import com.saltedge.sca.sdk.models.Authorization;
-import com.saltedge.sca.sdk.models.Consent;
-import com.saltedge.sca.sdk.models.UserIdentity;
+import com.saltedge.sca.sdk.models.*;
 
 import java.util.List;
 
@@ -85,9 +82,10 @@ public interface ServiceProvider {
      * It can be Sign-in to portal action or Payment action which requires authentication.
      *
      * @param action entity with uuid and userId
-     * @return return authorization id if SCA confirmation is required or null.
+     * @return return authorization content (title, description) for creating Authorization object (SCA confirmation),
+     *         if null then user will receive Instant action error.
      */
-    Long onAuthenticateAction(AuthenticateAction action);
+    AuthorizationContent onAuthenticateAction(AuthenticateAction action);
 
     /**
      * Notifies application about confirmation or denying of SCA Authorization

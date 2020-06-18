@@ -51,4 +51,11 @@ public abstract class NotFound extends RuntimeException implements HttpErrorPara
             return "Action Not Found.";
         }
     }
+
+    public static class UserNotFound extends NotFound {
+        @Override
+        public String getErrorMessage() {
+            return "User Not Found.";
+        }
+    }
 }
