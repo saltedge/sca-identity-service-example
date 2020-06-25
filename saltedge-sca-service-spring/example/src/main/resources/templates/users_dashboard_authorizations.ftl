@@ -31,6 +31,7 @@
                     <tr>
                        <th>ID</th>
                        <th>Title</th>
+                       <th>CreatedAt</th>
                        <th>ExpiresAt</th>
                        <th>Status</th>
                     </tr>
@@ -38,6 +39,7 @@
                     <tr>
                         <td><a href="/authorizations/${item.id}">${item.id}</a></td>
                         <td>${item.title}</td>
+                        <td>${item.getCreatedAt().toString()}</td>
                         <td>${item.getExpiresAt().toString()}</td>
                         <td>${item.getStatus()}</td>
                     </tr>

@@ -21,7 +21,7 @@
 package com.saltedge.sca.sdk.model.request;
 
 import com.saltedge.sca.sdk.ValidationTestAbs;
-import com.saltedge.sca.sdk.models.api.requests.UpdateAuthorizationRequest;
+import com.saltedge.sca.sdk.models.api.requests.ScaUpdateAuthorizationRequest;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,11 +29,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UpdateAuthorizationRequestTests extends ValidationTestAbs {
     @Test
     public void validateTest() {
-        UpdateAuthorizationRequest model = new UpdateAuthorizationRequest();
+        ScaUpdateAuthorizationRequest model = new ScaUpdateAuthorizationRequest();
 
         assertThat(validator.validate(model)).isNotEmpty();
 
-        model.data = new UpdateAuthorizationRequest.Data();
+        model.data = new ScaUpdateAuthorizationRequest.Data();
 
         assertThat(validator.validate(model)).isNotEmpty();
 

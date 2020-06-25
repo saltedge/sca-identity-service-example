@@ -23,6 +23,9 @@ package com.saltedge.sca.example.model
 import com.saltedge.sca.sdk.models.AuthenticateAction
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
+import java.time.Instant
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -32,13 +35,13 @@ class PaymentOrderEntity() {
     @GeneratedValue(strategy= GenerationType.AUTO)
     public var id: Long = 0
 
-    @Column
     @CreationTimestamp
-    private val createdAt: LocalDateTime? = null
+    @Column(updatable = false)
+    val createdAt: Instant? = null
 
-    @Column
     @UpdateTimestamp
-    private val updatedAt: LocalDateTime? = null
+    @Column
+    var updatedAt: Instant? = null
 
     @Column(nullable = false, length = 4096, unique = true)
     var uuid: String = ""

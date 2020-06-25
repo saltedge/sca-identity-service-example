@@ -9,7 +9,7 @@ _This application is just a Proof Of Concept._
 This codebase contains SDK module which is the set of tools for simplification of communication between ASPSP/Bank and Salt Edge Authenticator Application.    
 The SDK module implements the Salt Edge Authenticator v1 API.  
 [See how to add SDK](#SDK-Integration)  
-**Last stable version of SDK library is "1.2.1".**  
+**Last stable version of SDK library is "1.3.0".**  
 
 ### Codebase consists of modules:
 * **example** - simulates work of ASPSP/Bank Application.  

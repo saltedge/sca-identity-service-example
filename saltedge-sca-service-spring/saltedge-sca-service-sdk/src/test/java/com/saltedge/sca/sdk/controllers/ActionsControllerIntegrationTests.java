@@ -22,7 +22,7 @@ package com.saltedge.sca.sdk.controllers;
 
 import com.saltedge.sca.sdk.MockMvcTestAbs;
 import com.saltedge.sca.sdk.TestTools;
-import com.saltedge.sca.sdk.models.api.responces.ActionResponse;
+import com.saltedge.sca.sdk.models.api.responces.ScaActionResponse;
 import com.saltedge.sca.sdk.tools.DateTools;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -46,7 +46,7 @@ public class ActionsControllerIntegrationTests extends MockMvcTestAbs {
 	public void putActionTest_returnSuccess() throws Exception {
 		ArgumentCaptor<String> userCaptor = ArgumentCaptor.forClass(String.class);
 		given(connectionsRepository.findByAccessTokenAndRevokedFalse("accessToken")).willReturn(testAuthorizedConnection);
-		given(actionsAuthenticateService.onNewAuthenticatedAction("123", testAuthorizedConnection)).willReturn(new ActionResponse(true, null, null));
+		given(actionsAuthenticateService.onNewAuthenticatedAction("123", testAuthorizedConnection)).willReturn(new ScaActionResponse(true, null, null));
 		String expiresAt = String.valueOf((DateTools.nowUtcSeconds() + 60));
 		String signature = TestTools.createSignature(
 				"put",

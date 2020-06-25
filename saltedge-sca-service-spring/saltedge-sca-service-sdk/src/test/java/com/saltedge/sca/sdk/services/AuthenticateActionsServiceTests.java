@@ -25,7 +25,7 @@ import com.saltedge.sca.sdk.errors.BadRequest;
 import com.saltedge.sca.sdk.errors.NotFound;
 import com.saltedge.sca.sdk.models.AuthenticateAction;
 import com.saltedge.sca.sdk.models.AuthorizationContent;
-import com.saltedge.sca.sdk.models.api.responces.ActionResponse;
+import com.saltedge.sca.sdk.models.api.responces.ScaActionResponse;
 import com.saltedge.sca.sdk.models.persistent.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -103,13 +103,13 @@ public class AuthenticateActionsServiceTests extends MockServiceTestAbs {
 		assertThat(action.getUserId()).isNull();
 
 		//when
-		ActionResponse result = testService.onNewAuthenticatedAction("action1", connection);
+		ScaActionResponse result = testService.onNewAuthenticatedAction("action1", connection);
 
 		//then
 		ArgumentCaptor<AuthenticateActionEntity> captor = ArgumentCaptor.forClass(AuthenticateActionEntity.class);
 		verify(actionsRepository).save(captor.capture());
 		assertThat(captor.getValue().getUserId()).isEqualTo("user1");
-		assertThat(result).isEqualTo(new ActionResponse(false, null, null));
+		assertThat(result).isEqualTo(new ScaActionResponse(false, null, null));
 	}
 
 	@Test
@@ -138,12 +138,12 @@ public class AuthenticateActionsServiceTests extends MockServiceTestAbs {
 		assertThat(savedAction.getUserId()).isNull();
 
 		//when
-		ActionResponse result = testService.onNewAuthenticatedAction("action1", connection);
+		ScaActionResponse result = testService.onNewAuthenticatedAction("action1", connection);
 
 		//then
 		ArgumentCaptor<AuthenticateActionEntity> actionCaptor = ArgumentCaptor.forClass(AuthenticateActionEntity.class);
 		verify(actionsRepository).save(actionCaptor.capture());
 		assertThat(actionCaptor.getValue().getUserId()).isEqualTo("user1");
-		assertThat(result).isEqualTo(new ActionResponse(true, "1", "2"));
+		assertThat(result).isEqualTo(new ScaActionResponse(true, "1", "2"));
 	}
 }

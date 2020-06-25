@@ -21,10 +21,10 @@
 package com.saltedge.sca.sdk.controllers;
 
 import com.saltedge.sca.sdk.ScaSdkConstants;
-import com.saltedge.sca.sdk.models.api.requests.CreateConnectionRequest;
+import com.saltedge.sca.sdk.models.api.requests.ScaCreateConnectionRequest;
 import com.saltedge.sca.sdk.models.api.requests.DefaultAuthenticatedRequest;
-import com.saltedge.sca.sdk.models.api.responces.CreateConnectionResponse;
-import com.saltedge.sca.sdk.models.api.responces.RevokeConnectionResponse;
+import com.saltedge.sca.sdk.models.api.responces.ScaCreateConnectionResponse;
+import com.saltedge.sca.sdk.models.api.responces.ScaRevokeConnectionResponse;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
 import com.saltedge.sca.sdk.services.ClientConnectionsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,12 +53,12 @@ class ConnectionsController {
      * @return response
      */
     @PostMapping
-    public ResponseEntity<CreateConnectionResponse> createConnection(
-            @Valid @RequestBody CreateConnectionRequest newConnectionRequest
+    public ResponseEntity<ScaCreateConnectionResponse> createConnection(
+            @Valid @RequestBody ScaCreateConnectionRequest newConnectionRequest
     ) {
         if (newConnectionRequest == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         String authorizationSessionSecret = newConnectionRequest.getData().getConnectQuery();
-        CreateConnectionResponse result = connectionsService.createConnection(
+        ScaCreateConnectionResponse result = connectionsService.createConnection(
                 newConnectionRequest.getData(),
                 authorizationSessionSecret
         );
@@ -72,9 +72,9 @@ class ConnectionsController {
      * @return operation result
      */
     @DeleteMapping
-    public ResponseEntity<RevokeConnectionResponse> revokeConnection(DefaultAuthenticatedRequest request) {
+    public ResponseEntity<ScaRevokeConnectionResponse> revokeConnection(DefaultAuthenticatedRequest request) {
         ClientConnectionEntity connection = request.getConnection();
         connectionsService.revokeConnection(connection);
-        return ResponseEntity.ok(new RevokeConnectionResponse(true, connection.getAccessToken()));
+        return ResponseEntity.ok(new ScaRevokeConnectionResponse(true, connection.getAccessToken()));
     }
 }

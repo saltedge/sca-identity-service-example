@@ -21,10 +21,10 @@
 package com.saltedge.sca.sdk.controllers;
 
 import com.saltedge.sca.sdk.ScaSdkConstants;
-import com.saltedge.sca.sdk.models.api.EncryptedEntity;
+import com.saltedge.sca.sdk.models.api.ScaEncryptedEntity;
 import com.saltedge.sca.sdk.models.api.requests.DefaultAuthenticatedRequest;
-import com.saltedge.sca.sdk.models.api.responces.CollectionResponse;
-import com.saltedge.sca.sdk.models.api.responces.RevokeConsentResponse;
+import com.saltedge.sca.sdk.models.api.responces.ScaCollectionResponse;
+import com.saltedge.sca.sdk.models.api.responces.ScaRevokeConsentResponse;
 import com.saltedge.sca.sdk.services.ConsentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -49,8 +49,8 @@ public class ConsentsController {
      * @return response with collection with EncryptedEntity
      */
     @GetMapping
-    public ResponseEntity<CollectionResponse<EncryptedEntity>> getActiveConsents(DefaultAuthenticatedRequest request) {
-        return ResponseEntity.ok(new CollectionResponse<>(consentsService.getActiveConsents(request.getConnection())));
+    public ResponseEntity<ScaCollectionResponse<ScaEncryptedEntity>> getActiveConsents(DefaultAuthenticatedRequest request) {
+        return ResponseEntity.ok(new ScaCollectionResponse<>(consentsService.getActiveConsents(request.getConnection())));
     }
 
     /**
@@ -61,11 +61,11 @@ public class ConsentsController {
      * @return response with RevokeConsentResponse object
      */
     @DeleteMapping("/{" + ScaSdkConstants.KEY_ID + "}")
-    public ResponseEntity<RevokeConsentResponse> revokeConsent(
+    public ResponseEntity<ScaRevokeConsentResponse> revokeConsent(
             @PathVariable(ScaSdkConstants.KEY_ID) @NotEmpty String consentId,
             DefaultAuthenticatedRequest request
     ) {
         boolean result = consentsService.revokeConsent(consentId, request.getConnection());
-        return ResponseEntity.ok(new RevokeConsentResponse(result, consentId));
+        return ResponseEntity.ok(new ScaRevokeConsentResponse(result, consentId));
     }
 }

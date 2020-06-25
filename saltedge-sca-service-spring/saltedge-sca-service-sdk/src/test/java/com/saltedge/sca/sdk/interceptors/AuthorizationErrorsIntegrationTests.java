@@ -22,9 +22,9 @@ package com.saltedge.sca.sdk.interceptors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.saltedge.sca.sdk.TestTools;
-import com.saltedge.sca.sdk.models.api.ErrorResponse;
-import com.saltedge.sca.sdk.models.api.requests.UpdateAuthorizationRequest;
-import com.saltedge.sca.sdk.models.api.responces.CollectionResponse;
+import com.saltedge.sca.sdk.models.api.ScaErrorResponse;
+import com.saltedge.sca.sdk.models.api.requests.ScaUpdateAuthorizationRequest;
+import com.saltedge.sca.sdk.models.api.responces.ScaCollectionResponse;
 import com.saltedge.sca.sdk.models.api.responces.UpdateAuthorizationResponse;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationsRepository;
@@ -49,7 +49,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import javax.naming.NamingException;
 import java.io.FileNotFoundException;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -104,10 +103,10 @@ public class AuthorizationErrorsIntegrationTests {
 		LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
 		headers.add(HEADER_KEY_EXPIRES_AT, expiresAt);
 		headers.add(HEADER_KEY_SIGNATURE, signature);
-		ResponseEntity<ErrorResponse> response = testRestTemplate.exchange(requestUrl, HttpMethod.GET, new HttpEntity<>(headers), ErrorResponse.class);
+		ResponseEntity<ScaErrorResponse> response = testRestTemplate.exchange(requestUrl, HttpMethod.GET, new HttpEntity<>(headers), ScaErrorResponse.class);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-		assertThat(response.getBody()).isEqualTo(new ErrorResponse("AccessTokenMissing", "Access Token is missing."));
+		assertThat(response.getBody()).isEqualTo(new ScaErrorResponse("AccessTokenMissing", "Access Token is missing."));
 	}
 
 	@Test
@@ -116,10 +115,10 @@ public class AuthorizationErrorsIntegrationTests {
 		LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
 		headers.add(HEADER_KEY_ACCESS_TOKEN, "accessToken");
 
-		ResponseEntity<ErrorResponse> response = testRestTemplate.exchange(requestUrl, HttpMethod.GET, new HttpEntity<>(headers), ErrorResponse.class);
+		ResponseEntity<ScaErrorResponse> response = testRestTemplate.exchange(requestUrl, HttpMethod.GET, new HttpEntity<>(headers), ScaErrorResponse.class);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-		assertThat(response.getBody()).isEqualTo(new ErrorResponse("SignatureExpired", "Expired Signature."));
+		assertThat(response.getBody()).isEqualTo(new ScaErrorResponse("SignatureExpired", "Expired Signature."));
 	}
 
 	@Test
@@ -129,10 +128,10 @@ public class AuthorizationErrorsIntegrationTests {
 		headers.add(HEADER_KEY_ACCESS_TOKEN, "accessToken");
 		headers.add(HEADER_KEY_EXPIRES_AT, "0");
 
-		ResponseEntity<ErrorResponse> response = testRestTemplate.exchange(requestUrl, HttpMethod.GET, new HttpEntity<String>(headers), ErrorResponse.class);
+		ResponseEntity<ScaErrorResponse> response = testRestTemplate.exchange(requestUrl, HttpMethod.GET, new HttpEntity<String>(headers), ScaErrorResponse.class);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-		assertThat(response.getBody()).isEqualTo(new ErrorResponse("SignatureExpired", "Expired Signature."));
+		assertThat(response.getBody()).isEqualTo(new ScaErrorResponse("SignatureExpired", "Expired Signature."));
 	}
 
 	@Test
@@ -142,10 +141,10 @@ public class AuthorizationErrorsIntegrationTests {
 		headers.add(HEADER_KEY_ACCESS_TOKEN, "accessToken");
 		headers.add(HEADER_KEY_EXPIRES_AT, String.valueOf(DateTools.nowUtcSeconds() + 60));
 
-		ResponseEntity<ErrorResponse> response = testRestTemplate.exchange(requestUrl, HttpMethod.GET, new HttpEntity<>(headers), ErrorResponse.class);
+		ResponseEntity<ScaErrorResponse> response = testRestTemplate.exchange(requestUrl, HttpMethod.GET, new HttpEntity<>(headers), ScaErrorResponse.class);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-		assertThat(response.getBody()).isEqualTo(new ErrorResponse("SignatureMissing", "Signature is missing."));
+		assertThat(response.getBody()).isEqualTo(new ScaErrorResponse("SignatureMissing", "Signature is missing."));
 	}
 
 	@Test
@@ -157,10 +156,10 @@ public class AuthorizationErrorsIntegrationTests {
 		headers.add(HEADER_KEY_EXPIRES_AT, String.valueOf(DateTools.nowUtcSeconds() + 60));
 		headers.add(HEADER_KEY_SIGNATURE, "signature");
 
-		ResponseEntity<ErrorResponse> response = testRestTemplate.exchange(requestUrl, HttpMethod.GET, new HttpEntity<>(headers), ErrorResponse.class);
+		ResponseEntity<ScaErrorResponse> response = testRestTemplate.exchange(requestUrl, HttpMethod.GET, new HttpEntity<>(headers), ScaErrorResponse.class);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-		assertThat(response.getBody()).isEqualTo(new ErrorResponse("ConnectionNotFound", "Authenticator Connection Not Found."));
+		assertThat(response.getBody()).isEqualTo(new ScaErrorResponse("ConnectionNotFound", "Authenticator Connection Not Found."));
 	}
 
 	@Test
@@ -180,10 +179,10 @@ public class AuthorizationErrorsIntegrationTests {
 		headers.add(HEADER_KEY_EXPIRES_AT, expiresAt);
 		headers.add(HEADER_KEY_SIGNATURE, signature);
 
-		ResponseEntity<ErrorResponse> response = testRestTemplate.exchange(requestUrl, HttpMethod.GET, new HttpEntity<>(headers), ErrorResponse.class);
+		ResponseEntity<ScaErrorResponse> response = testRestTemplate.exchange(requestUrl, HttpMethod.GET, new HttpEntity<>(headers), ScaErrorResponse.class);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-		assertThat(response.getBody()).isEqualTo(new ErrorResponse("InvalidSignature", "Invalid Signature."));
+		assertThat(response.getBody()).isEqualTo(new ScaErrorResponse("InvalidSignature", "Invalid Signature."));
 	}
 
 	@Test
@@ -210,7 +209,7 @@ public class AuthorizationErrorsIntegrationTests {
 		headers.add(HEADER_KEY_EXPIRES_AT, expiresAt);
 		headers.add(HEADER_KEY_SIGNATURE, signature);
 
-		ResponseEntity<CollectionResponse> response = testRestTemplate.exchange(requestUrl, HttpMethod.GET, new HttpEntity<>(headers), CollectionResponse.class);
+		ResponseEntity<ScaCollectionResponse> response = testRestTemplate.exchange(requestUrl, HttpMethod.GET, new HttpEntity<>(headers), ScaCollectionResponse.class);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(Objects.requireNonNull(response.getBody()).data).isEmpty();
@@ -221,7 +220,7 @@ public class AuthorizationErrorsIntegrationTests {
 		String requestUrl = getBaseUrl() + AUTHORIZATIONS_REQUEST_PATH + "/1";
 		String expiresAt = String.valueOf((DateTools.nowUtcSeconds() + 60));
 
-		UpdateAuthorizationRequest body = new UpdateAuthorizationRequest(true, "1234567890");
+		ScaUpdateAuthorizationRequest body = new ScaUpdateAuthorizationRequest(true, "1234567890");
 
 		String rawBody = new ObjectMapper().writeValueAsString(body);
 		String signature = TestTools.createSignature(
