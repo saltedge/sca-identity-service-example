@@ -23,8 +23,8 @@ package com.saltedge.sca.sdk.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.saltedge.sca.sdk.MockMvcTestAbs;
 import com.saltedge.sca.sdk.TestTools;
-import com.saltedge.sca.sdk.models.api.requests.CreateConnectionRequest;
-import com.saltedge.sca.sdk.models.api.responces.CreateConnectionResponse;
+import com.saltedge.sca.sdk.models.api.requests.ScaCreateConnectionRequest;
+import com.saltedge.sca.sdk.models.api.responces.ScaCreateConnectionResponse;
 import com.saltedge.sca.sdk.tools.DateTools;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -37,7 +37,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static com.saltedge.sca.sdk.ScaSdkConstants.*;
 import static com.saltedge.sca.sdk.controllers.ConnectionsController.CONNECTIONS_REQUEST_PATH;
 import static com.saltedge.sca.sdk.tools.UrlTools.DEFAULT_AUTHENTICATOR_RETURN_TO;
-import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -51,10 +50,10 @@ public class ConnectionsControllerIntegrationTests extends MockMvcTestAbs {
 	@Test
 	public void givenValidRequest_whenMakeCreateConnectionRequest_thenReturnOKAndRedirectToEnrollPage() throws Exception {
 		//given
-		given(connectionsService.createConnection(any(CreateConnectionRequest.Data.class), isNull()))
-				.willReturn(CreateConnectionResponse.createResponseWithAuthorizeUrl("2", "https://localhost/admin/enroll?secret=auth_token"));
+		given(connectionsService.createConnection(any(ScaCreateConnectionRequest.Data.class), isNull()))
+				.willReturn(ScaCreateConnectionResponse.createResponseWithAuthorizeUrl("2", "https://localhost/admin/enroll?secret=auth_token"));
 
-		CreateConnectionRequest requestData = new CreateConnectionRequest(new CreateConnectionRequest.Data(
+		ScaCreateConnectionRequest requestData = new ScaCreateConnectionRequest(new ScaCreateConnectionRequest.Data(
 				publicKey,
 				DEFAULT_AUTHENTICATOR_RETURN_TO,
 				"android",
@@ -78,9 +77,9 @@ public class ConnectionsControllerIntegrationTests extends MockMvcTestAbs {
 	@Test
 	public void givenValidRequestWithConnectQueryParam_whenMakeCreateConnectionRequest_thenReturnOKAndReturnTo() throws Exception {
 		//given
-		given(connectionsService.createConnection(any(CreateConnectionRequest.Data.class), eq("connectQuery")))
-				.willReturn(CreateConnectionResponse.createResponseWithAccessToken("1", "access_token"));
-		CreateConnectionRequest requestData = new CreateConnectionRequest(new CreateConnectionRequest.Data(
+		given(connectionsService.createConnection(any(ScaCreateConnectionRequest.Data.class), eq("connectQuery")))
+				.willReturn(ScaCreateConnectionResponse.createResponseWithAccessToken("1", "access_token"));
+		ScaCreateConnectionRequest requestData = new ScaCreateConnectionRequest(new ScaCreateConnectionRequest.Data(
 				publicKey,
 				"authenticator//connect",
 				"android",
@@ -103,7 +102,7 @@ public class ConnectionsControllerIntegrationTests extends MockMvcTestAbs {
 	@Test
 	public void givenInvalidRequest_whenMakeCreateConnectionRequest_thenReturnBadRequest() throws Exception {
 		//given
-		CreateConnectionRequest requestData = new CreateConnectionRequest();
+		ScaCreateConnectionRequest requestData = new ScaCreateConnectionRequest();
 
 		//when
 		mvc.perform(post(CONNECTIONS_REQUEST_PATH)

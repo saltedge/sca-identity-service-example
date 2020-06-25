@@ -30,16 +30,20 @@
                 <table border="1">
                     <tr>
                        <th>ID</th>
-                       <th>Title</th>
-                       <th>Description</th>
+                       <th>TPP Name</th>
+                       <th>CreatedAt</th>
                        <th>ExpiresAt</th>
+                       <th>Type</th>
+                       <th>Status</th>
                     </tr>
                 <#items as item>
                     <tr>
                         <td>${item.id}</td>
-                        <td>${item.title}</td>
-                        <td>${item.description}</td>
-                        <td>${item.expiresAt.toString()}</td>
+                        <td>${item.tppName}</td>
+                        <td>${item.createdAt.toString()}</td>
+                        <td>${item.expirationLocalDate()}</td>
+                        <td>${item.consentType}</td>
+                        <td>${item.status}</td>
                     </tr>
                 </#items>
             </table>

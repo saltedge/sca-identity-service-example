@@ -23,8 +23,8 @@ package com.saltedge.sca.sdk.services;
 import com.saltedge.sca.sdk.MockServiceTestAbs;
 import com.saltedge.sca.sdk.models.ClientConnection;
 import com.saltedge.sca.sdk.models.UserIdentity;
-import com.saltedge.sca.sdk.models.api.requests.CreateConnectionRequest;
-import com.saltedge.sca.sdk.models.api.responces.CreateConnectionResponse;
+import com.saltedge.sca.sdk.models.api.requests.ScaCreateConnectionRequest;
+import com.saltedge.sca.sdk.models.api.responces.ScaCreateConnectionResponse;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionsRepository;
 import org.assertj.core.util.Lists;
@@ -64,7 +64,7 @@ public class ClientConnectionsServiceTests extends MockServiceTestAbs {
 	@Test
 	public void givenUnknownAuthorizationSecret_whenCreateConnection_thenReturnRedirectToAuthPage() {
 		//given
-		CreateConnectionRequest.Data requestData = new CreateConnectionRequest.Data(publicKey, DEFAULT_AUTHENTICATOR_RETURN_TO, "android", "token", null);
+		ScaCreateConnectionRequest.Data requestData = new ScaCreateConnectionRequest.Data(publicKey, DEFAULT_AUTHENTICATOR_RETURN_TO, "android", "token", null);
 		ClientConnectionEntity savedEntity = new ClientConnectionEntity();
 		savedEntity.setId(1L);
 		savedEntity.setPublicKey(requestData.getPublicKey());
@@ -77,7 +77,7 @@ public class ClientConnectionsServiceTests extends MockServiceTestAbs {
 		given(connectionsRepository.save(any(ClientConnectionEntity.class))).willReturn(savedEntity);
 
 		//when
-		CreateConnectionResponse result = testService.createConnection(requestData, "test");
+		ScaCreateConnectionResponse result = testService.createConnection(requestData, "test");
 
 		//then
 		ArgumentCaptor<ClientConnectionEntity> entityCaptor = ArgumentCaptor.forClass(ClientConnectionEntity.class);
@@ -99,7 +99,7 @@ public class ClientConnectionsServiceTests extends MockServiceTestAbs {
 	public void givenUnknownAuthorizationSecret_whenCreateConnection_thenReturnRedirectToReturnPage() {
 		//given
 		UserIdentity identity = new UserIdentity("1");
-		CreateConnectionRequest.Data requestData = new CreateConnectionRequest.Data(publicKey, DEFAULT_AUTHENTICATOR_RETURN_TO, "android", "token", null);
+		ScaCreateConnectionRequest.Data requestData = new ScaCreateConnectionRequest.Data(publicKey, DEFAULT_AUTHENTICATOR_RETURN_TO, "android", "token", null);
 		ClientConnectionEntity savedEntity = new ClientConnectionEntity();
 		savedEntity.setId(1L);
 		savedEntity.setPublicKey(requestData.getPublicKey());
@@ -114,7 +114,7 @@ public class ClientConnectionsServiceTests extends MockServiceTestAbs {
 		given(connectionsRepository.save(any(ClientConnectionEntity.class))).willReturn(savedEntity);
 
 		//when
-		CreateConnectionResponse result = testService.createConnection(requestData, "test");
+		ScaCreateConnectionResponse result = testService.createConnection(requestData, "test");
 
 		//then
 		ArgumentCaptor<ClientConnectionEntity> entityCaptor = ArgumentCaptor.forClass(ClientConnectionEntity.class);

@@ -20,7 +20,7 @@
  */
 package com.saltedge.sca.sdk.errors;
 
-import com.saltedge.sca.sdk.models.api.ErrorResponse;
+import com.saltedge.sca.sdk.models.api.ScaErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -45,9 +45,9 @@ public class ApiExceptionsHandler extends ResponseEntityExceptionHandler {
             NotFound.class,
             Unauthorized.class
     })
-    public ResponseEntity<ErrorResponse> handleCustomException(Exception ex, WebRequest request) {
+    public ResponseEntity<ScaErrorResponse> handleCustomException(Exception ex, WebRequest request) {
         HttpStatus errorStatus = ex instanceof HttpErrorParams ? ((HttpErrorParams) ex).getErrorStatus() : HttpStatus.BAD_REQUEST;
-        ErrorResponse error = new ErrorResponse(ex);
+        ScaErrorResponse error = new ScaErrorResponse(ex);
         log.error(error.toString());
         ex.printStackTrace();
         return ResponseEntity.status(errorStatus).body(error);
@@ -55,8 +55,8 @@ public class ApiExceptionsHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException e) {
-        ErrorResponse error = new ErrorResponse("WrongRequestFormat", e.getMessage());
+    ResponseEntity<ScaErrorResponse> handleConstraintViolationException(ConstraintViolationException e) {
+        ScaErrorResponse error = new ScaErrorResponse("WrongRequestFormat", e.getMessage());
         log.error(e.toString());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }

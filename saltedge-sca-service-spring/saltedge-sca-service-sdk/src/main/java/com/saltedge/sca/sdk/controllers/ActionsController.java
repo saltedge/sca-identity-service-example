@@ -22,7 +22,7 @@ package com.saltedge.sca.sdk.controllers;
 
 import com.saltedge.sca.sdk.ScaSdkConstants;
 import com.saltedge.sca.sdk.models.api.requests.DefaultAuthenticatedRequest;
-import com.saltedge.sca.sdk.models.api.responces.ActionResponse;
+import com.saltedge.sca.sdk.models.api.responces.ScaActionResponse;
 import com.saltedge.sca.sdk.services.ActionsAuthenticateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -51,11 +51,11 @@ public class ActionsController {
      * @return ActionResponse response
      */
     @PutMapping("/{" + ScaSdkConstants.KEY_ACTION_UUID + "}")
-    public ResponseEntity<ActionResponse> onSubmitAction(
+    public ResponseEntity<ScaActionResponse> onSubmitAction(
             @PathVariable(ScaSdkConstants.KEY_ACTION_UUID) @NotEmpty String actionUUID,
             DefaultAuthenticatedRequest request
     ) {
-        ActionResponse result = actionsService.onNewAuthenticatedAction(actionUUID, request.getConnection());
+        ScaActionResponse result = actionsService.onNewAuthenticatedAction(actionUUID, request.getConnection());
         return ResponseEntity.ok(result);
     }
 }
