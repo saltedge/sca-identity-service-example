@@ -24,6 +24,7 @@ import com.saltedge.sca.example.model.ConsentEntity
 import com.saltedge.sca.example.model.ConsentsRepository
 import com.saltedge.sca.example.model.UserEntity
 import com.saltedge.sca.example.services.UsersService
+import com.saltedge.sca.example.tools.AuthorizationTemplate
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_CONNECTION_ID
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_USER_ID
 import com.saltedge.sca.sdk.provider.ScaSDKCallbackService
@@ -108,9 +109,9 @@ class UserDashboardController {
     }
 
     @PostMapping("/authorizations/create")
-    fun createAuthorization(@RequestParam(value = KEY_USER_ID) userId: Long): ModelAndView {
+    fun createDemoPaymentAuthorizationForUser(@RequestParam(value = KEY_USER_ID) userId: Long): ModelAndView {
         val user = usersService.findUser(userId) ?: return ModelAndView("users_dashboard_denied")
-        createAuthorization(user = user)
+        createDemoPaymentAuthorization(user = user)
         return ModelAndView("redirect:$DASHBOARD_PATH/authorizations?user_id=$userId")
     }
 
@@ -126,7 +127,7 @@ class UserDashboardController {
     }
 
     @PostMapping("/consents/create")
-    fun createConsent(@RequestParam(value = KEY_USER_ID) userId: Long): ModelAndView {
+    fun createConsentForUser(@RequestParam(value = KEY_USER_ID) userId: Long): ModelAndView {
         val user = usersService.findUser(userId) ?: return ModelAndView("users_dashboard_denied")
         createConsent(user = user)
         return ModelAndView("redirect:$DASHBOARD_PATH/consents?user_id=$userId")
@@ -136,51 +137,24 @@ class UserDashboardController {
         connectionId?.let { scaSdkService.revokeConnection(it) }
     }
 
-    private fun createAuthorization(user: UserEntity) {
+    private fun createDemoPaymentAuthorization(user: UserEntity) {
         val amount = (1 until 200).random().toDouble()
-        val amountString = "%.2f".format(amount) + " EUR"
-        val fromAccount = "GB1234567890"
-        val toAccount = "Salt Edge Payment Processor"
-        val textDescription = createTextDescription(amountString, fromAccount, toAccount)
+        val amountString = "€ " + "%.2f".format(amount)
+        val fromAccount = "DE89 3704 0044 0532 0130 00"
+        val payeeAccount = "RO49 AAAA 1B31 0075 9384 0000"
+        val payeeName = "Salt Edge SCA Service Example (Spring)"
+        val textDescription = createTextDescription(amountString, fromAccount, payeeName)
 
         scaSdkService.createAuthorization(
                 user.id.toString(),
                 CodeBuilder.generateRandomString(),
-                "Demo Payment for $amountString",
-                createHTMLDescription(amountString, fromAccount, toAccount, textDescription)
+                "Payment confirmation",
+                AuthorizationTemplate.createHTMLDescriptionForPisp(amountString, fromAccount, payeeName, payeeAccount, textDescription)
         )
     }
 
     private fun createTextDescription(amountString: String, fromAccount: String, toAccount: String): String {
         return "Confirm payment of $amountString from account $fromAccount to $toAccount"
-    }
-
-    private fun createHTMLDescription(
-            amountString: String,
-            fromAccount: String,
-            toAccount: String,
-            textDescription: String
-    ): String {
-        return try {
-            val dataMap = mapOf(
-                    "amount" to amountString,
-                    "from_account" to fromAccount,
-                    "to_account" to toAccount,
-                    "payment_description" to textDescription,
-                    "date" to LocalDateTime.now().toString()
-            )
-
-            val templateName = "payment_authorization.ftl"
-            val configuration = Configuration(Configuration.VERSION_2_3_29)
-            configuration.setClassForTemplateLoading(this.javaClass, "/templates/");
-            val temp: Template = configuration.getTemplate(templateName)
-            val out: Writer = StringWriter()
-            temp.process(dataMap, out)
-            out.toString()
-        } catch(e: Exception) {
-            e.printStackTrace()
-            textDescription
-        }
     }
 
     private fun createConsent(user: UserEntity) {

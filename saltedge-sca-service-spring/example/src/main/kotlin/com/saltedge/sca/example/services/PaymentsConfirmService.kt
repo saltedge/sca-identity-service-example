@@ -22,6 +22,7 @@ package com.saltedge.sca.example.services
 
 import com.saltedge.sca.example.model.PaymentOrderEntity
 import com.saltedge.sca.example.model.PaymentOrdersRepository
+import com.saltedge.sca.example.tools.AuthorizationTemplate
 import com.saltedge.sca.sdk.models.AuthorizationContent
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -31,15 +32,18 @@ class PaymentsConfirmService {
     @Autowired
     private lateinit var paymentsRepository: PaymentOrdersRepository
 
-    fun authenticatePaymentOrder(paymentUUID: String, userId: Long): AuthorizationContent? {
+    fun authenticateDemoPaymentOrder(paymentUUID: String, userId: Long): AuthorizationContent? {
         val payment: PaymentOrderEntity = paymentsRepository.findFirstByUuid(paymentUUID) ?: return null
         payment.userId = userId
-        val save = paymentsRepository.save(payment)
-        return AuthorizationContent(
-                paymentUUID,
-                "Payment confirmation",
-                "Confirm payment for \n${payment.payeeName}\n${payment.payeeAddress}\nAmount: ${payment.amount} ${payment.currency}"
+        paymentsRepository.save(payment)
+        val description = AuthorizationTemplate.createHTMLDescriptionForPisp(
+                "${payment.amount} ${payment.currency}",
+                payment.fromAccount,
+                payment.payeeName,
+                payment.payeeAccount,
+                "Confirm payment for ${payment.payeeName} ${payment.payeeAddress}}"
         )
+        return AuthorizationContent(paymentUUID, "Payment confirmation", description)
     }
 
     fun authorizePaymentOrder(paymentUUID: String, confirmed: Boolean) {

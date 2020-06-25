@@ -50,7 +50,13 @@ class PaymentOrderEntity() {
     var currency: String = ""
 
     @Column(nullable = false, length = 4096)
+    var fromAccount: String = ""
+
+    @Column(nullable = false, length = 4096)
     var payeeName: String = ""
+
+    @Column(nullable = false, length = 4096)
+    var payeeAccount: String = ""
 
     @Column(nullable = false, length = 4096)
     var payeeAddress: String = ""

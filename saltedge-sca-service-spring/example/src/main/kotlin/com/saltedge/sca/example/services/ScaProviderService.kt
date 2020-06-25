@@ -24,6 +24,7 @@ import com.saltedge.sca.example.controller.SCA_ACTION_LOGIN
 import com.saltedge.sca.example.controller.SCA_ACTION_PAYMENT
 import com.saltedge.sca.example.controller.SIGN_IN_SCA_PATH
 import com.saltedge.sca.example.model.ConsentsRepository
+import com.saltedge.sca.example.tools.AuthorizationTemplate
 import com.saltedge.sca.example.tools.getApplicationUrl
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_SECRET
 import com.saltedge.sca.sdk.models.*
@@ -140,16 +141,17 @@ class ScaProviderService : ServiceProvider {
     override fun onAuthenticateAction(action: AuthenticateAction): AuthorizationContent? {
         if (action.isExpired) return null
         val userId = action.userId.toLongOrNull() ?: return null
+        val user = usersService.findUser(userId) ?: return null
         return when (action.code) {
             SCA_ACTION_LOGIN -> {
                 AuthorizationContent(
                         action.uuid,
-                        "Access to Salt Edge Admin page",
-                        "Authorize access to Salt Edge Admin page."
+                        "Access to Account Information",
+                        AuthorizationTemplate.createHTMLDescriptionForAisp(user.name, "Salt Edge SCA Service Example (Spring)")
                 )
             }
             SCA_ACTION_PAYMENT -> {
-                paymentsConfirmService.authenticatePaymentOrder(paymentUUID = action.uuid, userId = userId)
+                paymentsConfirmService.authenticateDemoPaymentOrder(paymentUUID = action.uuid, userId = userId)
             }
             else -> null
         }

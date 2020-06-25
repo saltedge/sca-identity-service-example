@@ -22,9 +22,8 @@
             </#if>
         </div>
 
-        <div>
-            <a href="/users/sign_in"><h3>Back to Sign In</h3></a>
-        </div>
+        <a href="/"><h2 class="top-header">Back to the main page</h2></a>
+        <a href="/users/sign_in"><h2 class="top-header">Go to Sign In</h2></a>
     </div>
 </body>
 </html>

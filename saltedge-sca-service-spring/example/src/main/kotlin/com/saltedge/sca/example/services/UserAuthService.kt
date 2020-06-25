@@ -72,7 +72,7 @@ class UserAuthService {
                     secret,
                     userId.toString(),
                     CodeBuilder.generateRandomString(),
-                    Instant.now().plus(1, ChronoUnit.MONTHS)
+                    Instant.now().plus(30, ChronoUnit.DAYS)
             )
         } else {
             scaSdkService.onUserAuthenticationFail(secret, "Invalid Credentials")
