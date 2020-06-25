@@ -61,7 +61,7 @@ class PaymentsController {
             @RequestParam(value = "create_new", required = false) createNew: Boolean?,
             response: HttpServletResponse
     ): ModelAndView {
-        val payment: PaymentOrderEntity = paymentsService.getOrCreatePaymentOrder(savedPaymentUUID, createNew ?: false)
+        val payment: PaymentOrderEntity = paymentsService.getOrCreateDemoPaymentOrder(savedPaymentUUID, createNew ?: false)
         if (savedPaymentUUID != payment.uuid) saveActionCookie(COOKIE_PAYMENT_ACTION, payment.uuid, response)
         return ModelAndView(template)
                 .addObject("payment", payment)
@@ -79,7 +79,7 @@ class PaymentsController {
         val userId: Long? = userAuthService.findUserId(username = username, password = password)
         return when {
             userId != null -> {
-                paymentsConfirmService.authenticatePaymentOrder(paymentUUID, userId)
+                paymentsConfirmService.authenticateDemoPaymentOrder(paymentUUID, userId)
                 ModelAndView("redirect:$PAYMENTS_ORDER_PATH")
             }
             else -> {

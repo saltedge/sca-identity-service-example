@@ -109,5 +109,6 @@
 
         </div>
     </div>
+    <a href="/"><h2 class="top-header">Back to the main page</h2></a>
 </body>
 </html>

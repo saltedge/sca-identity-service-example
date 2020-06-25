@@ -35,10 +35,10 @@ class PaymentsService {
     @Autowired
     private lateinit var scaSdkService: ScaSDKCallbackService
 
-    fun getOrCreatePaymentOrder(savedPaymentUUID: String, createNew: Boolean): PaymentOrderEntity {
+    fun getOrCreateDemoPaymentOrder(savedPaymentUUID: String, createNew: Boolean): PaymentOrderEntity {
         var payment: PaymentOrderEntity? = getPaymentByUUID(savedPaymentUUID)
         if (payment == null || payment.isClosed() || createNew) {
-            payment = createNewPaymentOrder()
+            payment = createNewDemoPaymentOrder()
         }
         return payment
     }
@@ -49,7 +49,7 @@ class PaymentsService {
         return paymentsRepository.findFirstByUuid(paymentUUID)
     }
 
-    private fun createNewPaymentOrder(): PaymentOrderEntity {
+    private fun createNewDemoPaymentOrder(): PaymentOrderEntity {
         val amount = (0 until 200).random().toDouble()
         val payment = PaymentOrderEntity().apply {
             this.uuid = UUID.randomUUID().toString()
@@ -57,6 +57,8 @@ class PaymentsService {
             this.currency = "EUR"
             this.payeeName = "Salt Edge Inc."
             this.payeeAddress = "40 King Street West, Suite 2100, Toronto, Ontario M5H3C2, Canada"
+            this.fromAccount = "DE89 3704 0044 0532 0130 00"
+            this.payeeAccount = "RO49 AAAA 1B31 0075 9384 0000"
         }
         paymentsRepository.save(payment)
         scaSdkService.createAction(SCA_ACTION_PAYMENT, payment.uuid, null)
