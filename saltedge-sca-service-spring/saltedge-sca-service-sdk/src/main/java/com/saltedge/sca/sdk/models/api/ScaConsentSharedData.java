@@ -48,7 +48,7 @@ public class ScaConsentSharedData {
     public ScaConsentSharedData() {
     }
 
-    public ScaConsentSharedData(@NotNull boolean balance, @NotNull boolean transactions) {
+    public ScaConsentSharedData(boolean balance, boolean transactions) {
         this.balance = balance;
         this.transactions = transactions;
     }

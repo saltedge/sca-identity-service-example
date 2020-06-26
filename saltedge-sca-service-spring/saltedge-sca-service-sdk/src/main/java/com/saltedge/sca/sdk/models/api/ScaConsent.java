@@ -106,7 +106,7 @@ public class ScaConsent {
             @NotNull Instant expiresAt,
             @NotEmpty String tppName,
             @NotNull @Valid List<ScaAccount> accounts,
-            @NotNull @Valid ScaConsentSharedData sharedData
+            ScaConsentSharedData sharedData
     ) {
         this.id = id;
         this.userId = userId;
