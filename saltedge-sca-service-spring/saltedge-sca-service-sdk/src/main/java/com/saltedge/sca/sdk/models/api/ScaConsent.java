@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
@@ -86,7 +87,16 @@ public class ScaConsent {
      */
     @JsonProperty(KEY_ACCOUNTS)
     @NotNull
+    @Valid
     public List<ScaAccount> accounts;
+
+    /**
+     * the specific information of shared with third party data type
+     */
+    @JsonProperty(KEY_SHARED_DATA)
+    @NotNull
+    @Valid
+    public ScaConsentSharedData sharedData;
 
     public ScaConsent() {
     }
@@ -96,15 +106,19 @@ public class ScaConsent {
             @NotEmpty String userId,
             @NotNull Instant createdAt,
             @NotNull Instant expiresAt,
+            @NotEmpty String consentType,
             @NotEmpty String tppName,
-            @NotNull List<ScaAccount> accounts
+            @NotNull @Valid List<ScaAccount> accounts,
+            @NotNull @Valid ScaConsentSharedData sharedData
     ) {
         this.id = id;
         this.userId = userId;
         this.createdAt = createdAt;
         this.expiresAt = expiresAt;
+        this.consentType = consentType;
         this.tppName = tppName;
         this.accounts = accounts;
+        this.sharedData = sharedData;
     }
 
     public String getId() {
@@ -133,5 +147,9 @@ public class ScaConsent {
 
     public List<ScaAccount> getAccounts() {
         return accounts;
+    }
+
+    public ScaConsentSharedData getSharedData() {
+        return sharedData;
     }
 }
