@@ -32,6 +32,7 @@ import com.saltedge.sca.sdk.models.Authorization
 import com.saltedge.sca.sdk.models.AuthorizationContent
 import com.saltedge.sca.sdk.models.UserIdentity
 import com.saltedge.sca.sdk.models.api.ScaConsent
+import com.saltedge.sca.sdk.models.api.ScaConsentSharedData
 import com.saltedge.sca.sdk.models.api.ScaProviderConfigurationData
 import com.saltedge.sca.sdk.provider.ServiceProvider
 import com.saltedge.sca.sdk.tools.CodeBuilder
@@ -175,7 +176,8 @@ class ScaProviderService : ServiceProvider {
                     it.createdAt,
                     it.expiresAt,
                     it.tppName,
-                    it.accounts
+                    it.accounts,
+                    ScaConsentSharedData(it.shareBalances, it.shareTransactions)
             )
         }
     }

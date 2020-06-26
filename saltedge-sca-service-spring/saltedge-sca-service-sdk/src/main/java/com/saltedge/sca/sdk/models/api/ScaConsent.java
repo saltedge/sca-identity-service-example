@@ -91,11 +91,9 @@ public class ScaConsent {
     public List<ScaAccount> accounts;
 
     /**
-     * the specific information of shared with third party data type
+     * the specific information of shared with third party data type [optional]
      */
     @JsonProperty(KEY_SHARED_DATA)
-    @NotNull
-    @Valid
     public ScaConsentSharedData sharedData;
 
     public ScaConsent() {
@@ -106,7 +104,6 @@ public class ScaConsent {
             @NotEmpty String userId,
             @NotNull Instant createdAt,
             @NotNull Instant expiresAt,
-            @NotEmpty String consentType,
             @NotEmpty String tppName,
             @NotNull @Valid List<ScaAccount> accounts,
             @NotNull @Valid ScaConsentSharedData sharedData
@@ -115,7 +112,6 @@ public class ScaConsent {
         this.userId = userId;
         this.createdAt = createdAt;
         this.expiresAt = expiresAt;
-        this.consentType = consentType;
         this.tppName = tppName;
         this.accounts = accounts;
         this.sharedData = sharedData;

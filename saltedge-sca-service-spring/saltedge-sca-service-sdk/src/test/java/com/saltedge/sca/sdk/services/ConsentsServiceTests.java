@@ -22,6 +22,7 @@ package com.saltedge.sca.sdk.services;
 
 import com.saltedge.sca.sdk.MockServiceTestAbs;
 import com.saltedge.sca.sdk.models.api.ScaConsent;
+import com.saltedge.sca.sdk.models.api.ScaConsentSharedData;
 import com.saltedge.sca.sdk.models.api.ScaEncryptedEntity;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
 import org.assertj.core.util.Arrays;
@@ -61,7 +62,8 @@ public class ConsentsServiceTests extends MockServiceTestAbs {
 				Instant.parse("2020-01-01T00:00:00Z"),
 				Instant.parse("2020-03-01T00:00:00Z"),
 				"tpp name",
-				Lists.list()
+				Lists.list(),
+				new ScaConsentSharedData(true, true)
 		);
 		given(serviceProvider.getActiveConsents(String.valueOf(connection.getId()))).willReturn(Lists.list(model));
 

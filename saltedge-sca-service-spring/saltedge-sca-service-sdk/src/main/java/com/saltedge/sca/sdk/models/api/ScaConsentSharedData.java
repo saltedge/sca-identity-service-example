@@ -37,14 +37,12 @@ public class ScaConsentSharedData {
      * Balance data of account shared with third party
      */
     @JsonProperty(KEY_BALANCE)
-    @NotNull
     public boolean balance;
 
     /**
      * Transactions data of account shared with third party
      */
     @JsonProperty(KEY_TRANSACTIONS)
-    @NotNull
     public boolean transactions;
 
     public ScaConsentSharedData() {

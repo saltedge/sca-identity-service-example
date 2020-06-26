@@ -23,6 +23,7 @@ package com.saltedge.sca.sdk.tools;
 import com.saltedge.sca.sdk.TestTools;
 import com.saltedge.sca.sdk.models.Authorization;
 import com.saltedge.sca.sdk.models.api.ScaConsent;
+import com.saltedge.sca.sdk.models.api.ScaConsentSharedData;
 import com.saltedge.sca.sdk.models.api.ScaEncryptedEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationEntity;
 import org.assertj.core.util.Lists;
@@ -71,7 +72,8 @@ public class EncryptedEntityFactoryTests {
 				Instant.parse("2020-01-01T00:00:00Z"),
 				Instant.parse("2020-03-01T00:00:00Z"),
 				"tpp name",
-				Lists.list()
+				Lists.list(),
+				new ScaConsentSharedData(true, true)
 		);
 		PublicKey publicKey = TestTools.getRsaPublicKey();
 		PrivateKey privateKey = TestTools.getRsaPrivateKey();
@@ -86,6 +88,6 @@ public class EncryptedEntityFactoryTests {
 
 		String decryptedData = new String(CryptTools.decryptAes(Base64.getDecoder().decode(encryptedObject.data), key, iv));
 
-		assertThat(decryptedData).isEqualTo("{\"id\":\"id1\",\"user_id\":\"userId\",\"created_at\":\"2020-01-01T00:00:00Z\",\"expires_at\":\"2020-03-01T00:00:00Z\",\"consent_type\":\"aisp\",\"tpp_name\":\"tpp name\",\"accounts\":[]}");
+		assertThat(decryptedData).isEqualTo("{\"id\":\"id1\",\"user_id\":\"userId\",\"created_at\":\"2020-01-01T00:00:00Z\",\"expires_at\":\"2020-03-01T00:00:00Z\",\"consent_type\":\"aisp\",\"tpp_name\":\"tpp name\",\"accounts\":[],\"shared_data\":{\"balance\":true,\"transactions\":true}}");
 	}
 }
