@@ -58,12 +58,18 @@ class ConsentEntity() {
     @Column(nullable = false, length = 1024)
     var tppName: String = ""
 
-    @Column(nullable = false, length = 64)
-    var status: String = "open"
-
     @Column(nullable = false, length = 4096)
     @Convert(converter = AccountsConverter::class)
     var accounts: List<ScaAccount> = emptyList()
+
+    @Column(nullable = false)
+    var shareBalances: Boolean = true
+
+    @Column(nullable = false)
+    var shareTransactions: Boolean = true
+
+    @Column(nullable = false, length = 64)
+    var status: String = "open"
 
     @ManyToOne var user: UserEntity? = null
 
