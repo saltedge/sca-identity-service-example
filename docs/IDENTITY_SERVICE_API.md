@@ -709,21 +709,22 @@ curl \
   "user_id": "333",
   "consent_type": "aisp",
   "tpp_name": "Fentury",
-  "accounts": [
-	   {
-		    "name": "Checking account",
-		    "account_number": "22334455",
-		    "sort_code": "11-22-33"
-	   },
-	   {
-		    "name": "Credit card account",
-		    "iban": "NL02ABNA0123456789"
-	   }
+  "accounts": 
+  [
+    {
+      "name": "Checking account",
+      "account_number": "22334455",
+      "sort_code": "11-22-33"
+    },
+    {
+      "name": "Credit card account",
+      "iban": "NL02ABNA0123456789"
+    }
   ],
   "shared_data": {
-		  "balance": true,
-		  "transactions": true
-	 },
+    "balance": true,
+    "transactions": true
+  },
   "created_at": "2020-01-22T08:00:00Z",
   "expires_at": "2020-03-22T08:00:00Z"
 }
