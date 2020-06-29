@@ -687,22 +687,45 @@ curl \
 ```  
   
 #### Consent Object (*Decrypted `data` field*)  
-- `id` **[string]** - an unique ID of Consent model;
-- `connection_id` **[string]** - an unique ID of Mobile Client (Service Connection). Used to decrypt models in the Mobile Application;
-- `title` **[string]** - a human-readable title of Consent;
-- `description` **[string]** - a description of Consent. Can be as human-readable plain text, or HTML encoded page;
-- `created_at` **[datetime]** - specifies the datetime in ISO 8601 (“yyyy-mm-ddTHH:mm:ssZ”) format, when the Consent was created;
-- `expires_at` **[datetime]** - specifies the datetime in ISO 8601 (“yyyy-mm-ddTHH:mm:ssZ”) format, when the Consent should expire.
+- `id` **[string, required]** - an unique ID of Consent model;
+- `user_id` **[string, required]** - an unique ID of User;
+- `consent_type` **[string, required]** - string type of consent. Supported by Salt Edge Authenticator value - `aisp`;
+- `tpp_name` **[string, required]** - the name of the third party provider / application to which user has provided consent;
+- `accounts` **[array, required]** - the information of accounts which were shared by user with third party provider;
+  - `name` **[string, required]** - name of the account that was shared with third party provider;
+  - `account_number` **[string, optional]** - identifier of the account, for the accounts in GBP currency;
+  - `sort_code` **[string, optional]** - identifier of the account, for the accounts in GBP currency;
+  - `iban` **[string, optional]** - identifier of the account, for the accounts in EUR or other European currency;
+- `shared_data` **[object, optional]** - the specific information of shared with third party data type;
+  - `balance` **[boolean, optional]** - type of data shared with third party;
+  - `transactions` **[boolean, optional]** - type of data shared with third party;
+- `created_at` **[datetime, required]** - specifies the datetime in ISO 8601 (“yyyy-mm-ddTHH:mm:ssZ”) format, when the Consent was created;
+- `expires_at` **[datetime, required]** - specifies the datetime in ISO 8601 (“yyyy-mm-ddTHH:mm:ssZ”) format, when the Consent should expire.
 
 #### Consent Object Example (*Decrypted `data` field*)  
 ```json
 {
   "id": "555",
-  "connection_id": "333",
-  "title": "Access Account information",
-  "description": "Access Account information of GB123456789 in Universal Bank",
-  "created_at": "2017-09-22T08:29:03Z",
-  "expires_at": "2017-09-22T08:34:03Z"
+  "user_id": "333",
+  "consent_type": "aisp",
+  "tpp_name": "Fentury",
+  "accounts": [
+	   {
+		    "name": "Checking account",
+		    "account_number": "22334455",
+		    "sort_code": "11-22-33"
+	   },
+	   {
+		    "name": "Credit card account",
+		    "iban": "NL02ABNA0123456789"
+	   }
+  ],
+  "shared_data": {
+		  "balance": true,
+		  "transactions": true
+	 },
+  "created_at": "2020-01-22T08:00:00Z",
+  "expires_at": "2020-03-22T08:00:00Z"
 }
 ```
 
@@ -801,4 +824,4 @@ Java (JDK 8) example:
 ```
 
 ----  
-Copyright © 2019 Salt Edge. https://www.saltedge.com
+Copyright © 2019 - 2020 Salt Edge. https://www.saltedge.com
