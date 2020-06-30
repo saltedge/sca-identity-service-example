@@ -9,7 +9,13 @@
 
     <script language="javascript">
         function refreshStatus() {
-            var action_uuid = "${action_uuid}"
+            <#if action_uuid??>
+                var action_uuid = "${action_uuid}"
+            <#else>
+                clearTimeout(poll);
+                return;
+            </#if>
+
             var token = $('input[name="csrfToken"]').attr('value');
 
             $.ajax({
