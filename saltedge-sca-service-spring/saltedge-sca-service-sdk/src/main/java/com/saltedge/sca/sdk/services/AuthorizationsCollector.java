@@ -21,7 +21,7 @@
 package com.saltedge.sca.sdk.services;
 
 import com.saltedge.sca.sdk.errors.NotFound;
-import com.saltedge.sca.sdk.models.api.EncryptedEntity;
+import com.saltedge.sca.sdk.models.api.ScaEncryptedEntity;
 import com.saltedge.sca.sdk.tools.EncryptedEntityFactory;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationsRepository;
@@ -44,7 +44,7 @@ public class AuthorizationsCollector {
      * @param connection to Client Authenticator with RSA Public Key
      * @return list of Encrypted Authorizations
      */
-    public static List<EncryptedEntity> collectActiveAuthorizations(
+    public static List<ScaEncryptedEntity> collectActiveAuthorizations(
             AuthorizationsRepository authorizationsRepository,
             ClientConnectionEntity connection
     ) {
@@ -68,7 +68,7 @@ public class AuthorizationsCollector {
      * @param authorizationId of required entity
      * @return EncryptedAuthorization object
      */
-    public static EncryptedEntity collectActiveAuthorization(
+    public static ScaEncryptedEntity collectActiveAuthorization(
             AuthorizationsRepository authorizationsRepository,
             ClientConnectionEntity connection,
             Long authorizationId

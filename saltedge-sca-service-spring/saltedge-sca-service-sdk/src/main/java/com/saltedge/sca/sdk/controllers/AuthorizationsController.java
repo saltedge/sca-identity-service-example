@@ -21,11 +21,11 @@
 package com.saltedge.sca.sdk.controllers;
 
 import com.saltedge.sca.sdk.ScaSdkConstants;
-import com.saltedge.sca.sdk.models.api.EncryptedEntity;
+import com.saltedge.sca.sdk.models.api.ScaEncryptedEntity;
 import com.saltedge.sca.sdk.models.api.requests.DefaultAuthenticatedRequest;
-import com.saltedge.sca.sdk.models.api.requests.UpdateAuthorizationRequest;
-import com.saltedge.sca.sdk.models.api.responces.AuthorizationResponse;
-import com.saltedge.sca.sdk.models.api.responces.CollectionResponse;
+import com.saltedge.sca.sdk.models.api.requests.ScaUpdateAuthorizationRequest;
+import com.saltedge.sca.sdk.models.api.responces.ScaAuthorizationResponse;
+import com.saltedge.sca.sdk.models.api.responces.ScaCollectionResponse;
 import com.saltedge.sca.sdk.models.api.responces.UpdateAuthorizationResponse;
 import com.saltedge.sca.sdk.services.AuthorizationsConfirmService;
 import com.saltedge.sca.sdk.services.AuthorizationsService;
@@ -53,24 +53,24 @@ public class AuthorizationsController {
     private AuthorizationsConfirmService authorizationsConfirmService;
 
     @GetMapping
-    public ResponseEntity<CollectionResponse<EncryptedEntity>> getActiveAuthorizations(DefaultAuthenticatedRequest request) {
-        List<EncryptedEntity> result = authorizationsService.getActiveAuthorizations(request.getConnection());
-        return ResponseEntity.ok(new CollectionResponse<>(result));
+    public ResponseEntity<ScaCollectionResponse<ScaEncryptedEntity>> getActiveAuthorizations(DefaultAuthenticatedRequest request) {
+        List<ScaEncryptedEntity> result = authorizationsService.getActiveAuthorizations(request.getConnection());
+        return ResponseEntity.ok(new ScaCollectionResponse<>(result));
     }
 
     @GetMapping("/{" + ScaSdkConstants.KEY_AUTHORIZATION_ID + "}")
-    public ResponseEntity<AuthorizationResponse> getActiveAuthorization(
+    public ResponseEntity<ScaAuthorizationResponse> getActiveAuthorization(
             @PathVariable(ScaSdkConstants.KEY_AUTHORIZATION_ID) @NotNull Long authorizationId,
             DefaultAuthenticatedRequest request
     ) {
-        EncryptedEntity authorization = authorizationsService.getActiveAuthorization(request.getConnection(), authorizationId);
-        return ResponseEntity.ok(new AuthorizationResponse(authorization));
+        ScaEncryptedEntity authorization = authorizationsService.getActiveAuthorization(request.getConnection(), authorizationId);
+        return ResponseEntity.ok(new ScaAuthorizationResponse(authorization));
     }
 
     @PutMapping("/{" + ScaSdkConstants.KEY_AUTHORIZATION_ID + "}")
     public ResponseEntity<UpdateAuthorizationResponse> confirmAuthorization(
             @PathVariable(ScaSdkConstants.KEY_AUTHORIZATION_ID) @NotNull Long authorizationId,
-            @Valid UpdateAuthorizationRequest request
+            @Valid ScaUpdateAuthorizationRequest request
     ) {
         boolean result = authorizationsConfirmService.confirmAuthorization(
                 request.getConnection(),

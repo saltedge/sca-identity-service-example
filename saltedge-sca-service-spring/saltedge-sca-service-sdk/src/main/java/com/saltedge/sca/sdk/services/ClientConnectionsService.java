@@ -23,8 +23,8 @@ package com.saltedge.sca.sdk.services;
 import com.saltedge.sca.sdk.ScaSdkConstants;
 import com.saltedge.sca.sdk.models.ClientConnection;
 import com.saltedge.sca.sdk.models.UserIdentity;
-import com.saltedge.sca.sdk.models.api.requests.CreateConnectionRequest;
-import com.saltedge.sca.sdk.models.api.responces.CreateConnectionResponse;
+import com.saltedge.sca.sdk.models.api.requests.ScaCreateConnectionRequest;
+import com.saltedge.sca.sdk.models.api.responces.ScaCreateConnectionResponse;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionsRepository;
 import com.saltedge.sca.sdk.provider.ServiceProvider;
@@ -53,8 +53,8 @@ public class ClientConnectionsService {
     @Autowired
     private ServiceProvider serviceProvider;
 
-    public CreateConnectionResponse createConnection(
-            @NotNull CreateConnectionRequest.Data data,
+    public ScaCreateConnectionResponse createConnection(
+            @NotNull ScaCreateConnectionRequest.Data data,
             String authorizationSessionSecret
     ) {
         UserIdentity userIdentity = null;
@@ -65,9 +65,9 @@ public class ClientConnectionsService {
 
         String connectionId = String.valueOf(connection.getId());
         if (connection.isAuthenticated()) {
-            return CreateConnectionResponse.createResponseWithAccessToken(connectionId, connection.getAccessToken());
+            return ScaCreateConnectionResponse.createResponseWithAccessToken(connectionId, connection.getAccessToken());
         } else {
-            return CreateConnectionResponse.createResponseWithAuthorizeUrl(
+            return ScaCreateConnectionResponse.createResponseWithAuthorizeUrl(
                     connectionId,
                     serviceProvider.getAuthorizationPageUrl(connection.getAuthSessionSecret())
             );
@@ -105,7 +105,7 @@ public class ClientConnectionsService {
     }
 
     private ClientConnectionEntity createNewClientConnectionEntity(
-            CreateConnectionRequest.Data requestData,
+            ScaCreateConnectionRequest.Data requestData,
             UserIdentity userIdentity
     ) {
         ClientConnectionEntity entity = new ClientConnectionEntity();

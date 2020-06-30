@@ -21,6 +21,8 @@
 package com.saltedge.sca.sdk.models.persistent;
 
 import com.saltedge.sca.sdk.models.BaseEntityAbs;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -39,12 +41,12 @@ abstract public class BaseEntity implements BaseEntityAbs {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
+    @CreationTimestamp
+    @Column(updatable = false)
     private Instant createdAt;
 
-    @LastModifiedDate
-    @Column(nullable = false)
+    @UpdateTimestamp
+    @Column
     private Instant updatedAt;
 
     public Long getId() {

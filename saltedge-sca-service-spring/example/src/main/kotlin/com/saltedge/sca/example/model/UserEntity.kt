@@ -33,13 +33,13 @@ class UserEntity() {
     @GeneratedValue(strategy= GenerationType.AUTO)
     public var id: Long = 0
 
-    @Column
     @CreationTimestamp
-    private val createdAt: Instant? = null
+    @Column(updatable = false)
+    val createdAt: Instant? = null
 
-    @Column
     @UpdateTimestamp
-    private val updatedAt: Instant? = null
+    @Column
+    var updatedAt: Instant? = null
 
     @Column(nullable = false, length = 64, unique = true)
     var name: String = ""

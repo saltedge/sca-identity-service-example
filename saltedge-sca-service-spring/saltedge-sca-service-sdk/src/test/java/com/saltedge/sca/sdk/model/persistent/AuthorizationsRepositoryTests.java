@@ -53,7 +53,5 @@ public class AuthorizationsRepositoryTests {
         assertThat(repository.findById(1L).orElse(null)).isEqualTo(savedModel);
 
         assertThat(savedModel.getId()).isEqualTo(1L);
-        assertThat(savedModel.getCreatedAt().toString()).isNotEmpty();
-        assertThat(savedModel.getUpdatedAt().toString()).isNotEmpty();
     }
 }

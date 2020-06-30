@@ -21,6 +21,8 @@
 package com.saltedge.sca.sdk.provider;
 
 import com.saltedge.sca.sdk.models.*;
+import com.saltedge.sca.sdk.models.api.ScaConsent;
+import com.saltedge.sca.sdk.models.api.ScaProviderConfigurationData;
 
 import java.util.List;
 
@@ -31,8 +33,23 @@ import java.util.List;
  */
 public interface ServiceProvider {
     /**
+     * Gives to SDK human readable Bank name for notifications
+     *
+     * @return name string
+     */
+    String getProviderName();
+
+    /**
+     * Gives to SDK SCA Service configuration data.
+     *
+     * @return SCAProviderConfigurationData object
+     * @see ScaProviderConfigurationData
+     */
+    ScaProviderConfigurationData getProviderConfiguration();
+
+    /**
      * Provides URL of authentication page of Service Provider
-     * for redirection in Authenticator app.
+     * for redirection in Authenticator app for authentication step of enrollment flow.
      *
      * @param enrollSessionSecret code related to Authenticator enrollment flow (Created by SDK)
      * @return url string
@@ -46,36 +63,9 @@ public interface ServiceProvider {
      *
      * @param sessionSecret code. (Created by Service Provider)
      * @return UserIdentity object with userId (optional) and accessToken (optional) value.
+     * @see UserIdentity
      */
     UserIdentity getUserIdByAuthenticationSessionSecret(String sessionSecret);
-
-    /**
-     * Provides code name of Service Provider
-     *
-     * @return code
-     */
-    String getProviderCode();
-
-    /**
-     * Provides human readable name of Service Provider
-     *
-     * @return name
-     */
-    String getProviderName();
-
-    /**
-     * Provides logo image of Service Provider
-     *
-     * @return url string
-     */
-    String getProviderLogoUrl();
-
-    /**
-     * Provides email of Service Provider for clients support
-     *
-     * @return email string
-     */
-    String getProviderSupportEmail();
 
     /**
      * Notifies application about receiving new authenticated Action request.
@@ -84,6 +74,8 @@ public interface ServiceProvider {
      * @param action entity with uuid and userId
      * @return return authorization content (title, description) for creating Authorization object (SCA confirmation),
      *         if null then user will receive Instant action error.
+     * @see AuthenticateAction
+     * @see AuthorizationContent
      */
     AuthorizationContent onAuthenticateAction(AuthenticateAction action);
 
@@ -91,6 +83,7 @@ public interface ServiceProvider {
      * Notifies application about confirmation or denying of SCA Authorization
      *
      * @param authorization an entity with unique authorizationCode and isConfirmed fields
+     * @see Authorization
      */
     void onAuthorizationConfirmed(Authorization authorization);
 
@@ -100,8 +93,9 @@ public interface ServiceProvider {
      *
      * @param userId an unique identifier of User (Customer) of ASPSP (Financial Institution)
      * @return list of Consent objects
+     * @see ScaConsent
      */
-    List<Consent> getActiveConsents(String userId);
+    List<ScaConsent> getActiveConsents(String userId);
 
     /**
      * Revoke Consent. Mark as revoked and notify concerned parties.

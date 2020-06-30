@@ -21,8 +21,8 @@
 package com.saltedge.sca.sdk.services;
 
 import com.saltedge.sca.sdk.models.ClientConnection;
-import com.saltedge.sca.sdk.models.Consent;
-import com.saltedge.sca.sdk.models.api.EncryptedEntity;
+import com.saltedge.sca.sdk.models.api.ScaConsent;
+import com.saltedge.sca.sdk.models.api.ScaEncryptedEntity;
 import com.saltedge.sca.sdk.provider.ServiceProvider;
 import com.saltedge.sca.sdk.tools.EncryptedEntityFactory;
 import org.slf4j.Logger;
@@ -44,16 +44,14 @@ public class ConsentsService {
     @Autowired
     private ServiceProvider serviceProvider;
 
-    public List<EncryptedEntity> getActiveConsents(@NotNull ClientConnection clientConnection) {
+    public List<ScaEncryptedEntity> getActiveConsents(@NotNull ClientConnection clientConnection) {
         PublicKey publicKey = clientConnection.getPublicKey();
-
-        List<Consent> consents = serviceProvider.getActiveConsents(clientConnection.getUserId());
+        List<ScaConsent> consents = serviceProvider.getActiveConsents(clientConnection.getUserId());
 
         return consents.stream()
                 .map(item -> EncryptedEntityFactory.encryptConsent(item, clientConnection.getId(), publicKey))
                 .collect(Collectors.toList());
     }
-
 
     public boolean revokeConsent(@NotEmpty String consentId, @NotNull ClientConnection connection) {
         return serviceProvider.revokeConsent(connection.getUserId(), consentId);

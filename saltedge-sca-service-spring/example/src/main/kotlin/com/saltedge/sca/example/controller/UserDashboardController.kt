@@ -27,6 +27,7 @@ import com.saltedge.sca.example.services.UsersService
 import com.saltedge.sca.example.tools.AuthorizationTemplate
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_CONNECTION_ID
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_USER_ID
+import com.saltedge.sca.sdk.models.api.ScaAccount
 import com.saltedge.sca.sdk.provider.ScaSDKCallbackService
 import com.saltedge.sca.sdk.tools.CodeBuilder
 import freemarker.template.Configuration
@@ -158,11 +159,14 @@ class UserDashboardController {
     }
 
     private fun createConsent(user: UserEntity) {
-        val expiresAt = Instant.now().plus(1, ChronoUnit.DAYS)
         val consent = ConsentEntity(
-                title = "Consent title",
-                description = "Consent will expire at: $expiresAt",
-                expiresAt = expiresAt,
+                tppName = "Example Dashboard",
+                accounts = listOf(
+                        ScaAccount("Checking account (GB)", "22334455", "11-22-33", null),
+                        ScaAccount("Credit card account (DE)", null, null, "DE89 3704 0044 0532 0130 00"),
+                        ScaAccount("Demo account", null, null, null)
+                ),
+                expiresAt = Instant.now().plus(7, ChronoUnit.DAYS),
                 user = user
         )
         consentsRepository.save(consent)

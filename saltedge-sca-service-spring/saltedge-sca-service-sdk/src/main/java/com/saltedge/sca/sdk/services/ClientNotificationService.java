@@ -22,8 +22,8 @@ package com.saltedge.sca.sdk.services;
 
 import com.saltedge.sca.sdk.models.Authorization;
 import com.saltedge.sca.sdk.models.ClientConnection;
-import com.saltedge.sca.sdk.models.api.requests.Notification;
-import com.saltedge.sca.sdk.models.api.requests.NotificationsRequest;
+import com.saltedge.sca.sdk.models.api.ScaNotification;
+import com.saltedge.sca.sdk.models.api.requests.ScaNotificationsRequest;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionsRepository;
 import com.saltedge.sca.sdk.provider.ServiceProvider;
 import com.saltedge.sca.sdk.tools.EnvironmentTools;
@@ -74,8 +74,8 @@ public class ClientNotificationService {
             headers.add("Content-Type", "application/json");
             headers.add("App-id", pushServiceAppId);
             headers.add("App-secret", pushServiceAppSecret);
-            NotificationsRequest body = new NotificationsRequest(createNotificationsList(connections, authorization, providerName));
-            HttpEntity<NotificationsRequest> request = new HttpEntity<>(body, headers);
+            ScaNotificationsRequest body = new ScaNotificationsRequest(createNotificationsList(connections, authorization, providerName));
+            HttpEntity<ScaNotificationsRequest> request = new HttpEntity<>(body, headers);
 
             try {
                 ResponseEntity<String> result = restTemplate.postForEntity(Objects.requireNonNull(pushServiceUrl), request, String.class);
@@ -85,15 +85,15 @@ public class ClientNotificationService {
         }
     }
 
-    private List<Notification> createNotificationsList(List<ClientConnection> connections, Authorization authorization, String providerName) {
+    private List<ScaNotification> createNotificationsList(List<ClientConnection> connections, Authorization authorization, String providerName) {
         return connections.stream()
                 .filter(item -> !StringUtils.isEmpty(item.getPushToken()))
                 .map(item -> createNotification(item, authorization, providerName))
                 .collect(Collectors.toList());
     }
 
-    private Notification createNotification(ClientConnection connection, Authorization authorization, String providerName) {
-        return new Notification(
+    private ScaNotification createNotification(ClientConnection connection, Authorization authorization, String providerName) {
+        return new ScaNotification(
                 "Authorization Request",
                 providerName + " is requesting authorization. Tap to proceed.",
                 connection.getPushToken(),
