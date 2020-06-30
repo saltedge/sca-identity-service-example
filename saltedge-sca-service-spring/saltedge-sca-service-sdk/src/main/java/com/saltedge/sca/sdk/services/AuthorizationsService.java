@@ -23,7 +23,7 @@ package com.saltedge.sca.sdk.services;
 import com.saltedge.sca.sdk.ScaSdkConstants;
 import com.saltedge.sca.sdk.models.Authorization;
 import com.saltedge.sca.sdk.models.AuthorizationContent;
-import com.saltedge.sca.sdk.models.api.EncryptedEntity;
+import com.saltedge.sca.sdk.models.api.ScaEncryptedEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationsRepository;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
@@ -77,11 +77,11 @@ public class AuthorizationsService {
         return authorizationsRepository.findById(authorizationId).orElse(null);
     }
 
-    public List<EncryptedEntity> getActiveAuthorizations(@NotNull ClientConnectionEntity connection) {
+    public List<ScaEncryptedEntity> getActiveAuthorizations(@NotNull ClientConnectionEntity connection) {
         return AuthorizationsCollector.collectActiveAuthorizations(authorizationsRepository, connection);
     }
 
-    public EncryptedEntity getActiveAuthorization(@NotNull ClientConnectionEntity connection, @NotNull Long authorizationId) {
+    public ScaEncryptedEntity getActiveAuthorization(@NotNull ClientConnectionEntity connection, @NotNull Long authorizationId) {
         return AuthorizationsCollector.collectActiveAuthorization(authorizationsRepository, connection, authorizationId);
     }
 

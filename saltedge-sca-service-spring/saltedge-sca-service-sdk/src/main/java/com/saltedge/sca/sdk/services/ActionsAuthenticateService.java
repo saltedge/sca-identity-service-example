@@ -24,7 +24,7 @@ import com.saltedge.sca.sdk.errors.BadRequest;
 import com.saltedge.sca.sdk.errors.NotFound;
 import com.saltedge.sca.sdk.models.Authorization;
 import com.saltedge.sca.sdk.models.AuthorizationContent;
-import com.saltedge.sca.sdk.models.api.responces.ActionResponse;
+import com.saltedge.sca.sdk.models.api.responces.ScaActionResponse;
 import com.saltedge.sca.sdk.models.persistent.AuthenticateActionEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthenticateActionsRepository;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
@@ -49,11 +49,11 @@ public class ActionsAuthenticateService {
     @Autowired
     private ServiceProvider serviceProvider;
 
-    public ActionResponse onNewAuthenticatedAction(
+    public ScaActionResponse onNewAuthenticatedAction(
             @NotEmpty String actionUUID,
             @NotNull ClientConnectionEntity connection
     ) throws NotFound.ActionNotFound {
-        ActionResponse response;
+        ScaActionResponse response;
         AuthenticateActionEntity action = actionsRepository.findFirstByUuid(actionUUID);
         if (action == null) throw new NotFound.ActionNotFound();
         if (action.isExpired()) throw new BadRequest.ActionExpired();
@@ -65,9 +65,9 @@ public class ActionsAuthenticateService {
             Authorization authorization = authorizationsService.createAuthorization(connection.getUserId(), authorizationContent);
             String authorizationIdValue = String.valueOf(authorization.getId());
             action.setAuthorizationId(authorizationIdValue);
-            response = new ActionResponse(true, String.valueOf(connection.getId()), authorizationIdValue);
+            response = new ScaActionResponse(true, String.valueOf(connection.getId()), authorizationIdValue);
         } else {
-            response = new ActionResponse(false, null, null);
+            response = new ScaActionResponse(false, null, null);
         }
         actionsRepository.save(action);
         return response;

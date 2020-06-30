@@ -21,7 +21,7 @@
 package com.saltedge.sca.sdk.model.request;
 
 import com.saltedge.sca.sdk.ValidationTestAbs;
-import com.saltedge.sca.sdk.models.api.requests.CreateConnectionRequest;
+import com.saltedge.sca.sdk.models.api.requests.ScaCreateConnectionRequest;
 import org.junit.Test;
 
 import static com.saltedge.sca.sdk.tools.UrlTools.DEFAULT_AUTHENTICATOR_RETURN_TO;
@@ -40,11 +40,11 @@ public class CreateConnectionRequestTests extends ValidationTestAbs {
 
     @Test
     public void validateTest() {
-        CreateConnectionRequest model = new CreateConnectionRequest();
+        ScaCreateConnectionRequest model = new ScaCreateConnectionRequest();
 
         assertThat(validator.validate(model)).isNotEmpty();
 
-        model.setData(new CreateConnectionRequest.Data());
+        model.setData(new ScaCreateConnectionRequest.Data());
 
         assertThat(validator.validate(model)).isNotEmpty();
 

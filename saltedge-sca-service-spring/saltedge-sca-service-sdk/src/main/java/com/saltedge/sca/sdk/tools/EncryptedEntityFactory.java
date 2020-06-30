@@ -23,8 +23,8 @@ package com.saltedge.sca.sdk.tools;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.saltedge.sca.sdk.ScaSdkConstants;
 import com.saltedge.sca.sdk.models.Authorization;
-import com.saltedge.sca.sdk.models.Consent;
-import com.saltedge.sca.sdk.models.api.EncryptedEntity;
+import com.saltedge.sca.sdk.models.api.ScaConsent;
+import com.saltedge.sca.sdk.models.api.ScaEncryptedEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,7 @@ public class EncryptedEntityFactory {
      * @param publicKey material is used to encrypt KEY, IV resulting fields
      * @return EncryptedEntity object
      */
-    public static EncryptedEntity encryptAuthorization(
+    public static ScaEncryptedEntity encryptAuthorization(
             Authorization authorization,
             Long connectionId,
             PublicKey publicKey
@@ -81,12 +81,11 @@ public class EncryptedEntityFactory {
      * @param publicKey material is used to encrypt KEY, IV resulting fields
      * @return EncryptedEntity object
      */
-    public static EncryptedEntity encryptConsent(
-            Consent consent,
+    public static ScaEncryptedEntity encryptConsent(
+            ScaConsent consent,
             Long connectionId,
             PublicKey publicKey
     ) {
-        consent.connectionId = connectionId.toString();
         return createEncryptedEntity(
                 String.valueOf(consent.getId()),
                 String.valueOf(connectionId),
@@ -95,32 +94,32 @@ public class EncryptedEntityFactory {
         );
     }
 
-    private static EncryptedEntity createEncryptedEntity(
+    private static ScaEncryptedEntity createEncryptedEntity(
             String entityId,
             String connectionId,
             Object dataObject,
             PublicKey publicKey
     ) {
-        EncryptedEntity encryptedEntity;
+        ScaEncryptedEntity encryptedEntity;
         try {
             String jsonString = JsonTools.createDefaultMapper().writeValueAsString(dataObject);
             encryptedEntity = createEncryptedEntity(jsonString, publicKey);
         } catch (JsonProcessingException e) {
             log.error("createEncryptedEntity", e);
-            encryptedEntity = new EncryptedEntity();
+            encryptedEntity = new ScaEncryptedEntity();
         }
         encryptedEntity.id = entityId;
         encryptedEntity.connectionId = connectionId;
         return encryptedEntity;
     }
 
-    private static EncryptedEntity createEncryptedEntity(String data, PublicKey publicKey) {
+    private static ScaEncryptedEntity createEncryptedEntity(String data, PublicKey publicKey) {
         byte[] key = new byte[32];
         new SecureRandom().nextBytes(key);
         byte[] iv = new byte[16];
         new SecureRandom().nextBytes(iv);
 
-        return new EncryptedEntity(
+        return new ScaEncryptedEntity(
                 "AES-256-CBC",
                 Base64.getEncoder().encodeToString(CryptTools.encryptRsa(key, publicKey)),
                 Base64.getEncoder().encodeToString(CryptTools.encryptRsa(iv, publicKey)),

@@ -1,6 +1,19 @@
 [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
 # Salt Edge Authenticator SCA Service SDK Changelog
 
+## 1.3.0 (2020-06-30)
+### Add 
+* ServiceProvider.getProviderConfiguration()
+
+### Change
+* change Configuration model: add 
+* change Consent model
+
+### Remove
+* ServiceProvider.getProviderCode()
+* ServiceProvider.getProviderSupportEmail()
+* ServiceProvider.getProviderLogoUrl()
+
 ## 1.2.1 (2020-06-16)
 ### Change
 * change ServiceProvider.onAuthenticateAction() result type to AuthorizationContent

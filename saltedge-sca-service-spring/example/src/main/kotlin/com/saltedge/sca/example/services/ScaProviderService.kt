@@ -27,9 +27,16 @@ import com.saltedge.sca.example.model.ConsentsRepository
 import com.saltedge.sca.example.tools.AuthorizationTemplate
 import com.saltedge.sca.example.tools.getApplicationUrl
 import com.saltedge.sca.sdk.ScaSdkConstants.KEY_SECRET
-import com.saltedge.sca.sdk.models.*
+import com.saltedge.sca.sdk.models.AuthenticateAction
+import com.saltedge.sca.sdk.models.Authorization
+import com.saltedge.sca.sdk.models.AuthorizationContent
+import com.saltedge.sca.sdk.models.UserIdentity
+import com.saltedge.sca.sdk.models.api.ScaConsent
+import com.saltedge.sca.sdk.models.api.ScaConsentSharedData
+import com.saltedge.sca.sdk.models.api.ScaProviderConfigurationData
 import com.saltedge.sca.sdk.provider.ServiceProvider
 import com.saltedge.sca.sdk.tools.CodeBuilder
+import com.saltedge.sca.sdk.tools.EnvironmentTools
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -64,30 +71,19 @@ class ScaProviderService : ServiceProvider {
     }
 
     /**
-     * Provides email of Service Provider for clients support
+     * Gives to SDK SCA Service configuration data.
      *
-     * @return email string
+     * @return ScaProviderConfigurationData щиосе
      */
-    override fun getProviderSupportEmail(): String {
-        return "support@spring-demobank.com"
-    }
-
-    /**
-     * Provides code name of Service Provider
-     *
-     * @return name
-     */
-    override fun getProviderCode(): String {
-        return "spring-bank"
-    }
-
-    /**
-     * Provides logo image of Service Provider
-     *
-     * @return url string
-     */
-    override fun getProviderLogoUrl(): String {
-        return "https://s3-media1.fl.yelpcdn.com/bphoto/9J0LUrYkKYuwcICwQztkxw/ls.jpg"
+    override fun getProviderConfiguration(): ScaProviderConfigurationData {
+        return ScaProviderConfigurationData(
+                EnvironmentTools.getScaServiceUrl(env)!!,
+                "spring-bank",
+                providerName,
+                "https://s3-media1.fl.yelpcdn.com/bphoto/9J0LUrYkKYuwcICwQztkxw/ls.jpg",
+                "support@spring-demobank.com",
+                true
+        )
     }
 
     /**
@@ -169,28 +165,30 @@ class ScaProviderService : ServiceProvider {
         )
     }
 
-    override fun getActiveConsents(userId: String?): List<Consent> {
-        return consentsRepository.findByUserIdAndRevokedFalseAndExpiresAtGreaterThan(
+    override fun getActiveConsents(userId: String?): List<ScaConsent> {
+        return consentsRepository.findByUserIdAndStatusNotAndExpiresAtGreaterThan(
                 userId = userId?.toLongOrNull() ?: return emptyList(),
                 currentDate = Instant.now()
         ).map {
-            Consent(
-                it.id.toString(),
-                it.title,
-                it.description,
-                it.createdAt,
-                it.expiresAt
+            ScaConsent(
+                    it.id.toString(),
+                    it.user?.id?.toString() ?: "",
+                    it.createdAt,
+                    it.expiresAt,
+                    it.tppName,
+                    it.accounts,
+                    ScaConsentSharedData(it.shareBalances, it.shareTransactions)
             )
         }
     }
 
     override fun revokeConsent(userId: String?, consentId: String?): Boolean {
-        var consent = consentsRepository.findFirstByIdAndUserId(
+        val consent = consentsRepository.findFirstByIdAndUserId(
                 id = consentId?.toLongOrNull() ?: return false,
                 userId = userId?.toLongOrNull() ?: return false
         ) ?: return false
-        consent.revoked = true
-        consent = consentsRepository.save(consent)
-        return consent.revoked
+        consent.revoke()
+        consentsRepository.save(consent)
+        return true
     }
 }

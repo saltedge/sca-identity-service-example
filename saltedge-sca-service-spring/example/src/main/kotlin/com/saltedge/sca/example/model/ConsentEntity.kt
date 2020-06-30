@@ -20,53 +20,84 @@
  */
 package com.saltedge.sca.example.model
 
+import com.saltedge.sca.sdk.models.api.ScaAccount
 import com.saltedge.sca.sdk.tools.DateTools
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
 import java.time.Instant
+import java.time.ZoneOffset
 import javax.persistence.*
 
+/**
+ * Consent DB model
+ * @see com.saltedge.sca.sdk.models.api.ScaConsent
+ * @see com.saltedge.sca.sdk.models.api.ScaAccount
+ */
 @Entity
 class ConsentEntity() {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     var id: Long = 0
 
-    @Column
     @CreationTimestamp
-    var createdAt: Instant? = null
+    @Column(updatable = false)
+    val createdAt: Instant? = null
 
-    @Column
     @UpdateTimestamp
+    @Column
     var updatedAt: Instant? = null
-
-    @Column(nullable = false, length = 1024)
-    var title: String = ""
-
-    @Column(nullable = false, length = 4096)
-    var description: String = ""
 
     @Column
     var expiresAt: Instant? = null
 
-    @Column
-    var revoked = false
+    @Column(nullable = false, length = 64)
+    var consentType: String = "aisp"
+
+    @Column(nullable = false, length = 1024)
+    var tppName: String = ""
+
+    @Column(nullable = false, length = 4096)
+    @Convert(converter = AccountsConverter::class)
+    var accounts: List<ScaAccount> = emptyList()
+
+    @Column(nullable = false)
+    var shareBalances: Boolean = true
+
+    @Column(nullable = false)
+    var shareTransactions: Boolean = true
+
+    @Column(nullable = false, length = 64)
+    var status: String = "open"
 
     @ManyToOne var user: UserEntity? = null
 
     constructor(
-            title: String,
-            description: String,
+            tppName: String,
+            accounts: List<ScaAccount>,
             expiresAt: Instant,
             user: UserEntity
     ) : this() {
-        this.title = title
-        this.description = description
+        this.tppName = tppName
+        this.accounts = accounts
         this.expiresAt = expiresAt
         this.user = user
     }
 
     fun isExpired(): Boolean {
         return DateTools.dateIsExpired(expiresAt)
+    }
+
+    fun expirationLocalDate(): String {
+        return expiresAt?.atZone(ZoneOffset.systemDefault())?.toLocalDate()?.toString() ?: ""
+    }
+
+    fun isRevoked(): Boolean {
+        return status == CONSENT_STATUS_REVOKED
+    }
+
+    fun revoke() {
+        status = CONSENT_STATUS_REVOKED
     }
 }

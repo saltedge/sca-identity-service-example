@@ -51,6 +51,16 @@ public class ScaSdkConstants {
     public final static String KEY_CONNECT_URL = "connect_url";
     public final static String KEY_CONNECT_QUERY = "connect_query";
     public final static String KEY_SUCCESS = "success";
+    public final static String KEY_CONSENT_TYPE = "consent_type";
+    public final static String KEY_TPP_NAME = "tpp_name";
+    public final static String KEY_ACCOUNTS = "accounts";
+    public final static String KEY_SHARED_DATA = "shared_data";
+    public final static String KEY_NAME = "name";
+    public final static String KEY_ACCOUNT_NUMBER = "account_number";
+    public final static String KEY_SORT_CODE = "sort_code";
+    public final static String KEY_IBAN = "iban";
+    public final static String KEY_BALANCE = "balance";
+    public final static String KEY_TRANSACTIONS = "transactions";
 
     public final static int AUTHORIZATION_DEFAULT_LIFETIME_MINUTES = 5;
     public final static int CONNECTION_DEFAULT_AUTH_SESSION_MINUTES = 5;

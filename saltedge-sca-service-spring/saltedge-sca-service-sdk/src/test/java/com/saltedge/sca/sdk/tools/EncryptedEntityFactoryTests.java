@@ -22,15 +22,18 @@ package com.saltedge.sca.sdk.tools;
 
 import com.saltedge.sca.sdk.TestTools;
 import com.saltedge.sca.sdk.models.Authorization;
-import com.saltedge.sca.sdk.models.Consent;
-import com.saltedge.sca.sdk.models.api.EncryptedEntity;
+import com.saltedge.sca.sdk.models.api.ScaConsent;
+import com.saltedge.sca.sdk.models.api.ScaConsentSharedData;
+import com.saltedge.sca.sdk.models.api.ScaEncryptedEntity;
 import com.saltedge.sca.sdk.models.persistent.AuthorizationEntity;
+import org.assertj.core.util.Lists;
 import org.junit.Test;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.time.Instant;
 import java.util.Base64;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,9 +51,9 @@ public class EncryptedEntityFactoryTests {
 		PublicKey publicKey = TestTools.getRsaPublicKey();
 		PrivateKey privateKey = TestTools.getRsaPrivateKey();
 
-		EncryptedEntity encryptedObject = EncryptedEntityFactory.encryptAuthorization(model, 1L, publicKey);
+		ScaEncryptedEntity encryptedObject = EncryptedEntityFactory.encryptAuthorization(model, 1L, publicKey);
 
-		byte[] key = CryptTools.decryptRsa(Base64.getDecoder().decode(encryptedObject.key), privateKey);
+		byte[] key = CryptTools.decryptRsa(Base64.getDecoder().decode(Objects.requireNonNull(encryptedObject).key), privateKey);
 		byte[] iv = CryptTools.decryptRsa(Base64.getDecoder().decode(encryptedObject.iv), privateKey);
 
 		assertThat(key.length).isEqualTo(32);
@@ -63,17 +66,19 @@ public class EncryptedEntityFactoryTests {
 
 	@Test
 	public void encryptConsentTest() throws Exception {
-		Consent model = new Consent(
+		ScaConsent model = new ScaConsent(
 				"id1",
-				"title",
-				"description",
+				"userId",
 				Instant.parse("2020-01-01T00:00:00Z"),
-				Instant.parse("2020-03-01T00:00:00Z")
+				Instant.parse("2020-03-01T00:00:00Z"),
+				"tpp name",
+				Lists.list(),
+				new ScaConsentSharedData(true, true)
 		);
 		PublicKey publicKey = TestTools.getRsaPublicKey();
 		PrivateKey privateKey = TestTools.getRsaPrivateKey();
 
-		EncryptedEntity encryptedObject = EncryptedEntityFactory.encryptConsent(model, 1L, publicKey);
+		ScaEncryptedEntity encryptedObject = EncryptedEntityFactory.encryptConsent(model, 1L, publicKey);
 
 		byte[] key = CryptTools.decryptRsa(Base64.getDecoder().decode(encryptedObject.key), privateKey);
 		byte[] iv = CryptTools.decryptRsa(Base64.getDecoder().decode(encryptedObject.iv), privateKey);
@@ -83,6 +88,6 @@ public class EncryptedEntityFactoryTests {
 
 		String decryptedData = new String(CryptTools.decryptAes(Base64.getDecoder().decode(encryptedObject.data), key, iv));
 
-		assertThat(decryptedData).isEqualTo("{\"id\":\"id1\",\"title\":\"title\",\"description\":\"description\",\"created_at\":\"2020-01-01T00:00:00Z\",\"expires_at\":\"2020-03-01T00:00:00Z\",\"connection_id\":\"1\"}");
+		assertThat(decryptedData).isEqualTo("{\"id\":\"id1\",\"user_id\":\"userId\",\"created_at\":\"2020-01-01T00:00:00Z\",\"expires_at\":\"2020-03-01T00:00:00Z\",\"consent_type\":\"aisp\",\"tpp_name\":\"tpp name\",\"accounts\":[],\"shared_data\":{\"balance\":true,\"transactions\":true}}");
 	}
 }

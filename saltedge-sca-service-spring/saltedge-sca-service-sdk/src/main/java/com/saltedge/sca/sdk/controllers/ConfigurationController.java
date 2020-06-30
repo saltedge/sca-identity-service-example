@@ -21,12 +21,9 @@
 package com.saltedge.sca.sdk.controllers;
 
 import com.saltedge.sca.sdk.ScaSdkConstants;
-import com.saltedge.sca.sdk.models.api.ConfigurationData;
-import com.saltedge.sca.sdk.models.api.responces.ConfigurationResponse;
+import com.saltedge.sca.sdk.models.api.responces.ScaConfigurationResponse;
 import com.saltedge.sca.sdk.provider.ServiceProvider;
-import com.saltedge.sca.sdk.tools.EnvironmentTools;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,20 +37,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class ConfigurationController {
     public final static String CONFIGURATION_REQUEST_PATH = ScaSdkConstants.AUTHENTICATOR_API_BASE_PATH + "/configuration";
     @Autowired
-    Environment env;
-    @Autowired
     ServiceProvider serviceProvider;
 
     @GetMapping
-    public ResponseEntity<ConfigurationResponse> getConfiguration() {
-        String identityServiceUrl = EnvironmentTools.getScaServiceUrl(env);
-        String providerCode = serviceProvider.getProviderCode();
-        String providerName = serviceProvider.getProviderName();
-        String providerLogoUrl = serviceProvider.getProviderLogoUrl();
-        String providerSupportEmail = serviceProvider.getProviderSupportEmail();
-        return ResponseEntity.ok(new ConfigurationResponse(new ConfigurationData(
-                identityServiceUrl, providerCode, providerName, providerLogoUrl, providerSupportEmail
-        )));
+    public ResponseEntity<ScaConfigurationResponse> getConfiguration() {
+        return ResponseEntity.ok(new ScaConfigurationResponse(serviceProvider.getProviderConfiguration()));
     }
 
 
