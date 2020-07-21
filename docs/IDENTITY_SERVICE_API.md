@@ -633,12 +633,12 @@ curl \
 
 ### Consent Management
 
-It is the set of functions that allows the customer to determine what permissions to access the ASPSP he gave and to revoke a certain consent.  
+Consent Management is a set of functions that allows customer to determine what permissions (consents) were granted to various third party providers in order to access his account information data at ASPSP, and to revoke certain permissions.  
 
 ### Show Consents List  
 
-Return list of all active Consents managed by Service Provider (ASPSP).  
-Each Consent object (`data` field) is **encrypted** with algorithm mentioned in `algorithm` field. Necessary data for decryption (`key` and `iv`) are encrypted by asymmetric `public_key` related to `connection_id`.  
+Returns list of all active Consents managed by Service Provider (ASPSP).  
+Each Consent object (`data` field) is **encrypted** with algorithm mentioned in `algorithm` field. Necessary data for decryption (`key` and `iv`) is encrypted by asymmetric `public_key` related to `connection_id`.  
 
 <img src="images/sca_consent_management_show_list.png" alt="sca_consent_management_show_list" width="240"/>
 
@@ -665,8 +665,8 @@ curl \
 #### Response Body Parameters
 - `id` **[string]** - an unique ID of Consent object;
 - `connection_id` **[string]** - an unique ID of Mobile Client (Service Connection). Used to decrypt models in the Mobile Application;
-- `iv` **[string]** - an initialization vector of encryption algorithm, this string is encrypted with public key linked to Mobile Client;
-- `key` **[string]** - a secure key of encryption algorithm, this string is encrypted with public key linked to Mobile Client;
+- `iv` **[string]** - an initialization vector of encryption algorithm, this string is encrypted with the public key linked to Mobile Client;
+- `key` **[string]** - a secure key of encryption algorithm, this string is encrypted with the public key linked to Mobile Client;
 - `algorithm` **[string]** - an encryption algorithm and block mode type;
 - `data` **[string]** - an encrypted Consent object with algorithm mentioned above.
 
@@ -687,16 +687,16 @@ curl \
 ```  
   
 #### Consent Object (*Decrypted `data` field*)  
-- `id` **[string, required]** - an unique ID of Consent model;
-- `user_id` **[string, required]** - an unique ID of User;
+- `id` **[string, required]** - a unique ID of Consent model;
+- `user_id` **[string, required]** - a unique ID of customer;
 - `consent_type` **[string, required]** - string type of consent. Supported by Salt Edge Authenticator value - `aisp`;
-- `tpp_name` **[string, required]** - the name of the third party provider / application to which user has provided consent;
-- `accounts` **[array, required]** - the information of accounts which were shared by user with third party provider;
+- `tpp_name` **[string, required]** - name of the third party provider / application to which user has granted consent;
+- `accounts` **[array, required]** - information of accounts which were shared by customer with third party provider;
   - `name` **[string, required]** - name of the account that was shared with third party provider;
   - `account_number` **[string, optional]** - identifier of the account, for the accounts in GBP currency;
   - `sort_code` **[string, optional]** - identifier of the account, for the accounts in GBP currency;
   - `iban` **[string, optional]** - identifier of the account, for the accounts in EUR or other European currency;
-- `shared_data` **[object, optional]** - the specific information of shared with third party data type;
+- `shared_data` **[object, optional]** - specific information of shared with third party data type;
   - `balance` **[boolean, optional]** - type of data shared with third party;
   - `transactions` **[boolean, optional]** - type of data shared with third party;
 - `created_at` **[datetime, required]** - specifies the datetime in ISO 8601 (“yyyy-mm-ddTHH:mm:ssZ”) format, when the Consent was created;
@@ -737,7 +737,7 @@ curl \
 
 ### Revoke Consent  
 
-Revoke Consent managed by Service Provider (ASPSP).  And return result of operation.
+Revoke Consent is managed by Service Provider (ASPSP), and returns result of operation.
 
 <img src="images/sca_consent_management_revoke.png" alt="sca_consent_management_revoke" width="240"/>
 
