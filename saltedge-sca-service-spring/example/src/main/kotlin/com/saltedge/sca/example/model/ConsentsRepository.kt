@@ -26,6 +26,7 @@ import java.time.Instant
 interface ConsentsRepository : JpaRepository<ConsentEntity, Long> {
     fun findByUserIdAndStatusNotAndExpiresAtGreaterThan(userId: Long, status: String = CONSENT_STATUS_REVOKED, currentDate: Instant): List<ConsentEntity>
     fun findFirstByIdAndUserId(id: Long, userId: Long): ConsentEntity?
+    fun findAllByUserId(userId: Long): List<ConsentEntity>
 }
 
 const val CONSENT_STATUS_REVOKED = "revoked"

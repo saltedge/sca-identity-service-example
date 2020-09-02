@@ -30,6 +30,7 @@
                 <table border="1">
                     <tr>
                        <th>ID</th>
+                       <th>User ID</th>
                        <th>TPP Name</th>
                        <th>CreatedAt</th>
                        <th>ExpiresAt</th>
@@ -39,6 +40,7 @@
                 <#items as item>
                     <tr>
                         <td>${item.id}</td>
+                        <td>${item.user.id}</td>
                         <td>${item.tppName}</td>
                         <td>${item.createdAt.toString()}</td>
                         <td>${item.expirationLocalDate()}</td>

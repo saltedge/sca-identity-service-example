@@ -121,7 +121,7 @@ class UserDashboardController {
             @RequestParam(value = KEY_USER_ID, required = false) userId: Long?
     ): ModelAndView {
         val user = userId?.let { usersService.findUser(it) } ?: return ModelAndView("users_dashboard_denied")
-        val consents = consentsRepository.findAll().sortedByDescending { it.id }
+        val consents: List<ConsentEntity> = consentsRepository.findAllByUserId(userId).sortedByDescending { it.id }
         return ModelAndView("users_dashboard_consents")
                 .addObject("user", user)
                 .addObject("consents", consents)
