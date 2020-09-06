@@ -10,17 +10,9 @@
 
          <div class="qr-section">
           <table align="center">
-            <% @qr.modules.each_index do |x| %>
               <tr>
-                <% @qr.modules.each_index do |y| %>
-                  <% if @qr.dark?(x,y) %>
-                    <td class="black"/>
-                      <% else %>
-                        <td class="white"/>
-                      <% end %>
-                  <% end %>
+                <%= @qr.as_html %>
               </tr>
-            <% end %>
           </table>
 
             <a href=<%= @configuration_deeplink %> <h3 style="text-align:center;">or OPEN with Authenticator App</h3></a>
