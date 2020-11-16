@@ -17,8 +17,6 @@
 # For the additional permissions granted for Salt Edge Authenticator
 # under Section 7 of the GNU General Public License see THIRD_PARTY_NOTICES.md
 
-require 'pry'
-
 class UserAuthorizeController < BaseController
   get '/' do
     erb :index
@@ -79,7 +77,6 @@ class UserAuthorizeController < BaseController
     @instant_action_deeplink = create_instant_action_deep_link(@action.uuid, "", "https://#{request.host_with_port}")
 
     @qr = Sinatra::QrHelper.create_qr_code(@instant_action_deeplink)
-    binding.pry
 
     @payment = {
       "uuid"       => @action.uuid,
