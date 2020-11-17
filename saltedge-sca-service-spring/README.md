@@ -1,4 +1,6 @@
-[![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
+[![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html) 
+![SDK verson](https://img.shields.io/badge/SDK%20version-1.3.0-orange) 
+  
 # Salt Edge Authenticator SCA Service Example & SDK (based on Spring Boot)
 
 This codebase is a full-stack application built on Spring Boot Framework. 
@@ -9,7 +11,6 @@ _This application is just a Proof Of Concept._
 This codebase contains SDK module which is the set of tools for simplification of communication between ASPSP/Bank and Salt Edge Authenticator Application.    
 The SDK module implements the Salt Edge Authenticator v1 API.  
 [See how to add SDK](#SDK-Integration)  
-**Last stable version of SDK library is "1.3.0".**  
 
 ### Codebase consists of modules:
 * **example** - simulates work of ASPSP/Bank Application.  
