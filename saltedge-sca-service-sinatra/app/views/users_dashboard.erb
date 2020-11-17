@@ -165,17 +165,9 @@
                 <div class="modal-content">
                 <span class="close">&times;</span>
                     <table align="center">
-                        <% @qr.modules.each_index do |x| %>
                         <tr>
-                            <% @qr.modules.each_index do |y| %>
-                            <% if @qr.dark?(x,y) %>
-                                <td class="black"/>
-                            <% else %>
-                                <td class="white"/>
-                            <% end %>
-                            <% end %>
+                        <%= @qr.as_html %>
                         </tr>
-                    <% end %>
                   </table>
 
                     <a href=<%= @configuration_deeplink %>> <h3 style="text-align:center;">or OPEN with Authenticator App</h3></a>
@@ -185,7 +177,7 @@
                             <img src='https://cdn.worldvectorlogo.com/logos/google-play-badge.svg' alt='Get it on Google Play' height="44px"/>
                         </a>
                         <a href='https://apps.apple.com/md/app/priora-authenticator/id1277625653'>
-                            <img src='https://cdn.worldvectorlogo.com/logos/download-on-the-app-store-apple.svg' alt='Get it on App Store' height="44px"/>
+                            <img src='https://cdn.worldvectorlogo.com/logos/aivalable-on-the-app-store-2.svg' alt='Get it on App Store' height="44px"/>
                         </a>
                     </div>
                 </div>
