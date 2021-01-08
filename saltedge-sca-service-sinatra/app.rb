@@ -2,6 +2,7 @@ require 'sinatra'
 require 'sinatra/namespace'
 require 'sinatra/config_file'
 require 'sinatra/reloader' if development?
+require 'active_record'
 require 'sinatra/activerecord'
 require 'pry'
 require 'yaml'

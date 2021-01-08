@@ -27,6 +27,7 @@ gem 'sinatra-activerecord' # ActiveRecord implementation
 gem 'sqlite3'              # SQLite DB
 gem 'json'                 # JSON implementation
 gem 'rqrcode'              # QR code generator
+gem 'activerecord'
 gem 'rest-client'
 gem 'pry'
 
