@@ -82,6 +82,7 @@ class ScaProviderService : ServiceProvider {
                 providerName,
                 "https://s3-media1.fl.yelpcdn.com/bphoto/9J0LUrYkKYuwcICwQztkxw/ls.jpg",
                 "support@spring-demobank.com",
+                true,
                 true
         )
     }

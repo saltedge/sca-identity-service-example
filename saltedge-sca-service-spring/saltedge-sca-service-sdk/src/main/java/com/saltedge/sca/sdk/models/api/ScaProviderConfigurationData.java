@@ -84,6 +84,17 @@ public class ScaProviderConfigurationData {
     @NotNull
     public Boolean consentManagementIsSupported = true;
 
+    /**
+     * Geolocation info collection is required for mobile clients or not
+     *
+     * true - geolocation is mandatory
+     * false - geolocation is optional
+     * null - geolocation is not supported
+     */
+    @JsonProperty("geolocation_required")
+    @NotNull
+    public Boolean geolocationRequired = null;
+
     public ScaProviderConfigurationData() {
     }
 
@@ -103,31 +114,80 @@ public class ScaProviderConfigurationData {
         this.consentManagementIsSupported = consentManagementIsSupported;
     }
 
+    public ScaProviderConfigurationData(
+      @NonNull String connectUrl,
+      @NonNull String code,
+      @NonNull String name,
+      @NonNull String logoUrl,
+      @NonNull String supportEmail,
+      @NotNull Boolean consentManagementIsSupported,
+      Boolean geolocationRequired
+    ) {
+        this(connectUrl, code, name, logoUrl, supportEmail, consentManagementIsSupported);
+        this.geolocationRequired = geolocationRequired;
+    }
+
     public String getConnectUrl() {
         return connectUrl;
+    }
+
+    public void setConnectUrl(String connectUrl) {
+        this.connectUrl = connectUrl;
     }
 
     public String getCode() {
         return code;
     }
 
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getLogoUrl() {
         return logoUrl;
     }
 
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
+    }
+
     public String getSupportEmail() {
         return supportEmail;
+    }
+
+    public void setSupportEmail(String supportEmail) {
+        this.supportEmail = supportEmail;
     }
 
     public String getVersion() {
         return version;
     }
 
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
     public Boolean getConsentManagementIsSupported() {
         return consentManagementIsSupported;
+    }
+
+    public void setConsentManagementIsSupported(Boolean consentManagementIsSupported) {
+        this.consentManagementIsSupported = consentManagementIsSupported;
+    }
+
+    public Boolean getGeolocationRequired() {
+        return geolocationRequired;
+    }
+
+    public void setGeolocationRequired(Boolean geolocationRequired) {
+        this.geolocationRequired = geolocationRequired;
     }
 }
