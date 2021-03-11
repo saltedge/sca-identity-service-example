@@ -39,8 +39,6 @@ class PendingAuthorizationsController {
     @Autowired
     private lateinit var scaSdkService: ScaSDKCallbackService
 
-    private val template = "payments_order"
-
     @GetMapping("/{" + ScaSdkConstants.KEY_AUTHORIZATION_ID + "}")
     fun showAuthorization(
         @PathVariable(ScaSdkConstants.KEY_AUTHORIZATION_ID) authorizationId: Long

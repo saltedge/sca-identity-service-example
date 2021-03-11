@@ -221,19 +221,21 @@ public class AuthorizationErrorsIntegrationTests {
 		String expiresAt = String.valueOf((DateTools.nowUtcSeconds() + 60));
 
 		ScaUpdateAuthorizationRequest body = new ScaUpdateAuthorizationRequest(true, "1234567890");
-
 		String rawBody = new ObjectMapper().writeValueAsString(body);
 		String signature = TestTools.createSignature(
-				HttpMethod.PUT.toString(),
-				requestUrl,
-				expiresAt,
-				rawBody,
-				TestTools.getRsaPrivateKey()
+			HttpMethod.PUT.toString(),
+			requestUrl,
+			expiresAt,
+			rawBody,
+			TestTools.getRsaPrivateKey()
 		);
+
 		LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
 		headers.add(HEADER_KEY_ACCESS_TOKEN, "accessToken");
 		headers.add(HEADER_KEY_EXPIRES_AT, expiresAt);
 		headers.add(HEADER_KEY_SIGNATURE, signature);
+		headers.add(HEADER_KEY_GEOLOCATION, "GEO:1.2;3.4");
+		headers.add(HEADER_KEY_AUTHORIZATION_TYPE, "passcode");
 
 		ArgumentCaptor<String> userCaptor = ArgumentCaptor.forClass(String.class);
 		given(connectionsRepository.findByAccessTokenAndRevokedFalse("accessToken")).willReturn(testConnection);
