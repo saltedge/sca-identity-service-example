@@ -37,27 +37,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest(ConfigurationController.class)
 public class ConfigurationControllerIntegrationTests extends MockMvcTestAbs {
-	@Test
-	public void getConfigurationTest() throws Exception {
-		ScaProviderConfigurationData configurationData = new ScaProviderConfigurationData(
-				"https://your_host.org",
-				"spring-demobank",
-				"Spring Demobank",
-				"",
-				"support@spring-demobank.com",
-				true
-		);
-		given(serviceProvider.getProviderConfiguration()).willReturn(configurationData);
+  @Test
+  public void getConfigurationTest() throws Exception {
+    ScaProviderConfigurationData configurationData = new ScaProviderConfigurationData(
+      "https://your_host.org",
+      "spring-demobank",
+      "Spring Demobank",
+      "",
+      "support@spring-demobank.com",
+      true,
+      true
+    );
+    given(serviceProvider.getProviderConfiguration()).willReturn(configurationData);
 
-		mvc.perform(MockMvcRequestBuilders.get(CONFIGURATION_REQUEST_PATH))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.data").exists())
-				.andExpect(jsonPath("$.data.code", Matchers.is("spring-demobank")))
-				.andExpect(jsonPath("$.data.name", Matchers.is("Spring Demobank")))
-				.andExpect(jsonPath("$.data.connect_url", Matchers.is("https://your_host.org")))
-				.andExpect(jsonPath("$.data.logo_url", Matchers.is("")))
-				.andExpect(jsonPath("$.data.support_email", Matchers.is("support@spring-demobank.com")))
-				.andExpect(jsonPath("$.data.consent_management", Matchers.is(true)))
-				.andExpect(jsonPath("$.data.version", Matchers.is("1")));
-	}
+    mvc.perform(MockMvcRequestBuilders.get(CONFIGURATION_REQUEST_PATH))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.data").exists())
+      .andExpect(jsonPath("$.data.code", Matchers.is("spring-demobank")))
+      .andExpect(jsonPath("$.data.name", Matchers.is("Spring Demobank")))
+      .andExpect(jsonPath("$.data.connect_url", Matchers.is("https://your_host.org")))
+      .andExpect(jsonPath("$.data.logo_url", Matchers.is("")))
+      .andExpect(jsonPath("$.data.support_email", Matchers.is("support@spring-demobank.com")))
+      .andExpect(jsonPath("$.data.consent_management", Matchers.is(true)))
+      .andExpect(jsonPath("$.data.version", Matchers.is("1")))
+      .andExpect(jsonPath("$.data.geolocation_required", Matchers.is(true)));
+  }
 }

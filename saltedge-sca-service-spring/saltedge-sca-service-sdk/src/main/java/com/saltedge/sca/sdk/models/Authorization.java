@@ -28,10 +28,13 @@ import java.time.Instant;
  * @see com.saltedge.sca.sdk.models.persistent.AuthorizationEntity
  */
 public interface Authorization extends BaseEntityAbs {
+    AuthorizationStatus getStatus();
     Instant getExpiresAt();
     String getTitle();
     String getDescription();
     String getAuthorizationCode();
     String getUserId();
     Boolean getConfirmed();
+    String getConfirmLocation();
+    String getConfirmAuthorizationType();
 }

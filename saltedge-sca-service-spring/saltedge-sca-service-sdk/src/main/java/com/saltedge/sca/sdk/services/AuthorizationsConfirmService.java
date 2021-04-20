@@ -35,30 +35,34 @@ import javax.validation.constraints.NotNull;
 @Service
 @Validated
 public class AuthorizationsConfirmService {
-    private Logger log = LoggerFactory.getLogger(AuthorizationsConfirmService.class);
-    @Autowired
-    private AuthorizationsRepository authorizationsRepository;
-    @Autowired
-    private ServiceProvider serviceProvider;
+  private final Logger log = LoggerFactory.getLogger(AuthorizationsConfirmService.class);
+  @Autowired
+  private AuthorizationsRepository authorizationsRepository;
+  @Autowired
+  private ServiceProvider serviceProvider;
 
-    public boolean confirmAuthorization(
-            @NotNull ClientConnectionEntity connection,
-            @NotNull Long authorizationId,
-            @NotNull String authorizationCode,
-            @NotNull boolean confirmAuthorization
-    ) {
-        AuthorizationEntity authorization = AuthorizationsCollector.findActiveAuthorization(
-                authorizationsRepository,
-                connection,
-                authorizationId
-        );
+  public boolean confirmAuthorization(
+    @NotNull ClientConnectionEntity connection,
+    @NotNull Long authorizationId,
+    @NotNull String authorizationCode,
+    @NotNull Boolean confirmAuthorization,
+    String geolocation,
+    String authorizationType
+  ) {
+    AuthorizationEntity authorization = AuthorizationsCollector.findActiveAuthorization(
+      authorizationsRepository,
+      connection,
+      authorizationId
+    );
 
-        boolean canUpdateAuthorization = authorization.getAuthorizationCode().equals(authorizationCode);
-        if (canUpdateAuthorization) {
-            authorization.setConfirmed(confirmAuthorization);
-            authorizationsRepository.save(authorization);
-            serviceProvider.onAuthorizationConfirmed(authorization);
-        }
-        return canUpdateAuthorization;
+    boolean canUpdateAuthorization = authorization.getAuthorizationCode().equals(authorizationCode);
+    if (canUpdateAuthorization) {
+      authorization.setConfirmed(confirmAuthorization);
+      authorization.setConfirmLocation(geolocation);
+      authorization.setConfirmAuthorizationType(authorizationType);
+      authorizationsRepository.save(authorization);
+      serviceProvider.onAuthorizationConfirmed(authorization);
     }
+    return canUpdateAuthorization;
+  }
 }

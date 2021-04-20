@@ -1,13 +1,13 @@
 plugins {
     id 'java'
     id 'maven'
-    id 'org.springframework.boot' version "2.2.2.RELEASE"
-    id 'io.spring.dependency-management' version "1.0.8.RELEASE"
+    id 'org.springframework.boot' version '2.2.2.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
     id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
 group 'com.saltedge.sca.sdk'
-version '1.3.0'
+version '1.4.0'
 
 sourceCompatibility = 1.8
 

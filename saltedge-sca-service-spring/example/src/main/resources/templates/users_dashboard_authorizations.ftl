@@ -31,17 +31,19 @@
                     <tr>
                        <th>ID</th>
                        <th>Title</th>
-                       <th>CreatedAt</th>
-                       <th>ExpiresAt</th>
+                       <th>CreatedAt -> ExpiresAt</th>
                        <th>Status</th>
+                       <th>Confirmed with</th>
+                       <th>Location</th>
                     </tr>
                 <#items as item>
                     <tr>
                         <td><a href="/authorizations/${item.id}">${item.id}</a></td>
-                        <td>${item.title}</td>
-                        <td>${item.getCreatedAt().toString()}</td>
-                        <td>${item.getExpiresAt().toString()}</td>
+                        <td>${item.getTitle()}</td>
+                        <td>${item.getCreatedAt().toString()}<br>${item.getExpiresAt().toString()}</td>
                         <td>${item.getStatus()}</td>
+                        <td>${item.getConfirmAuthorizationType()}</td>
+                        <td>${item.getConfirmLocation()}</td>
                     </tr>
                 </#items>
             </table>

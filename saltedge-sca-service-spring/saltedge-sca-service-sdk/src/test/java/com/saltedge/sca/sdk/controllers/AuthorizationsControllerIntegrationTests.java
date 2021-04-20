@@ -20,15 +20,20 @@
  */
 package com.saltedge.sca.sdk.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.saltedge.sca.sdk.MockMvcTestAbs;
+import com.saltedge.sca.sdk.ScaSdkConstants;
 import com.saltedge.sca.sdk.TestTools;
+import com.saltedge.sca.sdk.models.api.requests.ScaUpdateAuthorizationRequest;
 import com.saltedge.sca.sdk.models.persistent.ClientConnectionEntity;
 import com.saltedge.sca.sdk.tools.DateTools;
+import com.saltedge.sca.sdk.tools.JsonTools;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -143,5 +148,40 @@ public class AuthorizationsControllerIntegrationTests extends MockMvcTestAbs {
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$.error_class", Matchers.is("UserNotFound")))
 				.andExpect(jsonPath("$.error_message", Matchers.is("User Not Found.")));
+	}
+
+	@Test
+	public void whenConfirmAuthorization_returnSuccess() throws Exception {
+		given(connectionsRepository.findByAccessTokenAndRevokedFalse("accessToken")).willReturn(testAuthorizedConnection);
+		given(authorizationsConfirmService.confirmAuthorization(
+			testAuthorizedConnection, 1L, "1234567890", true, "GEO:1.2;3.4", "passcode")
+		).willReturn(true);
+
+		String requestUrl = "http://localhost" + AUTHORIZATIONS_REQUEST_PATH + "/1";
+		String expiresAt = String.valueOf((DateTools.nowUtcSeconds() + 60));
+
+		ScaUpdateAuthorizationRequest body = new ScaUpdateAuthorizationRequest(true, "1234567890");
+		String rawBody = new ObjectMapper().writeValueAsString(body);
+		String signature = TestTools.createSignature(
+			HttpMethod.PUT.toString(),
+			requestUrl,
+			expiresAt,
+			rawBody,
+			TestTools.getRsaPrivateKey()
+		);
+
+		mvc.perform(MockMvcRequestBuilders.put(AUTHORIZATIONS_REQUEST_PATH + "/1")
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
+			.header(HEADER_KEY_ACCESS_TOKEN, "accessToken")
+			.header(HEADER_KEY_EXPIRES_AT, expiresAt)
+			.header(HEADER_KEY_SIGNATURE, signature)
+			.header("GEO-Location", "GEO:1.2;3.4")
+			.header("Authorization-Type", "passcode")
+			.content(rawBody)
+		)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.success", Matchers.is(true)))
+			.andExpect(jsonPath("$.data.id", Matchers.is("1")));
 	}
 }

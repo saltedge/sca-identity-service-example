@@ -30,6 +30,8 @@ public class ScaSdkConstants {
     public final static String HEADER_KEY_ACCESS_TOKEN = "access-token";
     public final static String HEADER_KEY_EXPIRES_AT = "expires-at";
     public final static String HEADER_KEY_SIGNATURE = "signature";
+    public final static String HEADER_KEY_GEOLOCATION = "geo-location";
+    public final static String HEADER_KEY_AUTHORIZATION_TYPE = "authorization-type";
 
     public final static String KEY_DATA = "data";
     public final static String KEY_ERROR_MESSAGE = "error_message";
