@@ -1,5 +1,5 @@
 [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html) 
-![SDK verson](https://img.shields.io/badge/SDK%20version-1.3.0-orange) 
+![SDK verson](https://img.shields.io/badge/SDK%20version-1.4.0-orange) 
   
 # Salt Edge Authenticator SCA Service Example & SDK (based on Spring Boot)
 
@@ -79,7 +79,7 @@ Example Application implements custom admin page for creating users, authorizing
   ```
   Add Connector SDK dependency to application build.gradle
   ```groovy
-      implementation ('com.saltedge.sca.sdk:saltedge-sca-service-sdk:x.x.x') {
+      implementation ('com.saltedge.sca.sdk:saltedge-sca-service-sdk:1.x.x') {
           transitive = true
       }
   ```
@@ -96,7 +96,9 @@ Example Application implements custom admin page for creating users, authorizing
        
     }
     ```
-### 4. Create a service which will provide info required by SCA SDK Module (Service should implement `ServiceProvider` interface and should have `@Service` annotation):    
+### 4. Create a service which will provide info required by SCA SDK Module (Service should implement `ServiceProvider` interface and should have `@Service` annotation):
+
+  * `getProviderConfiguration()` - Provides Service configuration `ScaProviderConfigurationData` designated for connection initiation;  
   * `getAuthorizationPageUrl(String enrollSessionSecret)` - Provides URL of authentication page of Service Provider for redirection in Authenticator app. `enrollSessionSecret` is created by SDK;  
     (**Ignore if REDIRECT authentication is not supported**)  
   * `getUserIdByAuthenticationSessionSecret(String sessionSecret)` - Find User entity by authentication session secret code. 
@@ -141,4 +143,4 @@ Instant Actions management (**ignore if Instant Action flow is not supported**):
   * `getActionStatus(actionUUID)` - returns Action's status by `actionUUID`;  
     
 ----
-Copyright © 2019 - 2020 Salt Edge. https://www.saltedge.com  
+Copyright © 2019 Salt Edge. https://www.saltedge.com  

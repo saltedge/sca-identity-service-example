@@ -1,4 +1,4 @@
-# SCA Service (Identity Service)
+# SCA Service API v1 (part of Identity Service)
 
 * [What is Identity Service?](#what-is-identity-service)
 * [Service Configuration](#service-configuration)

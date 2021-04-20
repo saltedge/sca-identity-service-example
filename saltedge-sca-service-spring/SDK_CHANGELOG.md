@@ -1,7 +1,7 @@
 [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
 # Salt Edge Authenticator SCA Service SDK Changelog
 
-## 1.4.0 (2021-03-12)
+## 1.4.0 (2021-04-12)
 ### Add
 * Support of Geolocation info  
 * Support of User Authorization Type info  
@@ -44,4 +44,4 @@
 - Pending Authorizations
   
 ----
-Copyright © 2020 Salt Edge. https://www.saltedge.com  
+Copyright © 2019 Salt Edge. https://www.saltedge.com  
