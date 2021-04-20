@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.util.Map;
 
 public class StringMapConverter implements AttributeConverter<Map<String, String>, String> {
-    private static Logger log = LoggerFactory.getLogger(StringMapConverter.class);
+    private static final Logger log = LoggerFactory.getLogger(StringMapConverter.class);
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override

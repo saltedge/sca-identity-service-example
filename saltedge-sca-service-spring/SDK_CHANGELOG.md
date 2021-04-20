@@ -1,6 +1,12 @@
 [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
 # Salt Edge Authenticator SCA Service SDK Changelog
 
+## 1.4.0 (2021-03-12)
+### Add
+* Support of Geolocation info  
+* Support of User Authorization Type info  
+**Note: Should be added migration for `Transaction_Authorization`. Add `confirmLocation` and `confirmAuthorizationType` fields.**  
+
 ## 1.3.0 (2020-06-30)
 ### Add 
 * ServiceProvider.getProviderConfiguration()

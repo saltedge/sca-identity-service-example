@@ -40,6 +40,12 @@ public class AuthorizationEntity extends BaseEntity implements Authorization {
 
     private Boolean confirmed;
 
+    @Column(length = 64)
+    private String confirmLocation = "";
+
+    @Column(length = 64)
+    private String confirmAuthorizationType = "";
+
     @Column(length = 4096)
     private String title = "";
 
@@ -72,6 +78,7 @@ public class AuthorizationEntity extends BaseEntity implements Authorization {
         return DateTools.dateIsExpired(this.expiresAt);
     }
 
+    @Override
     public AuthorizationStatus getStatus() {
         if (confirmed != null) return confirmed ? AuthorizationStatus.CONFIRMED : AuthorizationStatus.DENIED;
         if (this.isExpired()) return AuthorizationStatus.EXPIRED;
@@ -108,6 +115,16 @@ public class AuthorizationEntity extends BaseEntity implements Authorization {
         return userId;
     }
 
+    @Override
+    public String getConfirmLocation() {
+        return confirmLocation == null ? "" : confirmLocation;
+    }
+
+    @Override
+    public String getConfirmAuthorizationType() {
+        return confirmAuthorizationType == null ? (confirmed == null ? "" : "unknown") : confirmAuthorizationType;
+    }
+
     public void setUserId(String userId) {
         this.userId = userId;
     }
@@ -118,5 +135,25 @@ public class AuthorizationEntity extends BaseEntity implements Authorization {
 
     public void setAuthorizationCode(String authorizationCode) {
         this.authorizationCode = authorizationCode;
+    }
+
+    public void setExpiresAt(Instant expiresAt) {
+        this.expiresAt = expiresAt;
+    }
+
+    public void setConfirmLocation(String confirmLocation) {
+        this.confirmLocation = confirmLocation;
+    }
+
+    public void setConfirmAuthorizationType(String confirmAuthorizationType) {
+        this.confirmAuthorizationType = confirmAuthorizationType;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

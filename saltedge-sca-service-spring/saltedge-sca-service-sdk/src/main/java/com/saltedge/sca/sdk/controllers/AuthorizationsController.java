@@ -38,46 +38,54 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+import static com.saltedge.sca.sdk.ScaSdkConstants.HEADER_KEY_AUTHORIZATION_TYPE;
+import static com.saltedge.sca.sdk.ScaSdkConstants.HEADER_KEY_GEOLOCATION;
+
 /**
  * REST Controller designated for serving SCA Authorizations
+ *
  * @see {https://github.com/saltedge/sca-identity-service-example/blob/master/docs/IDENTITY_SERVICE_API.md#show-authorizations-list}
  */
 @RestController
 @RequestMapping(AuthorizationsController.AUTHORIZATIONS_REQUEST_PATH)
 @Validated
 public class AuthorizationsController {
-    public final static String AUTHORIZATIONS_REQUEST_PATH = ScaSdkConstants.AUTHENTICATOR_API_BASE_PATH + "/authorizations";
-    @Autowired
-    private AuthorizationsService authorizationsService;
-    @Autowired
-    private AuthorizationsConfirmService authorizationsConfirmService;
+  public final static String AUTHORIZATIONS_REQUEST_PATH = ScaSdkConstants.AUTHENTICATOR_API_BASE_PATH + "/authorizations";
+  @Autowired
+  private AuthorizationsService authorizationsService;
+  @Autowired
+  private AuthorizationsConfirmService authorizationsConfirmService;
 
-    @GetMapping
-    public ResponseEntity<ScaCollectionResponse<ScaEncryptedEntity>> getActiveAuthorizations(DefaultAuthenticatedRequest request) {
-        List<ScaEncryptedEntity> result = authorizationsService.getActiveAuthorizations(request.getConnection());
-        return ResponseEntity.ok(new ScaCollectionResponse<>(result));
-    }
+  @GetMapping
+  public ResponseEntity<ScaCollectionResponse<ScaEncryptedEntity>> getActiveAuthorizations(DefaultAuthenticatedRequest request) {
+    List<ScaEncryptedEntity> result = authorizationsService.getActiveAuthorizations(request.getConnection());
+    return ResponseEntity.ok(new ScaCollectionResponse<>(result));
+  }
 
-    @GetMapping("/{" + ScaSdkConstants.KEY_AUTHORIZATION_ID + "}")
-    public ResponseEntity<ScaAuthorizationResponse> getActiveAuthorization(
-            @PathVariable(ScaSdkConstants.KEY_AUTHORIZATION_ID) @NotNull Long authorizationId,
-            DefaultAuthenticatedRequest request
-    ) {
-        ScaEncryptedEntity authorization = authorizationsService.getActiveAuthorization(request.getConnection(), authorizationId);
-        return ResponseEntity.ok(new ScaAuthorizationResponse(authorization));
-    }
+  @GetMapping("/{" + ScaSdkConstants.KEY_AUTHORIZATION_ID + "}")
+  public ResponseEntity<ScaAuthorizationResponse> getActiveAuthorization(
+    @PathVariable(ScaSdkConstants.KEY_AUTHORIZATION_ID) @NotNull Long authorizationId,
+    DefaultAuthenticatedRequest request
+  ) {
+    ScaEncryptedEntity authorization = authorizationsService.getActiveAuthorization(request.getConnection(), authorizationId);
+    return ResponseEntity.ok(new ScaAuthorizationResponse(authorization));
+  }
 
-    @PutMapping("/{" + ScaSdkConstants.KEY_AUTHORIZATION_ID + "}")
-    public ResponseEntity<UpdateAuthorizationResponse> confirmAuthorization(
-            @PathVariable(ScaSdkConstants.KEY_AUTHORIZATION_ID) @NotNull Long authorizationId,
-            @Valid ScaUpdateAuthorizationRequest request
-    ) {
-        boolean result = authorizationsConfirmService.confirmAuthorization(
-                request.getConnection(),
-                authorizationId,
-                request.data.authorizationCode,
-                request.data.confirmAuthorization
-        );
-        return ResponseEntity.ok(new UpdateAuthorizationResponse(result, authorizationId.toString()));
-    }
+  @PutMapping("/{" + ScaSdkConstants.KEY_AUTHORIZATION_ID + "}")
+  public ResponseEntity<UpdateAuthorizationResponse> confirmAuthorization(
+    @RequestHeader(required = false, value = HEADER_KEY_GEOLOCATION) String geolocation,
+    @RequestHeader(required = false, value = HEADER_KEY_AUTHORIZATION_TYPE) String authorizationType,
+    @PathVariable(ScaSdkConstants.KEY_AUTHORIZATION_ID) @NotNull Long authorizationId,
+    @Valid ScaUpdateAuthorizationRequest request
+  ) {
+    boolean result = authorizationsConfirmService.confirmAuthorization(
+      request.getConnection(),
+      authorizationId,
+      request.data.authorizationCode,
+      request.data.confirmAuthorization,
+      geolocation,
+      authorizationType
+    );
+    return ResponseEntity.ok(new UpdateAuthorizationResponse(result, authorizationId.toString()));
+  }
 }
