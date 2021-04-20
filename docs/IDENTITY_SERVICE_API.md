@@ -183,7 +183,7 @@ Application name; version name/code; installer name; phone manufacturer; model; 
   
 ---
   
-## Identity Service API  
+## SCA Service API
 
 ### Get Service provider configuration   
 Public resource (not authenticated) for fetching of initial data of Service Provider.
@@ -199,12 +199,14 @@ curl \
 ```
 
 #### Response parameters
-- `connect_url`   **[string, required]** - base URL of the Identity Service
-- `code`          **[string, required]** - code of the Service Provider
-- `name`          **[string, required]** - name of the Service Provider
-- `logo_url`      **[string, optional]** - URL of the Service Provider's logo asset ([logo instruction](https://github.com/saltedge/sca-identity-service-example/wiki/How-to...%3F#correctly-fit-logo))
+- `connect_url` **[string, required]** - base URL of the Identity Service
+- `code` **[string, required]** - code of the Service Provider
+- `name` **[string, required]** - name of the Service Provider
+- `logo_url` **[string, optional]** - URL of the Service Provider's logo asset ([logo instruction](https://github.com/saltedge/sca-identity-service-example/wiki/How-to...%3F#correctly-fit-logo))
 - `support_email` **[string, optional]** - email address of Provider's Customer Support
-- `version`       **[string, required]** - required Authenticator API version
+- `consent_management` **[boolen, required]** - consent Management feature is available for mobile clients or not
+- `geolocation_required` **[boolen, optional]** - geolocation info collection is required for mobile clients or not
+- `version` **[string, required]** - required Authenticator API version
 
 #### Example response
 ```json  
@@ -215,6 +217,8 @@ curl \
     "name": "Demobank",
     "logo_url": "https://connector.service_host.com/assets/logo.png",
     "support_email": "support@your_host.com",
+    "consent_management": true,
+    "geolocation_required": true
     "version": "1"
   }
 }
@@ -519,6 +523,8 @@ curl \
   -H 'Expires-at: expires_at_time' \
   -H 'Signature: generated_signature' \
   -H 'User-Agent: device_info' \
+  -H 'GEO-Location: GEO:52.506931;13.144558' \
+  -H 'Authorization-Type: biometrics' \
   -X PUT \
   -d '{ "data": { "confirm": true, "authorization_code": "123456789" } }' \
   https://connector.service_host.com/api/authenticator/v1/authorizations/444
@@ -532,7 +538,9 @@ curl \
 - `Access-Token` **[string, required]** - access token, required to access resources which require authentication;
 - `Expires-at` **[datetime, required]** - expiration time of request as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
 - `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature;
-- `User-Agent` **[string, required]** - request header is a characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent.
+- `User-Agent` **[string, required]** - request header is a characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent;
+- `GEO-Location` **[string, optional]** - user geolocation info, in RFC2426 format;
+- `Authorization-Type` **[string, required]** - the type of how user has been authorized in the app, using `biometrics` or `passcode`.
 
 #### Request Body Parameters
 - `confirm` **[boolean, required]** - Confirm (`true`) or Deny (`false`) authorization
@@ -597,6 +605,8 @@ curl \
   -H 'Expires-at: expires_at_time' \
   -H 'Signature: generated_signature' \
   -H 'User-Agent: device_info' \
+  -H 'GEO-Location: GEO:52.506931;13.144558' \
+  -H 'Authorization-Type: biometrics' \
   -X PUT \
   https://connector.service_host.com/api/authenticator/v1/actions/uuid123456
 ```
@@ -610,7 +620,9 @@ curl \
 - `Access-Token` **[string, required]** - access token, required to access resources which require authentication;
 - `Expires-at` **[datetime, required]** - expiration time of request as a UNIX time (seconds since Jan 01 1970) in UTC timezone, required to access resources which verify request signature;
 - `Signature` **[string, required]** - signed by Asymmetric Key string, required to access resources which verify request signature;
-- `User-Agent` **[string, required]** - request header is a characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent.
+- `User-Agent` **[string, required]** - request header is a characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent;
+- `GEO-Location` **[string, optional]** - user geolocation info, in RFC2426 format;
+- `Authorization-Type` **[string, required]** - the type of how user has been authorized in the app, using `biometrics` or `passcode`.
 
 #### Response Body Parameters:
 
