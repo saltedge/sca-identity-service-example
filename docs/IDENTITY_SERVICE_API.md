@@ -54,7 +54,7 @@ Example of application link:
   authenticator://saltedge.com/connect?configuration=https://saltedge.com/configuration
 ```  
 
-Application link can contains extra authentication data (`connect_query` param). This connect flow is named "Instant Enrollment".  
+Application link can contain extra authentication data (`connect_query` param). This connect flow is named "Instant Enrollment".  
 Additional authentication parameter should be sent to service while [connecting to provider](#connect-to-service-provider).  
 Example of application link with exta data:  
 ``` 
