@@ -45,7 +45,7 @@ Besides public API, may be implemented next useful end-points for internal usage
 
 ## Service Configuration
 
-Authenticator application can has hardcoded service configuration (e.g. service url) or support dynamic configuration.  
+Authenticator application can have hardcoded service configuration (e.g. service url) or support dynamic configuration.  
 
 For dynamic confoguration we propose to use application links (deep-links) or encoded in QR code image application links.
 For initiating connect flow, service should generate application link for initiating connection in mobile application. 
