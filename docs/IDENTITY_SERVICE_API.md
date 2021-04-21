@@ -218,7 +218,7 @@ curl \
     "logo_url": "https://connector.service_host.com/assets/logo.png",
     "support_email": "support@your_host.com",
     "consent_management": true,
-    "geolocation_required": true
+    "geolocation_required": true,
     "version": "1"
   }
 }
