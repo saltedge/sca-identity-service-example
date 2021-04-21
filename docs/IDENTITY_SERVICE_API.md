@@ -47,7 +47,7 @@ Besides public API, may be implemented next useful end-points for internal usage
 
 Authenticator application can have hardcoded service configuration (e.g. service url) or support dynamic configuration.  
 
-For dynamic confoguration we propose to use application links (deep-links) or encoded in QR code image application links.
+For dynamic configuration we propose to use application links (deep-links) or encoded in QR code image application links.
 For initiating connect flow, service should generate application link for initiating connection in mobile application. 
 Example of application link:  
 ``` 
