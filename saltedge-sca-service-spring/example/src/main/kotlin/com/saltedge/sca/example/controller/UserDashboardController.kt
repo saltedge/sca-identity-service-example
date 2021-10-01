@@ -155,7 +155,7 @@ class UserDashboardController {
     }
 
     private fun createTextDescription(amountString: String, fromAccount: String, toAccount: String): String {
-        return "Confirm payment of $amountString from account $fromAccount to $toAccount"
+        return "Confirm payment of $amountString from account $fromAccount to $toAccount on ${LocalDateTime.now()}"
     }
 
     private fun createConsent(user: UserEntity) {
