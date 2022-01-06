@@ -83,8 +83,8 @@ class UserAuthorizeController < BaseController
       "payee_name" => "Amazon US",
       "amount"     => "256",
       "currency"   => "USD",
-      "user_name"  => "UNKNOWN",
-      "status"     => "UNKNOWN"
+      "user_name"  => "Unknown",
+      "status"     => @action.status
     }
 
     erb :payment

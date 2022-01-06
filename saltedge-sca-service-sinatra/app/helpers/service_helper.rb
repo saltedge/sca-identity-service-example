@@ -39,7 +39,7 @@ module Sinatra
   module ServiceHelper
     include Sinatra::EnrollHelper
 
-    DEEPLINK_URL = 'authenticator://saltedge.com/connect'
+    DEEPLINK_URL = 'authenticator://saltedge.com'
 
     # Verifies that request has ACCESS_TOKEN header and related Connection exist
     def verify_identity
@@ -77,7 +77,7 @@ module Sinatra
     def create_deep_link(service_url, user_id)
       configuration_url = "#{service_url}/api/authenticator/v1/configuration"
       url_encoded_string = URI::encode(configuration_url)
-      default_deeplink = "authenticator://saltedge.com/connect?configuration=#{url_encoded_string}"
+      default_deeplink = "#{DEEPLINK_URL}/connect?configuration=#{url_encoded_string}"
 
       user = User.find_by(id: user_id) unless user_id.nil?
       if user.nil?
